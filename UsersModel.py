@@ -8,7 +8,6 @@ def check_password(new_password):
     return new_password
 def check_email(new_email):
     return new_email
-print("wow")
 
 class User:
     def __init__(self, db_name):
