@@ -20,9 +20,9 @@ class User:
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY,
-                    email TEXT,
-                    username TEXT,
-                    password TEXT
+                    email TEXT UNIQUE,
+                    username TEXT UNIQUE,
+                    password TEXT UNIQUE
                 ) WITHOUT ROWID;
                 """
         cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
@@ -67,36 +67,39 @@ class User:
                 return "need an @ symbol"
             if "." not in user_details["email"].split("@")[1]:
                 return "need a valid domain"
-            
             if (user_details["username"] in cursor.execute("SELECT * FROM users;").fetchall()):
                 return "username already exists"
             
-            passwordTemp = user_details["password"]
+            passwordTemp = str(user_details["password"])
             goodPassword = "none"
 
             if len(passwordTemp) >= 8:
-                if string.digits in passwordTemp:
-                    if string.ascii_letters.upper() in passwordTemp:
-                        if string.ascii_letters.lower() in passwordTemp:
-                            goodPassword = passwordTemp
-                        else:
-                            return "must have one lowercase letter at least"
+                if any(char.isdigit() for char in passwordTemp):
+                    passwordTemp2 = "".join(filter(str.isalpha,passwordTemp))
+                    if passwordTemp2.islower() == False or passwordTemp2.isupper() == False:
+                        print("e")
+                        goodPassword = passwordTemp
                     else:
-                        return "must have one uppercase letter at least"
+                        print("tough e")
+                        return "must have one uppercase and one lowercase"
                 else:
                     return "must have at least 1 #"
             else:
                 return "must be 8 chars at least"
+            
+            new_email = user_details["email"]
+            new_username = user_details["username"]
 
-            user_data = (user_id, user_details["email"], user_details["username"], goodPassword)
+            user_data = (user_id, new_email, new_username, goodPassword)
             #are you sure you have all data in the correct format?
-
+            print(user_details)
+            print(user_data)
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_data)
+            print("what then")
             db_connection.commit()
             return {"result": "success",
-                    "message": user_id
+                    "message": user_data
                     }
-        
         except sqlite3.Error as error:
             return {"result":"error",
                     "message":error}
