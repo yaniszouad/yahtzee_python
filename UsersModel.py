@@ -29,32 +29,29 @@ class User:
         results=cursor.execute(schema)
         db_connection.close()
     
-    def exists(self, username = None, id = None):
+    def exists(self, username = "", id = ""):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            if id != None:
+            if id != "":
                 query = f'SELECT * from users WHERE id = "{id}";'
-            elif username != None:
+            elif username != "":
                 query = f'SELECT * from users WHERE username = "{username}";'
-            
 
-            results = cursor.execute(query)
-            print(results.fetchone())
-            if results.fetchone() == None:
-                print("wow")
-                return {"result":"success",
-                        "message":False}
+            result = cursor.execute(query)
+            needThat = result.fetchone()
+
+            if needThat is None:
+                return {"result": "success",
+                        "message": False}
             else:
-                {"result": "success",
-                    "message": True}
-            db_connection.commit()
-            return {"result": "success",
-                    "message": True}
+                return {"result": "success",
+                        "message": True}
+
         
         except sqlite3.Error as error:
             return {"result":"success",
-                    "message":False}
+                    "message":error}
         
         finally:
             db_connection.close()
@@ -72,19 +69,25 @@ class User:
                     unique = True
             
             if user_details["email"] in cursor.execute("SELECT * FROM users;").fetchall():
+                print("email already exists")
                 return "email already exists"   
             if "@" not in user_details["email"]:
+                print("need an @ symbol")
                 return "need an @ symbol"
             if "." not in user_details["email"].split("@")[1]:
+                print("need a valid domain")
                 return "need a valid domain"
             if (user_details["username"] in cursor.execute("SELECT * FROM users;").fetchall()):
+                print("username already exists")
                 return "username already exists"
-            
+            print("yo?")
             passwordTemp = str(user_details["password"])
             goodPassword = "none"
 
             if len(passwordTemp) >= 8:
+                print("and here?")
                 if any(char.isdigit() for char in passwordTemp):
+                    print("here?")
                     passwordTemp2 = "".join(filter(str.isalpha,passwordTemp))
                     if passwordTemp2.islower() == False or passwordTemp2.isupper() == False:
                         print("e")
@@ -105,7 +108,7 @@ class User:
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_data)
             db_connection.commit()
             return {"result": "success",
-                    "message": user_details
+                    "message": {"id": user_id, "email": user_details["email"], "username" : user_details["username"], "password": user_details["password"]}
                     }
         except sqlite3.Error as error:
             return {"result":"error",
@@ -138,15 +141,15 @@ class User:
 
     def get_users(self):
         try: 
-            db_connection = sqlite3.connect("users")
+            db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            query = f"SELECT * FROM users;"
-            print(query)
-            results = cursor.execute(query)
-            db_connection.commit()
+            cursor.execute(f"SELECT * FROM {self.table_name}")
+
+            user_list = cursor.fetchall()
+
             return {"result": "success",
-                    "message": results.fetchall()
+                    "message": [self.to_dict(user) for user in user_list]
                     }
             
         except sqlite3.Error as error:
@@ -158,7 +161,7 @@ class User:
 
     def update_user(self, user_details):
         try: 
-            db_connection = sqlite3.connect("users")
+            db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
             query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_details.emails};"
@@ -178,7 +181,7 @@ class User:
 
     def remove_user(self, user_id):
         try: 
-            db_connection = sqlite3.connect("users")
+            db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
             query = f"DELETE * from {self.table_name} WHERE {self.table_name}.id = {user_id};"
@@ -195,3 +198,11 @@ class User:
         
         finally:
             db_connection.close()
+
+    def to_dict(self, user_tuple):
+        return{
+            "id" : user_tuple[0],
+            "email" : user_tuple[1],
+            "username" : user_tuple[2],
+            "password" : user_tuple[3]
+        }
