@@ -72,8 +72,10 @@ class User:
                 print("email already exists")
                 return "email already exists"   
             if "@" not in user_details["email"]:
+                print
                 print("need an @ symbol")
                 return "need an @ symbol"
+            print('here?')
             if "." not in user_details["email"].split("@")[1]:
                 print("need a valid domain")
                 return "need a valid domain"
@@ -117,19 +119,21 @@ class User:
         finally:
             db_connection.close()
     
-    def get_user(self, username = None, user_id = None):
+    def get_user(self, username = "", user_id = ""):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            if user_id != None:
-                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_id};"
-            else:
-                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.username = {username};"
-            print(query)
+            if user_id != "":
+                query = f'SELECT * from users WHERE id = {user_id};'
+            elif username != "":
+                query = f'SELECT * from users WHERE username = "{username}";'
+            
+
             results = cursor.execute(query)
-            db_connection.commit()
+            user = results.fetchone()
+
             return {"result": "success",
-                    "message": results.fetchone()
+                    "message": user
                     }
         
         except sqlite3.Error as error:
