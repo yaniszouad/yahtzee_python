@@ -29,13 +29,13 @@ class User:
         results=cursor.execute(schema)
         db_connection.close()
     
-    def exists(self, username = "", id = ""):
+    def exists(self, username = None, id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            if id != "":
+            if id != None:
                 query = f'SELECT * from users WHERE id = "{id}";'
-            elif username != "":
+            elif username != None:
                 query = f'SELECT * from users WHERE username = "{username}";'
 
             result = cursor.execute(query)
@@ -119,21 +119,29 @@ class User:
         finally:
             db_connection.close()
     
-    def get_user(self, username = "", user_id = ""):
+    def get_user(self, username = None, id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            if user_id != "":
-                query = f'SELECT * from users WHERE id = {user_id};'
-            elif username != "":
-                query = f'SELECT * from users WHERE username = "{username}";'
+            if id != None:
+                query = f'SELECT * from users WHERE users.id = {id};'
+            elif username != None:
+                query = f'SELECT * from users WHERE users.username = "{username}";'
             
+            print(query)
 
             results = cursor.execute(query)
             user = results.fetchone()
+            print(user)
+            if user is None:
+                print("User doesnt exist")
+                return {"result":"error",
+                    "message":"User doesnt exist"}
+            dictUser = self.to_dict(user)
+            print(dictUser)
 
             return {"result": "success",
-                    "message": user
+                    "message": dictUser
                     }
         
         except sqlite3.Error as error:
@@ -167,13 +175,23 @@ class User:
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
+            
+            user = self.get_user(id = user_details["id"])
+            
+            if user is None:
+                return {"result":"error",
+                    "message":"User doesn't exist"}
+                
+            print(user)
+            dictedUser = self.to_dict(user)
+            print(user_details)
 
-            query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_details.emails};"
-            print(query)
-            results = cursor.execute(query)
-            db_connection.commit()
+            dictedUser["email"] = user_details["email"]
+            dictedUser["username"] = user_details["username"]
+            dictedUser["password"] = user_details["password"]
+
             return {"result": "success",
-                    "message": results.fetchone()
+                    "message": dictedUser
                     }
         
         except sqlite3.Error as error:
