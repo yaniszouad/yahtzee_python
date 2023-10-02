@@ -19,10 +19,10 @@ class User:
         cursor = db_connection.cursor()
         schema=f"""
                 CREATE TABLE {self.table_name} (
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY UNIQUE,
                     email TEXT UNIQUE,
                     username TEXT UNIQUE,
-                    password TEXT UNIQUE
+                    password TEXT
                 ) WITHOUT ROWID;
                 """
         cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
@@ -33,18 +33,28 @@ class User:
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
+            if id != None:
+                query = f'SELECT * from users WHERE id = "{id}";'
+            elif username != None:
+                query = f'SELECT * from users WHERE username = "{username}";'
+            
 
-            query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_id};"
-            print(query)
             results = cursor.execute(query)
+            print(results.fetchone())
+            if results.fetchone() == None:
+                print("wow")
+                return {"result":"success",
+                        "message":False}
+            else:
+                {"result": "success",
+                    "message": True}
             db_connection.commit()
             return {"result": "success",
-                    "message": results.fetchone()
-                    }
+                    "message": True}
         
         except sqlite3.Error as error:
-            return {"result":"error",
-                    "message":error}
+            return {"result":"success",
+                    "message":False}
         
         finally:
             db_connection.close()
@@ -92,13 +102,10 @@ class User:
 
             user_data = (user_id, new_email, new_username, goodPassword)
             #are you sure you have all data in the correct format?
-            print(user_details)
-            print(user_data)
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_data)
-            print("what then")
             db_connection.commit()
             return {"result": "success",
-                    "message": user_data
+                    "message": user_details
                     }
         except sqlite3.Error as error:
             return {"result":"error",
@@ -107,12 +114,14 @@ class User:
         finally:
             db_connection.close()
     
-    def get_user(self, user_id):
+    def get_user(self, username = None, user_id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-
-            query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_id};"
+            if user_id != None:
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {user_id};"
+            else:
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.username = {username};"
             print(query)
             results = cursor.execute(query)
             db_connection.commit()
