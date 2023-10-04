@@ -411,4 +411,4 @@ class TestUserModel(unittest.TestCase):
         print(old_user)
         self.assertEqual(old_user["result"], "error", "Trying to delete a user that doesn't exist should result in an error")
 
-TestUserModel().test_5()
+TestUserModel().test_12()

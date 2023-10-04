@@ -138,9 +138,9 @@ class User:
             results = cursor.execute(query)
             user = results.fetchone()
             if user is None:
-                print("User doesnt exist")
+                print("User doesnt exist in get user")
                 return {"result":"error",
-                    "message":"User doesnt exist"}
+                    "message":"User doesnt exist in get user"}
             dictUser = self.dict_transformer(user)
 
             return {"result": "success",
@@ -178,28 +178,29 @@ class User:
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            
             user = self.get_user(id = user_details["id"]) # already in dictionary format
             
             if user["message"] == "User doesnt exist":
                 return {"result":"error",
-                    "message":"User doesn't exist"}
+                    "message":"User doesn't exist in update"}
                 
             newUser = user["message"]
-            print("before updating: " , user["message"])
-
+            setParsed = (user_details["id"],user_details["email"],user_details["username"],user_details["password"])
             newUser["email"] = user_details["email"]
             newUser["username"] = user_details["username"]
             newUser["password"] = user_details["password"]
-            print("after updating: " , newUser)
-            finalUser = newUser
+
+            print("the stuff ", setParsed)
+            self.remove_user(user["message"]["id"])
+            cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_details)
             db_connection.commit()
+
             return {"result": "success",
-                    "message": finalUser
+                    "message": newUser
                     }
         
         except sqlite3.Error as error:
-            return {"result":"error",
+            return {"result":"error for update",
                     "message":error}
         
         finally:
