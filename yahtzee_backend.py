@@ -113,8 +113,64 @@ class TestUserModel(unittest.TestCase):
         self.assertEqual(results["result"], "error", "Creating a user with the same email should result in an error")
 
     def test_4(self):
-        """TODO - UsersModel: create_user w/ data in incorrect format"""
-        self.assertEqual(True, False)
+        """UsersModel: create_user w/ data in incorrect format"""
+        users.initialize_users_table()
+        user_incorrect_email_1={
+            "email":"test.usertrinityschoolnyc.org",
+            "username":"testuser",
+            "password":"123TriniT"
+        }
+        results = users.create_user(user_incorrect_email_1)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect email (no @) should return error")
+        
+        user_incorrect_email_2={
+            "email":"test.user@trinityschoolnycorg",
+            "username":"testuser",
+            "password":"123TriniT"
+        }
+        results = users.create_user(user_incorrect_email_2)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect email (no . three letters from the end of the email) should return error")
+        
+        user_incorrect_username_bad_characters={
+            "email":"test.user@trinityschoolnyc.org",
+            "username":"test@!user",
+            "password":"123TriniT"
+        }
+        results = users.create_user(user_incorrect_username_bad_characters)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect username (includes special characters) should return error")
+        
+        user_incorrect_password_fewer_than_8={
+            "email":"test.user@trinityschoolnyc.org",
+            "username":"test@!user",
+            "password":"123Tr"
+        }
+        results = users.create_user(user_incorrect_password_fewer_than_8)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect password (fewer than 8 characters) should return error")
+        
+        user_incorrect_password_all_lower={
+            "email":"test.user@trinityschoolnyc.org",
+            "username":"test@!user",
+            "password":"asdfasdfasdfas"
+        }
+        results = users.create_user(user_incorrect_password_all_lower)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect password (all lowercase) should return error")
+    
+        user_incorrect_password_all_upper={
+            "email":"test.user@trinityschoolnyc.org",
+            "username":"test@!user",
+            "password":"ASDFGASDFASDF"
+        }
+        results = users.create_user(user_incorrect_password_all_upper)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect password (all uppercase) should return error")
+    
+        user_incorrect_password_no_numbers={
+            "email":"test.user@trinityschoolnyc.org",
+            "username":"test@!user",
+            "password":"ASDFsdfasdfSDF"
+        }
+        results = users.create_user(user_incorrect_password_no_numbers)
+        self.assertEqual(results["result"], "error", "Creating a user with incorrect password (no numbers) should return error")
+    
     
     def test_5(self):
         """UsersModel: exists w/ username and id"""
@@ -355,3 +411,4 @@ class TestUserModel(unittest.TestCase):
         print(old_user)
         self.assertEqual(old_user["result"], "error", "Trying to delete a user that doesn't exist should result in an error")
 
+TestUserModel().test_5()
