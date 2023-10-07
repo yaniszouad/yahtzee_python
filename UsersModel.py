@@ -69,37 +69,32 @@ class User:
                     unique = True
             
             if user_details["email"] in cursor.execute("SELECT * FROM users;").fetchall():
-                print("email already exists")
                 return {"result":"error",
                     "message":"email already exists"}
             if "@" not in user_details["email"]:
-                print
-                print("need an @ symbol")
                 return {"result":"error",
                     "message":"need an @ symbol"}
-            print('here?')
-            if "." not in user_details["email"].split("@")[1]:
-                print("need a valid domain")
+            tempEmail = user_details["email"].split("@")
+            if "." not in str(tempEmail[1]):
                 return {"result":"error",
                     "message":"need a valid domain"}
             if (user_details["username"] in cursor.execute("SELECT * FROM users;").fetchall()):
-                print("username already exists")
                 return {"result":"error",
                     "message": "username already exists"}
-            print("yo?")
+            if any(string.punctuation[i] in user_details["username"] for i in range(len(user_details["username"]))):
+                return {"result":"error",
+                    "message": "username uses invalid characters"}
+            
+
             passwordTemp = str(user_details["password"])
             goodPassword = "none"
 
             if len(passwordTemp) >= 8:
-                print("and here?")
                 if any(char.isdigit() for char in passwordTemp):
-                    print("here?")
                     passwordTemp2 = "".join(filter(str.isalpha,passwordTemp))
                     if passwordTemp2.islower() == False or passwordTemp2.isupper() == False:
-                        print("e")
                         goodPassword = passwordTemp
                     else:
-                        print("tough e")
                         return {"result":"error",
                     "message": "must have one uppercase and one lowercase"}
                 else:
@@ -138,7 +133,6 @@ class User:
             results = cursor.execute(query)
             user = results.fetchone()
             if user is None:
-                print("User doesnt exist in get user")
                 return {"result":"error",
                     "message":"User doesnt exist in get user"}
             dictUser = self.dict_transformer(user)
@@ -175,34 +169,30 @@ class User:
             db_connection.close()
 
     def update_user(self, user_details):
-        try: 
+        try:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            user = self.get_user(id = user_details["id"]) # already in dictionary format
-            
-            if user["message"] == "User doesnt exist":
-                return {"result":"error",
-                    "message":"User doesn't exist in update"}
-                
-            newUser = user["message"]
-            setParsed = (user_details["id"],user_details["email"],user_details["username"],user_details["password"])
-            newUser["email"] = user_details["email"]
-            newUser["username"] = user_details["username"]
-            newUser["password"] = user_details["password"]
+            user = self.get_user(id=user_details["id"])
 
-            print("the stuff ", setParsed)
-            self.remove_user(user["message"]["id"])
-            cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_details)
+            if user["message"] == "User doesnt exist in get user":
+                return {"result": "error",
+                        "message": "User doesn't exist in update"}
+
+            # Update the user's details
+            query = f"UPDATE {self.table_name} SET email=?, username=?, password=? WHERE id=?"
+            cursor.execute(query, (user_details["email"], user_details["username"], user_details["password"], user_details["id"]))
             db_connection.commit()
 
+            # Fetch the updated user and return it
+            updated_user = self.get_user(id=user_details["id"])["message"]
+
             return {"result": "success",
-                    "message": newUser
-                    }
-        
+                    "message": updated_user}
+
         except sqlite3.Error as error:
-            return {"result":"error for update",
-                    "message":error}
-        
+            return {"result": "error for update",
+                    "message": error}
+
         finally:
             db_connection.close()
 
@@ -212,9 +202,7 @@ class User:
             cursor = db_connection.cursor()
             userDeleted = cursor.execute(f"SELECT * from {self.table_name} WHERE {self.table_name}.username = '{user_id}';").fetchone()
             query = f"DELETE from {self.table_name} WHERE {self.table_name}.username = '{user_id}';"
-            print(userDeleted)
             if userDeleted is None:
-                print("User doesnt exist")
                 return {"result":"error",
                     "message":"User doesnt exist"}
             dictedUser = self.dict_transformer(userDeleted)

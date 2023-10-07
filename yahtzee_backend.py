@@ -64,7 +64,6 @@ class TestUserModel(unittest.TestCase):
         finally:
             db_connection.close()
 
-
     def test_2(self):
         """UsersModel: create_user w/ 4 users"""
         users.initialize_users_table()
@@ -170,7 +169,6 @@ class TestUserModel(unittest.TestCase):
         }
         results = users.create_user(user_incorrect_password_no_numbers)
         self.assertEqual(results["result"], "error", "Creating a user with incorrect password (no numbers) should return error")
-    
     
     def test_5(self):
         """UsersModel: exists w/ username and id"""
@@ -411,4 +409,4 @@ class TestUserModel(unittest.TestCase):
         print(old_user)
         self.assertEqual(old_user["result"], "error", "Trying to delete a user that doesn't exist should result in an error")
 
-TestUserModel().test_12()
+TestUserModel().test_4()
