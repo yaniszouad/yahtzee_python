@@ -380,4 +380,4 @@ class TestgameModel(unittest.TestCase):
         
         self.assertEqual(True, False, "This test hasn't been implmented yet")
 
-TestgameModel.test_1
+TestgameModel.test_4

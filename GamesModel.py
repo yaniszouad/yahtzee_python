@@ -1,35 +1,39 @@
 import sqlite3
 import random
 import string
+import datetime
+
+
 
 class Game:
     def __init__(self, db_name):
         self.db_name =  db_name
-        self.table_name = "users"
+        self.table_name = "games"
     
-    def initialize_users_table(self):
+    def initialize_games_table(self):
         db_connection = sqlite3.connect(self.db_name)
         cursor = db_connection.cursor()
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY UNIQUE,
-                    email TEXT UNIQUE,
-                    username TEXT UNIQUE,
-                    password TEXT
-                ) WITHOUT ROWID;
+                    name TEXT UNIQUE,
+                    link TEXT UNIQUE,
+                    created TIMESTAMP,
+                    finished TIMESTAMP
+                )
                 """
         cursor.execute(f"DROP TABLE IF EXISTS {self.table_name};")
         results=cursor.execute(schema)
         db_connection.close()
     
-    def exists(self, username = None, id = None):
+    def exists(self, name = None, id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             if id != None:
-                query = f'SELECT * from users WHERE id = "{id}";'
-            elif username != None:
-                query = f'SELECT * from users WHERE username = "{username}";'
+                query = f'SELECT * from games WHERE id = "{id}";'
+            elif name != None:
+                query = f'SELECT * from games WHERE name = "{name}";'
 
             result = cursor.execute(query)
             needThat = result.fetchone()
@@ -49,63 +53,37 @@ class Game:
         finally:
             db_connection.close()
 
-    def create_user(self, user_details):
+    def create_game(self, game_info):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            user_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
+            game_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
             unique = False
             while unique != True:
-                if (user_id in cursor.execute("SELECT * FROM users;").fetchall()):
-                    user_id = random.randint(0, 9223372036854775807)
+                if (game_id in cursor.execute("SELECT * FROM games;").fetchall()):
+                    game_id = random.randint(0, 9223372036854775807)
                 else:
                     unique = True
+
+            dateToday = datetime.datetime.now()
+            game_info["created"] = dateToday
+            game_info["finished"] = dateToday
+            print(dateToday)
             
-            if user_details["email"] in cursor.execute("SELECT * FROM users;").fetchall():
+            if any(string.punctuation[i] in game_info["link"] for i in range(len(game_info["link"]))) or len(game_info["link"]) == 0:
                 return {"result":"error",
-                    "message":"email already exists"}
-            if "@" not in user_details["email"]:
+                    "message": "link uses invalid characters"}
+            if any(string.punctuation[i] in game_info["name"] for i in range(len(game_info["name"]))) or len(game_info["name"]) == 0:
                 return {"result":"error",
-                    "message":"need an @ symbol"}
-            tempEmail = user_details["email"].split("@")
-            if "." not in str(tempEmail[1]):
-                return {"result":"error",
-                    "message":"need a valid domain"}
-            if (user_details["username"] in cursor.execute("SELECT * FROM users;").fetchall()):
-                return {"result":"error",
-                    "message": "username already exists"}
-            if any(string.punctuation[i] in user_details["username"] for i in range(len(user_details["username"]))):
-                return {"result":"error",
-                    "message": "username uses invalid characters"}
+                    "message": "name uses invalid characters"}
             
 
-            passwordTemp = str(user_details["password"])
-            goodPassword = "none"
-
-            if len(passwordTemp) >= 8:
-                if any(char.isdigit() for char in passwordTemp):
-                    passwordTemp2 = "".join(filter(str.isalpha,passwordTemp))
-                    if passwordTemp2.islower() == False or passwordTemp2.isupper() == False:
-                        goodPassword = passwordTemp
-                    else:
-                        return {"result":"error",
-                    "message": "must have one uppercase and one lowercase"}
-                else:
-                    return {"result":"error",
-                    "message": "must have at least 1 #"}
-            else:
-                return {"result":"error",
-                    "message": "must be 8 chars at least"}
-            
-            new_email = user_details["email"]
-            new_username = user_details["username"]
-
-            user_data = (user_id, new_email, new_username, goodPassword)
+            user_data = (game_id, game_info["name"], game_info["link"], game_info["created"], game_info["finished"])
             #are you sure you have all data in the correct format?
-            cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?);", user_data)
+            cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?);", user_data)
             db_connection.commit()
             return {"result": "success",
-                    "message": {"id": user_id, "email": user_details["email"], "username" : user_details["username"], "password": user_details["password"]}
+                    "message": {"id": game_id, "name": game_info["name"], "link" : game_info["link"], "created": game_info["created"], "finished": game_info["finished"]}
                     }
         except sqlite3.Error as error:
             return {"result":"error",
@@ -114,24 +92,24 @@ class Game:
         finally:
             db_connection.close()
     
-    def get_user(self, username = None, id = None):
+    def get_game(self, name = None, id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             if id != None:
-                query = f'SELECT * from users WHERE users.id = {id};'
-            elif username != None:
-                query = f'SELECT * from users WHERE users.username = "{username}";'
+                query = f'SELECT * from games WHERE games.id = {id};'
+            elif name != None:
+                query = f'SELECT * from games WHERE games.name = "{name}";'
 
             results = cursor.execute(query)
-            user = results.fetchone()
-            if user is None:
+            game = results.fetchone()
+            if game is None:
                 return {"result":"error",
-                    "message":"User doesnt exist in get user"}
-            dictUser = self.dict_transformer(user)
+                    "message":"game doesnt exist in get game"}
+            dictGame = self.to_dict(game)
 
             return {"result": "success",
-                    "message": dictUser
+                    "message": dictGame
                     }
         
         except sqlite3.Error as error:
@@ -141,17 +119,18 @@ class Game:
         finally:
             db_connection.close()
 
-    def get_users(self):
+    def get_games(self):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
 
-            cursor.execute(f"SELECT * FROM {self.table_name}")
+            cursor.execute(f"SELECT * FROM games")
 
-            user_list = cursor.fetchall()
-
+            game_list = cursor.fetchall()
+            print(game_list)
+            print([self.to_dict(game) for game in game_list])
             return {"result": "success",
-                    "message": [self.dict_transformer(user) for user in user_list]
+                    "message": [self.to_dict(game) for game in game_list]
                     }
             
         except sqlite3.Error as error:
@@ -161,26 +140,26 @@ class Game:
         finally:
             db_connection.close()
 
-    def update_user(self, user_details):
+    def update_game(self, game_info):
         try:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            user = self.get_user(id=user_details["id"])
+            game = self.get_game(id=game_info["id"])
 
-            if user["message"] == "User doesnt exist in get user":
+            if game["message"] == "game doesnt exist in get game":
                 return {"result": "error",
-                        "message": "User doesn't exist in update"}
+                        "message": "game doesn't exist in update"}
 
-            # Update the user's details
-            query = f"UPDATE {self.table_name} SET email=?, username=?, password=? WHERE id=?"
-            cursor.execute(query, (user_details["email"], user_details["username"], user_details["password"], user_details["id"]))
+            # Update the game's details
+            query = f"UPDATE {self.table_name} SET name=?, link=?, finished=? WHERE id=?"
+            cursor.execute(query, (game_info["name"], game_info["link"], game_info["finished"], game_info["id"]))
             db_connection.commit()
 
-            # Fetch the updated user and return it
-            updated_user = self.get_user(id=user_details["id"])["message"]
+            # Fetch the updated game and return it
+            updatedGame = self.get_game(id=game_info["id"])["message"]
 
             return {"result": "success",
-                    "message": updated_user}
+                    "message": updatedGame}
 
         except sqlite3.Error as error:
             return {"result": "error for update",
@@ -189,20 +168,20 @@ class Game:
         finally:
             db_connection.close()
 
-    def remove_user(self, user_id):
+    def remove_game(self, gameName):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            userDeleted = cursor.execute(f"SELECT * from {self.table_name} WHERE {self.table_name}.username = '{user_id}';").fetchone()
-            query = f"DELETE from {self.table_name} WHERE {self.table_name}.username = '{user_id}';"
-            if userDeleted is None:
+            gameDeleted = cursor.execute(f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{gameName}';").fetchone()
+            query = f"DELETE from {self.table_name} WHERE {self.table_name}.name = '{gameName}';"
+            if gameDeleted is None:
                 return {"result":"error",
-                    "message":"User doesnt exist"}
-            dictedUser = self.dict_transformer(userDeleted)
+                    "message":"Game doesnt exist"}
+            dictedGame = self.to_dict(gameDeleted)
             cursor.execute(query)
             db_connection.commit()
             return {"result": "success",
-                    "message": dictedUser
+                    "message": dictedGame
                     }
         
         except sqlite3.Error as error:
@@ -212,10 +191,11 @@ class Game:
         finally:
             db_connection.close()
 
-    def dict_transformer(self, user_tuple):
+    def to_dict(self, game_tuple):
         return{
-            "id" : user_tuple[0],
-            "email" : user_tuple[1],
-            "username" : user_tuple[2],
-            "password" : user_tuple[3]
+            "id" : game_tuple[0],
+            "name" : game_tuple[1],
+            "link" : game_tuple[2],
+            "created" : game_tuple[3],
+            "finished" : game_tuple[4]
         }
