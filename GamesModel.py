@@ -66,16 +66,17 @@ class Game:
                     unique = True
 
             dateToday = datetime.datetime.now()
-            game_info["created"] = dateToday
-            game_info["finished"] = dateToday
-            print(dateToday)
-            
-            if any(string.punctuation[i] in game_info["link"] for i in range(len(game_info["link"]))) or len(game_info["link"]) == 0:
-                return {"result":"error",
-                    "message": "link uses invalid characters"}
-            if any(string.punctuation[i] in game_info["name"] for i in range(len(game_info["name"]))) or len(game_info["name"]) == 0:
-                return {"result":"error",
+            game_info["created"] = str(dateToday)
+            game_info["finished"] = str(dateToday)
+
+            for i in game_info["name"]:
+                if i in string.punctuation:
+                    return {"result":"error",
                     "message": "name uses invalid characters"}
+            for i in game_info["link"]:
+                if i in string.punctuation or i == " ":
+                    return {"result":"error",
+                    "message": "link uses invalid characters"}
             
 
             user_data = (game_id, game_info["name"], game_info["link"], game_info["created"], game_info["finished"])
@@ -127,8 +128,6 @@ class Game:
             cursor.execute(f"SELECT * FROM games")
 
             game_list = cursor.fetchall()
-            print(game_list)
-            print([self.to_dict(game) for game in game_list])
             return {"result": "success",
                     "message": [self.to_dict(game) for game in game_list]
                     }
@@ -142,6 +141,7 @@ class Game:
 
     def update_game(self, game_info):
         try:
+            print(game_info)
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             game = self.get_game(id=game_info["id"])
@@ -150,9 +150,13 @@ class Game:
                 return {"result": "error",
                         "message": "game doesn't exist in update"}
 
-            # Update the game's details
-            query = f"UPDATE {self.table_name} SET name=?, link=?, finished=? WHERE id=?"
-            cursor.execute(query, (game_info["name"], game_info["link"], game_info["finished"], game_info["id"]))
+            print(game["finished"])
+            if game["finished"] == None:
+                query = f"UPDATE {self.table_name} SET name=?, link=?, WHERE id=?"
+                cursor.execute(query, (game_info["name"], game_info["link"], game_info["id"]))
+            else:
+                query = f"UPDATE {self.table_name} SET name=?, link=?, finished=? WHERE id=?"
+                cursor.execute(query, (game_info["name"], game_info["link"], game_info["finished"], game_info["id"]))
             db_connection.commit()
 
             # Fetch the updated game and return it
@@ -191,11 +195,31 @@ class Game:
         finally:
             db_connection.close()
 
+    def is_finished(self, gameName):
+        try: 
+            db_connection = sqlite3.connect(self.db_name)
+            cursor = db_connection.cursor()
+            game = cursor.execute(f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{gameName}';").fetchone()
+    
+            if game["created"] != game["finished"]:
+                return {"result":"True",
+                    "message":"Game has finished"}
+            else:
+                return {"result":"False",
+                    "message":"Game has not finished"}    
+        
+        except sqlite3.Error as error:
+            return {"result":"error",
+                    "message":error}
+        
+        finally:
+            db_connection.close()
+
     def to_dict(self, game_tuple):
         return{
             "id" : game_tuple[0],
             "name" : game_tuple[1],
             "link" : game_tuple[2],
-            "created" : game_tuple[3],
-            "finished" : game_tuple[4]
+            "created" : str(game_tuple[3]),
+            "finished" : str(game_tuple[4])
         }
