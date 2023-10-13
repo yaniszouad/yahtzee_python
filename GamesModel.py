@@ -149,16 +149,19 @@ class Game:
             if game["message"] == "game doesnt exist in get game":
                 return {"result": "error",
                         "message": "game doesn't exist in update"}
+            
+            if 'finished' in game_info.keys():
+                query = f"UPDATE {self.table_name} SET name=?, link=?, finished=? WHERE id=?;"
+                cursor.execute(query, (game_info["name"], game_info["link"], game_info["finished"], game_info["id"]))
 
-            print(game["finished"])
-            if game["finished"] == None:
-                query = f"UPDATE {self.table_name} SET name=?, link=?, WHERE id=?"
+            elif 'finished' not in game_info.keys():
+                print("has no finished")
+                print(game_info)
+                query = f"UPDATE {self.table_name} SET name=?, link=? WHERE id=?;"
                 cursor.execute(query, (game_info["name"], game_info["link"], game_info["id"]))
             else:
-                query = f"UPDATE {self.table_name} SET name=?, link=?, finished=? WHERE id=?"
-                cursor.execute(query, (game_info["name"], game_info["link"], game_info["finished"], game_info["id"]))
+                print("what this error?")
             db_connection.commit()
-
             # Fetch the updated game and return it
             updatedGame = self.get_game(id=game_info["id"])["message"]
 
@@ -200,13 +203,15 @@ class Game:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             game = cursor.execute(f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{gameName}';").fetchone()
-    
-            if game["created"] != game["finished"]:
-                return {"result":"True",
-                    "message":"Game has finished"}
-            else:
-                return {"result":"False",
-                    "message":"Game has not finished"}    
+            print(game)
+            gameDicted = self.to_dict(game)
+            print(gameDicted["created"],gameDicted["finished"])
+            if str(gameDicted["created"]) != str(gameDicted["finished"]):
+                return {"result":"success",
+                    "message":True}
+            elif str(gameDicted["created"]) == str(gameDicted["finished"]):
+                return {"result":"success",
+                    "message":False}    
         
         except sqlite3.Error as error:
             return {"result":"error",
