@@ -1,13 +1,12 @@
 import unittest
 import sqlite3
-from gradescope_utils.autograder_utils.decorators import weight, number
 import os
 import datetime
 import json
 
 from ScorecardsModel import Scorecard
-from UsersModelSolution import User
-from GamesModelSolution import Game
+from UsersModel import User
+from GamesModel import Game
 
 yahtzee_db_name=f"{os.getcwd()}/yahtzeeDB.db"
 table_name = "scorecards"
@@ -100,8 +99,6 @@ blank_card={
         }
 
 class TestScorecardsModel(unittest.TestCase):
-    @weight(1)
-    @number("1.1")
     def test_1(self):
         """ScorecardsModel: create_scorecard w/ 1 scorecard"""
         users.initialize_users_table()
@@ -147,9 +144,6 @@ class TestScorecardsModel(unittest.TestCase):
         finally:
             db_connection.close()
 
-
-    @weight(1)
-    @number("1.2")
     def test_2(self):
         """ScorecardsModel: create_scorecard w/ 4 scorecards in same game"""
         users.initialize_users_table()
@@ -202,8 +196,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(card_obj_3["score"], 0, "score of returned scorecard 3 should be 0")
         self.assertEqual(card_obj_4["score"], 0, "score of returned scorecard 4 should be 0")
       
-    @weight(1)
-    @number("1.3")
     def test_3(self):
         """ScorecardsModel: create_scorecard w/ 5 scorecards"""
         users.initialize_users_table()
@@ -237,8 +229,6 @@ class TestScorecardsModel(unittest.TestCase):
 
         self.assertEqual(results["result"], "error", "Creating five scorecards for the same game should return error")
    
-    @weight(1)
-    @number("1.4")
     def test_4(self):
         """ScorecardsModel: create_scorecard w/ 1 user on two scorecards for the same game"""
         users.initialize_users_table()
@@ -258,8 +248,6 @@ class TestScorecardsModel(unittest.TestCase):
         card_obj_2 = results["message"]
         self.assertEqual(results["result"], "error", "Creating a second scorecard for a user in the same game should return error")
           
-    @weight(1)
-    @number("1.5")
     def test_5(self):
         """ScorecardsModel: create_scorecard w/ 1 user on two scorecards for different games"""
         users.initialize_users_table()
@@ -280,10 +268,8 @@ class TestScorecardsModel(unittest.TestCase):
         card_obj_1 = results["message"]
         results = scorecards.create_scorecard(g2["id"], u1["id"], 2)
         card_obj_2 = results["message"]
-        self.assertEqual(results["result"], "success", "Creating a two scorecards for a user in two different games should return success")
+        self.assertEqual(results["result"], "success", "Creating two scorecards for a user in two different games should return success")
 
-    @weight(1)
-    @number("1.6")
     def test_6(self):
         """ScorecardsModel: get_scorecard that exists"""
         users.initialize_users_table()
@@ -316,8 +302,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(results["message"]["score_info"], blank_card, "score_info of returned scorecard should match blank card dictionary")
         self.assertEqual(results["message"]["turn_order"], 2, "turn_order of returned scorecard should be 2")
  
-    @weight(1)
-    @number("1.7")
     def test_7(self):
         """ScorecardsModel: get_scorecard that doesn't exist"""
         users.initialize_users_table()
@@ -344,8 +328,6 @@ class TestScorecardsModel(unittest.TestCase):
         results = scorecards.get_scorecard(-12345)
         self.assertEqual(results["result"], "error", "Getting a scorecard that doesn't exist should return error")
 
-    @weight(1)
-    @number("1.8")
     def test_8(self):
         """ScorecardsModel: get_scorecards with no scorecards"""
         scorecards.initialize_scorecards_table()
@@ -354,9 +336,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(all_cards["result"], "success", "Askings for all games when no games exists should return success")
         self.assertEqual(len(all_cards["message"]), 0, "The length of an empty list should be 0")
 
-
-    @weight(1)
-    @number("1.9")
     def test_9(self):
         """ScorecardsModel: get_scorecards with multiple scorecards"""
         users.initialize_users_table()
@@ -387,8 +366,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertIn(card_obj_2, results["message"], f"{u2} should be in the list of scorecards returned")
         self.assertIn(card_obj_3, results["message"], f"{u3} should be in the list of scorecards returned")
 
-    @weight(1)
-    @number("1.10")
     def test_10(self):
         """ScorecardsModel: get_game_scorecards with no scorecards"""
         users.initialize_users_table()
@@ -420,8 +397,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(results["result"], "success", "Getting scorecards from an existing game with no scorecards should return success")
         self.assertEqual(len(results["message"]), 0, "The number of scorecards returned should be 0")
 
-    @weight(1)
-    @number("1.11")
     def test_11(self):
         """ScorecardsModel: get_game_scorecards with 1 scorecard"""
         users.initialize_users_table()
@@ -454,8 +429,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(len(results["message"]), 1, "The number of scorecards returned should be 1")
         self.assertEqual(returned_card["id"], card_obj_1["id"], "The id of the scorecard returned should match the id of the scorecard added to the game")
   
-    @weight(1)
-    @number("1.12")
     def test_12(self):
         """get_game_scorecards with multiple scorecards"""
         users.initialize_users_table()
@@ -496,9 +469,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertIn(card_obj_3["id"], all_ids, "The id of the first scorecard should appear in the list of ids returned")
         self.assertIn(card_obj_4["id"], all_ids, "The id of the first scorecard should appear in the list of ids returned")
 
-
-    @weight(1)
-    @number("1.13")
     def test_13(self):
         """ScorecardsModel: update_scorecard with 1 entry in score_info"""
         users.initialize_users_table()
@@ -553,8 +523,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(card["turn_order"], card_obj_1["turn_order"], "turn_order in DB should be the same as the turn_order that was changed")
         self.assertEqual(card["score"], 25, "score in DB should be 25")
 
-    @weight(1)
-    @number("1.14")
     def test_14(self):
         """ScorecardsModel: update_scorecard with multiple entries in score_info"""
         users.initialize_users_table()
@@ -609,8 +577,6 @@ class TestScorecardsModel(unittest.TestCase):
         self.assertEqual(card["turn_order"], card_obj_1["turn_order"], "turn_order in DB should be the same as the turn_order that was changed")
         self.assertEqual(card["score"], 141, "score in DB should be 25")
                 
-    @weight(1)
-    @number("1.15")
     def test_15(self):
         """ScorecardsModel: update_scorecard that doesn't exist"""
         users.initialize_users_table()
@@ -639,8 +605,6 @@ class TestScorecardsModel(unittest.TestCase):
         results = scorecards.update_scorecard(-234455, blank_card)
         self.assertEqual(results["result"], "error", "Updating a scorecard that doesn't exist should return error")
 
-    @weight(1)
-    @number("1.16")
     def test_16(self):
         """ScorecardsModel: delete_scorecard that exists"""
         users.initialize_users_table()
@@ -701,10 +665,6 @@ class TestScorecardsModel(unittest.TestCase):
         finally:
             db_connection.close()
 
-        
-               
-    @weight(1)
-    @number("1.17")
     def test_17(self):
         """ScorecardsModel: delete_scorecard that doesn't exist"""
         users.initialize_users_table()
@@ -730,3 +690,6 @@ class TestScorecardsModel(unittest.TestCase):
 
         results = scorecards.remove_scorecard(-234455)
         self.assertEqual(results["result"], "error", "Updating a scorecard that doesn't exist should return error")
+
+
+TestScorecardsModel().test_5()
