@@ -10,26 +10,41 @@ table_name = "games"
 games = Game(yahtzee_db_name)
 
 
-def all_game_objects():
+def all_games_and_create_games():
     #Getting information via the query string portion of a URL
     # curl "http://127.0.0.1:5000/fruit/"
     # curl "http://127.0.0.1:5000/fruit?index=0"
 
     print(f"request.url={request.url}")
     print(f"request.url={request.query_string}")
+    if request.method == "GET":
+        game_objects = Game.get_games()
+        return jsonify(game_objects)
     
-    game_objects = Game.get_games()
+    elif request.method == "POST":
+        game_object = Game.create_game(request.data)
+        return jsonify(game_object)
+    
+    else:
+        return {"error:" "Invalid request"}
 
-    return jsonify(game_objects)
-
-def info_of_game(game_name):
+def update_delete_return_one_game(game_name):
     #Getting information via the path portion of a URL
     print(f"request.url={request.url}")
     print(f"request.url={request.query_string}")
+    if request.method == "GET":
+        game = Game.get_game(game_name)
+        return jsonify(game)
     
-    game = Game.get_game(game_name)
+    elif request.method == "PUT":
+        game_object = Game.update_game(request.data)
+        return jsonify(game_object)
 
-    return jsonify(game)
+    elif request.method == "DELETE":
+        game_object = Game.remove_game(request.data)
+        return jsonify(game_object)
+    else:
+        return {"error:" "Invalid request"}
             
 
 def scorecards_for_game(game_name):
