@@ -3,6 +3,7 @@ from flask import request
 import os
 from models.UsersModel import User
 from models.ScorecardsModel import Scorecard
+from models.GamesModel import Game
 
 yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
 table_name = "users"
@@ -18,41 +19,44 @@ def all_users_and_create_users():
     print(f"request.url={request.url}")
     print(f"request.url={request.query_string}")
     if request.method == "GET":
-        game_objects = User.get_games()
-        return jsonify(game_objects)
+        user_objects = users.get_users()
+        
+        return user_objects['message']
     
     elif request.method == "POST":
-        game_object = User.create_game(request.data)
-        return jsonify(game_object)
+        user_object = users.create_user(request.data)
+        
+        return user_object
     
     else:
         return {"error:" "Invalid request"}
 
-def update_delete_return_one_user(game_name):
+def update_delete_return_one_user(user_name):
     #Getting information via the path portion of a URL
     print(f"request.url={request.url}")
     print(f"request.url={request.query_string}")
     if request.method == "GET":
-        game = User.get_game(game_name)
-        return jsonify(game)
+        user = users.get_user(user_name)
+        return jsonify(user)
     
     elif request.method == "PUT":
-        game_object = User.update_game(request.data)
-        return jsonify(game_object)
+        user_object = users.update_user(request.data)
+        return jsonify(user_object)
 
     elif request.method == "DELETE":
-        game_object = User.remove_game(request.data)
-        return jsonify(game_object)
+        user_object = users.remove_user(request.data)
+        return jsonify(user_object)
     else:
         return {"error:" "Invalid request"}
             
 
-def games_for_user(game_name):
+def games_for_user(user_name):
     #Getting information via the path portion of a URL
     print(f"request.url={request.url}")
     print(f"request.url={request.query_string}")
-    
-    game = User.get_game(game_name)
-    scorecards = Scorecard.get_game_scorecards["id"]
 
-    return jsonify(scorecards)
+    all_scorecards = Scorecard.get_scorecards()
+    user = users.get_user(user_name)
+    games = Game.get_game(user)
+
+    return jsonify(games)
