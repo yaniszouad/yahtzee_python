@@ -63,7 +63,7 @@ class TestUserController(unittest.TestCase):
         User.initialize_users_table()
         Game.initialize_games_table()
         Scorecard.initialize_scorecards_table()
-    '''
+
     def test_GET_users_no_users(self):
         """1.1) UsersController: GET /users with no users"""
         response = requests.get("http://127.0.0.1:5000/users")
@@ -187,7 +187,7 @@ class TestUserController(unittest.TestCase):
 
         self.assertEqual(response.json(), {}, "Updating a user that DNE should return {}")
  
-'''
+
     def test_DELETE_user_by_username_exists(self):
         """1.9) UsersController: DELETE /users/<user_name> w/ user that exists"""
           # create 4 users
@@ -199,9 +199,9 @@ class TestUserController(unittest.TestCase):
         response = requests.get("http://127.0.0.1:5000/users")
         original_list_of_users = response.json()
         self.assertEqual(len(response.json()), 4, "4 users should initially be in DB")
-
         # ask to delete pricessOfficial info
         response = requests.delete("http://127.0.0.1:5000/users/princessOfficial")
+        
 
         self.assertEqual(response.json()["username"], user3["username"], "username of returned user should match DELETEd user")
         self.assertEqual(response.json()["email"], user3["email"], "email of returned user should match DELETEd user")
@@ -211,7 +211,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(len(response.json()), 3, "3 users should be in DB after the delete")
         for user in response.json():
             self.assertNotEqual(user["username"], "princessOfficial", "3 users should be in DB after the delete")
-'''  
+ 
     def test_DELETE_user_by_username_DNE(self):
         """1.10) UsersController: DELETE /users/<user_name> w/ user that doesn't exist"""
         # create 4 users
@@ -286,7 +286,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(len(response.json()), 1, "GETing games for a user with 1 game should return a list of length 1")
         self.assertEqual(response.json()[0]["id"], game4_info["id"], "GETing games for a user with 1 game should return the id of the correct game")
 
-    
+
     def test_GET_games_user_exists_many_games(self):
         """1.13) UsersController: GET /users/games/:user_name w/ user that exists and many games"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -330,7 +330,7 @@ class TestUserController(unittest.TestCase):
         response = requests.get("http://127.0.0.1:5000/users/games/bowserOfficial")
 
         self.assertEqual(response.json(), [], "GETing games for a user that DNE exist should return []")
-'''
+
 
 if __name__ == "__main__":
       unittest.main()

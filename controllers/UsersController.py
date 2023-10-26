@@ -7,17 +7,15 @@ from models.ScorecardsModel import Scorecard
 from models.GamesModel import Game
 
 yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
-
 users = User(yahtzee_db_name)
+games = Game(yahtzee_db_name)
+scorecards = Scorecard(yahtzee_db_name)
 
 
 def all_users_and_create_users():
     #Getting information via the query string portion of a URL
     # curl "http://127.0.0.1:5000/fruit/"
     # curl "http://127.0.0.1:5000/fruit?index=0"
-
-    print(f"request.url={request.url}")
-    print(f"request.url={request.query_string}")
     if request.method == "GET":
         user_objects = users.get_users()
         return user_objects['message']
@@ -35,8 +33,6 @@ def all_users_and_create_users():
 
 def update_delete_return_one_user(user_name):
     #Getting information via the path portion of a URL
-    print(f"request.url={request.url}")
-    print(f"request.query={request.query_string}")
     if request.method == "GET":
         user = users.get_user(user_name)
         if user["message"] == "User doesnt exist in get user":
@@ -51,24 +47,24 @@ def update_delete_return_one_user(user_name):
         return jsonify(user_object["message"])
 
     elif request.method == "DELETE":
-        print("HHHAAAAAAAA",request.json["username"])
-        data = request.json
-        print(data)
-        user_object = users.remove_user(data)
+        user_object = users.remove_user(user_name)
         if user_object["message"] == "User doesnt exist":
             return {}
         return jsonify(user_object["message"])
     else:
         return {"error:" "Invalid request"}
             
-
 def games_for_user(user_name):
     #Getting information via the path portion of a URL
-    print(f"request.url={request.url}")
-    print(f"request.url={request.query_string}")
 
-    all_scorecards = Scorecard.get_scorecards()
-    user = users.get_user(user_name)
-    games = Game.get_game(user)
+    if users.get_user(username = user_name)["message"] == "User doesnt exist in get user":
+        return []
+    user_id = users.get_user(username = user_name)["message"]["id"]
+    listScorecards = scorecards.get_scorecards()["message"]
+    gamesForUser = []
+    for scorecard in listScorecards:
+        if user_id == scorecard["user_id"]:
+            gameToPlant = games.get_game(id=scorecard["game_id"])["message"]
+            gamesForUser.append(gameToPlant)
 
-    return jsonify(games)
+    return gamesForUser
