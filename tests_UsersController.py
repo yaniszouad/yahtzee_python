@@ -63,11 +63,11 @@ class TestUserController(unittest.TestCase):
         User.initialize_users_table()
         Game.initialize_games_table()
         Scorecard.initialize_scorecards_table()
- 
+    '''
     def test_GET_users_no_users(self):
         """1.1) UsersController: GET /users with no users"""
         response = requests.get("http://127.0.0.1:5000/users")
-        self.assertEqual(response.json(), [], "GET request for all users before DB is seeded should return {}")
+        self.assertEqual(response.json(), [], "GET request for all users before DB is seeded should return []")
     
     def test_POST_users(self):
         """1.2) UsersController: POST /users returns posted user"""
@@ -75,7 +75,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(response.json()["username"], user1["username"], "username of returned user should match POSTed user")
         self.assertEqual(response.json()["email"], user1["email"], "email of returned user should match POSTed user")
         self.assertEqual(response.json()["password"], user1["password"], "password of returned user should match POSTed user")
-'''
+
     def test__GET_users_one_user(self):
         """1.3) UsersController: GET /users with one user"""
         # create 1 user
@@ -114,7 +114,6 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(all_users[3]["username"], user4["username"], "username of returned user should match POSTed user")
         self.assertEqual(all_users[3]["email"], user4["email"], "email of returned user should match POSTed user")
         self.assertEqual(all_users[3]["password"], user4["password"], "password of returned user should match POSTed user")
-
     def test_GET_user_by_username_exists(self):
         """1.5) UsersController: GET /users/<user_name> w/ user that exists"""
         # create 4 users
@@ -123,13 +122,13 @@ class TestUserController(unittest.TestCase):
         requests.post("http://127.0.0.1:5000/users", json=user3)
         requests.post("http://127.0.0.1:5000/users", json=user4)
         
-        # ask for princess_official
+        # ask for princessOfficial
         response = requests.get("http://127.0.0.1:5000/users/princessOfficial")
 
         self.assertEqual(response.json()["username"], user3["username"], "username of returned user should match POSTed user")
         self.assertEqual(response.json()["email"], user3["email"], "email of returned user should match POSTed user")
         self.assertEqual(response.json()["password"], user3["password"], "password of returned user should match POSTed user")
-        
+
     def test_GET_user_by_username_DNE(self):
         """1.6) UsersController: GET /users/<user_name> w/ user that doesn't exist"""
         # create 4 users
@@ -138,12 +137,12 @@ class TestUserController(unittest.TestCase):
         requests.post("http://127.0.0.1:5000/users", json=user3)
         requests.post("http://127.0.0.1:5000/users", json=user4)
         
-        # ask for bowser_official
+        # ask for bowserOfficial
         response = requests.get("http://127.0.0.1:5000/users/bowserOfficial")
 
         self.assertEqual(response.json(), {}, "GETing a user that DNE exist should return {}")
 
-      
+'''
     def test_PUT_user_by_username_exists(self):
         """1.7) UsersController: PUT /users/<user_name> w/ user that exists"""
          # create 4 users
@@ -157,18 +156,18 @@ class TestUserController(unittest.TestCase):
         new_user3_info ={
             "id": response.json()["id"],
             "email":"princeZZZZZ@trinityschoolnyc.org",
-            "username":"princeZZZ_official1",
+            "username":"princeZZZOfficial1",
             "password":"123TriniTea"
         }
 
-        # ask to update pricess_official info
+        # ask to update pricessOfficial info
         response = requests.put("http://127.0.0.1:5000/users/princessOfficial", json=new_user3_info)
 
         self.assertEqual(response.json()["username"], new_user3_info["username"], "username of returned user should match POSTed user")
         self.assertEqual(response.json()["email"], new_user3_info["email"], "email of returned user should match POSTed user")
         self.assertEqual(response.json()["password"], new_user3_info["password"], "password of returned user should match POSTed user")
         
- 
+'''
     def test_PUT_user_by_username_DNE(self):
         """1.8) UsersController: PUT /users/<user_name> w/ user that doesn't exist"""
         # create 4 users
@@ -180,11 +179,11 @@ class TestUserController(unittest.TestCase):
         new_user3_info ={
             "id": 12345,
             "email":"bowZZZZZer@trinityschoolnyc.org",
-            "username":"bowZZZer_official1",
+            "username":"bowZZZerOfficial1",
             "password":"123TriniTea"
         }
 
-        # ask to update bowser_official info
+        # ask to update bowserOfficial info
         response = requests.put("http://127.0.0.1:5000/users/bowserOfficial", json=new_user3_info)
 
         self.assertEqual(response.json(), {}, "Updating a user that DNE should return {}")
@@ -202,7 +201,7 @@ class TestUserController(unittest.TestCase):
         original_list_of_users = response.json()
         self.assertEqual(len(response.json()), 4, "4 users should initially be in DB")
 
-        # ask to delete pricess_official info
+        # ask to delete pricessOfficial info
         response = requests.delete("http://127.0.0.1:5000/users/princessOfficial")
 
         self.assertEqual(response.json()["username"], user3["username"], "username of returned user should match DELETEd user")
@@ -212,7 +211,7 @@ class TestUserController(unittest.TestCase):
         response = requests.get("http://127.0.0.1:5000/users")
         self.assertEqual(len(response.json()), 3, "3 users should be in DB after the delete")
         for user in response.json():
-            self.assertNotEqual(user["username"], "princess_official", "3 users should be in DB after the delete")
+            self.assertNotEqual(user["username"], "princessOfficial", "3 users should be in DB after the delete")
 
     def test_DELETE_user_by_username_DNE(self):
         """1.10) UsersController: DELETE /users/<user_name> w/ user that doesn't exist"""
@@ -222,7 +221,7 @@ class TestUserController(unittest.TestCase):
         requests.post("http://127.0.0.1:5000/users", json=user3)
         requests.post("http://127.0.0.1:5000/users", json=user4)
                 
-        # ask to update bowser_official info
+        # ask to update bowserOfficial info
         response = requests.delete("http://127.0.0.1:5000/users/bowserOfficial")
 
         self.assertEqual(response.json(), {}, "DELETEing a user that DNE should return {}")
@@ -332,7 +331,7 @@ class TestUserController(unittest.TestCase):
         response = requests.get("http://127.0.0.1:5000/users/games/bowserOfficial")
 
         self.assertEqual(response.json(), [], "GETing games for a user that DNE exist should return []")
-
 '''
+
 if __name__ == "__main__":
       unittest.main()

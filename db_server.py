@@ -12,7 +12,7 @@ app.add_url_rule('/game/<game_name>', view_func=Games.update_delete_return_one_g
 app.add_url_rule('/games/scorecards/<game_name>', view_func=Games.scorecards_for_game)
 
 app.add_url_rule('/users', view_func=Users.all_users_and_create_users , methods = ["POST", "GET"])
-app.add_url_rule('/user/<user_name>', view_func=Users.update_delete_return_one_user, methods = ["GET", "PUT", "DELETE"])
+app.add_url_rule('/users/<user_name>', view_func=Users.update_delete_return_one_user, methods = ["GET", "PUT", "DELETE"])
 app.add_url_rule('/users/games/<user_name>', view_func=Users.games_for_user)
 """
 app.add_url_rule('/scores', view_func=Scorecards.ten_score_objects , methods = ["POST", "GET"])

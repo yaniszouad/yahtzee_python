@@ -57,7 +57,8 @@ class User:
             db_connection.close()
 
     def create_user(self, user_details):
-        try: 
+        try:
+            print(user_details)
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             user_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
