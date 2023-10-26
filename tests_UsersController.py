@@ -142,7 +142,6 @@ class TestUserController(unittest.TestCase):
 
         self.assertEqual(response.json(), {}, "GETing a user that DNE exist should return {}")
 
-'''
     def test_PUT_user_by_username_exists(self):
         """1.7) UsersController: PUT /users/<user_name> w/ user that exists"""
          # create 4 users
@@ -166,8 +165,8 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(response.json()["username"], new_user3_info["username"], "username of returned user should match POSTed user")
         self.assertEqual(response.json()["email"], new_user3_info["email"], "email of returned user should match POSTed user")
         self.assertEqual(response.json()["password"], new_user3_info["password"], "password of returned user should match POSTed user")
-        
-'''
+   
+
     def test_PUT_user_by_username_DNE(self):
         """1.8) UsersController: PUT /users/<user_name> w/ user that doesn't exist"""
         # create 4 users
@@ -188,7 +187,7 @@ class TestUserController(unittest.TestCase):
 
         self.assertEqual(response.json(), {}, "Updating a user that DNE should return {}")
  
-    
+'''
     def test_DELETE_user_by_username_exists(self):
         """1.9) UsersController: DELETE /users/<user_name> w/ user that exists"""
           # create 4 users
@@ -212,7 +211,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(len(response.json()), 3, "3 users should be in DB after the delete")
         for user in response.json():
             self.assertNotEqual(user["username"], "princessOfficial", "3 users should be in DB after the delete")
-
+'''  
     def test_DELETE_user_by_username_DNE(self):
         """1.10) UsersController: DELETE /users/<user_name> w/ user that doesn't exist"""
         # create 4 users

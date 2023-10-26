@@ -20,7 +20,6 @@ def all_users_and_create_users():
     print(f"request.url={request.query_string}")
     if request.method == "GET":
         user_objects = users.get_users()
-        print("look",user_objects["message"])
         return user_objects['message']
     
     elif request.method == "POST":
@@ -39,22 +38,26 @@ def update_delete_return_one_user(user_name):
     print(f"request.url={request.url}")
     print(f"request.query={request.query_string}")
     if request.method == "GET":
-        print("WHHHHHHAAAAAT")
         user = users.get_user(user_name)
         if user["message"] == "User doesnt exist in get user":
             return {}
         return jsonify(user["message"])
     
     elif request.method == "PUT":
-        print(request.json["username"])
         data = request.json
-        print(data)
         user_object = users.update_user(data)
+        if user_object["message"] == "User doesn't exist in update":
+            return {}
         return jsonify(user_object["message"])
 
     elif request.method == "DELETE":
-        user_object = users.remove_user(request.data)
-        return jsonify(user_object)
+        print("HHHAAAAAAAA",request.json["username"])
+        data = request.json
+        print(data)
+        user_object = users.remove_user(data)
+        if user_object["message"] == "User doesnt exist":
+            return {}
+        return jsonify(user_object["message"])
     else:
         return {"error:" "Invalid request"}
             
