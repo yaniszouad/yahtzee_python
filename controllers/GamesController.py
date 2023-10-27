@@ -1,58 +1,73 @@
 from flask import jsonify
+import json
 from flask import request
 import os
-from models.GamesModel import Game
+from models.UsersModel import User
 from models.ScorecardsModel import Scorecard
+from models.GamesModel import Game
 
 yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
-table_name = "games"
-
+users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
+scorecards = Scorecard(yahtzee_db_name)
 
 
 def all_games_and_create_games():
     #Getting information via the query string portion of a URL
     # curl "http://127.0.0.1:5000/fruit/"
     # curl "http://127.0.0.1:5000/fruit?index=0"
-
-    print(f"request.url={request.url}")
-    print(f"request.url={request.query_string}")
     if request.method == "GET":
-        game_objects = Game.get_games()
-        return jsonify(game_objects)
+        game_objects = games.get_games()
+        return game_objects['message']
     
     elif request.method == "POST":
-        game_object = Game.create_game(request.data)
-        return jsonify(game_object)
-    
+        content_type = request.headers.get('Content-Type')
+        if content_type == 'application/json':
+            data = request.json
+            game_object = games.create_game(data)
+            return jsonify(game_object["message"])
+        else:
+            return {}
     else:
         return {"error:" "Invalid request"}
 
 def update_delete_return_one_game(game_name):
     #Getting information via the path portion of a URL
-    print(f"request.url={request.url}")
-    print(f"request.url={request.query_string}")
     if request.method == "GET":
-        game = Game.get_game(game_name)
-        return jsonify(game)
+        game = games.get_game(game_name)
+        if game["message"] == "game doesnt exist in get game":
+            print("game no exist")
+            return {}
+        return jsonify(game["message"])
     
     elif request.method == "PUT":
-        game_object = Game.update_game(request.data)
-        return jsonify(game_object)
+        data = request.json
+        game_object = games.update_game(data)
+        if game_object["message"] == "game doesn't exist in update":
+            return {}
+        return jsonify(game_object["message"])
 
     elif request.method == "DELETE":
-        game_object = Game.remove_game(request.data)
-        return jsonify(game_object)
+        game_object = games.remove_game(game_name)
+        if game_object["message"] == "Game doesnt exist":
+            return {}
+        return jsonify(game_object["message"])
     else:
         return {"error:" "Invalid request"}
             
-
 def scorecards_for_game(game_name):
     #Getting information via the path portion of a URL
-    print(f"request.url={request.url}")
-    print(f"request.url={request.query_string}")
-    
-    game = Game.get_game(game_name)
-    scorecards = Scorecard.get_game_scorecards["id"]
+    if games.get_game(name = game_name)["message"] == "game doesnt exist in get game":
+        return []
+    game_id = games.get_game(name = game_name)["message"]["id"]
+    print(games.get_game(name = game_name)["message"])
+    print(game_id)
+    if scorecards.get_scorecards()["message"] == []:
+        return []
+    listScorecards = scorecards.get_scorecards()["message"]
+    gamesForUser = []
+    for scorecard in listScorecards:
+        if game_id == scorecard["game_id"]:
+            gamesForUser.append(scorecard)
 
-    return jsonify(scorecards)
+    return gamesForUser
