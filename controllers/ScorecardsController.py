@@ -11,8 +11,17 @@ users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
 scorecards = Scorecard(yahtzee_db_name)
 
+def ten_score_objects():
+    if request.method == "GET":
+        game_objects = games.get_games()
+        return game_objects['message']
 
-def all_games_and_create_games():
+def all_scorecards(scorecard_name):
+    if request.method == "GET":
+        game_objects = games.get_games()
+        return game_objects['message']
+
+def all_scorecards_and_create_scorecard():
     #Getting information via the query string portion of a URL
     # curl "http://127.0.0.1:5000/fruit/"
     # curl "http://127.0.0.1:5000/fruit?index=0"
@@ -31,7 +40,7 @@ def all_games_and_create_games():
     else:
         return {"error:" "Invalid request"}
 
-def update_delete_return_one_game(game_name):
+def update_delete_return_one_scorecard(game_name):
     #Getting information via the path portion of a URL
     if request.method == "GET":
         game = games.get_game(game_name)
@@ -55,7 +64,7 @@ def update_delete_return_one_game(game_name):
     else:
         return {"error:" "Invalid request"}
             
-def scorecards_for_game(game_name):
+def info_of_a_game(game_name):
     #Getting information via the path portion of a URL
     if games.get_game(name = game_name)["message"] == "game doesnt exist in get game":
         return []
