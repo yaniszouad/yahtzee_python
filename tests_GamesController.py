@@ -10,10 +10,13 @@ sys.path.append(fpath)
 yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
 print("test_GamesController DB location:", yahtzee_db_name)
 
-import UsersModel, GamesModel, ScorecardsModel
-User = UsersModel.User(yahtzee_db_name)
-Game = GamesModel.Game(yahtzee_db_name)
-Scorecard = ScorecardsModel.Scorecard(yahtzee_db_name)
+import models.UsersModel as Userr
+import models.GamesModel as Gamess
+import models.ScorecardsModel as Scoress
+User = Userr.User(yahtzee_db_name)
+Game = Gamess.Game(yahtzee_db_name)
+Scorecard = Scoress.Scorecard(yahtzee_db_name)
+
 
 user1 ={
     "email":"luigi@trinityschoolnyc.org",

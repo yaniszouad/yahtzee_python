@@ -7,13 +7,15 @@ fpath = os.path.join(os.path.dirname(__file__), 'controllers')
 sys.path.append(fpath)
 fpath = os.path.join(os.path.dirname(__file__), 'models')
 sys.path.append(fpath)
-yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
+yahtzee_db_name=f"{os.getcwd()}\\models\\yahtzeeDB.db"
 print("test_UsersController DB location:", yahtzee_db_name)
 
-import UsersModel, GamesModel, ScorecardsModel
-User = UsersModel.User(yahtzee_db_name)
-Game = GamesModel.Game(yahtzee_db_name)
-Scorecard = ScorecardsModel.Scorecard(yahtzee_db_name)
+import models.UsersModel as Userr
+import models.GamesModel as Gamess
+import models.ScorecardsModel as Scoress
+User = Userr.User(yahtzee_db_name)
+Game = Gamess.Game(yahtzee_db_name)
+Scorecard = Scoress.Scorecard(yahtzee_db_name)
 
 
 
