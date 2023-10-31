@@ -10,11 +10,38 @@ yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
 users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
 scorecards = Scorecard(yahtzee_db_name)
+def bubbleSort(arr):
+    n = len(arr)
+    # optimize code, so if the array is already sorted, it doesn't need
+    # to go through the entire process
+    swapped = False
+    # Traverse through all array elements
+    for i in range(n-1):
+        # range(n) also work but outer loop will
+        # repeat one time more than needed.
+        # Last i elements are already in place
+        for j in range(0, n-i-1):
+ 
+            # traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if arr["score"][j] > arr["score"][j + 1]:
+                swapped = True
+                arr["score"][j], arr["score"][j + 1] = arr["score"][j + 1], arr["score"][j]
+         
+        if not swapped:
+            # if we haven't needed to make a single swap, we 
+            # can just exit the main loop.
+            return
+ 
 
 def ten_score_objects():
     if request.method == "GET":
         game_objects = games.get_games()
-        return game_objects['message']
+        print(game_objects)
+        result = bubbleSort(game_objects["message"])
+        print(result)
+        return result[0:9]
 
 def all_scorecards(scorecard_name):
     if request.method == "GET":
@@ -26,15 +53,17 @@ def all_scorecards_and_create_scorecard():
     # curl "http://127.0.0.1:5000/fruit/"
     # curl "http://127.0.0.1:5000/fruit?index=0"
     if request.method == "GET":
-        game_objects = games.get_games()
-        return game_objects['message']
+        scorecard = scorecards.get_scorecards()
+        return scorecard['message']
     
     elif request.method == "POST":
         content_type = request.headers.get('Content-Type')
         if content_type == 'application/json':
             data = request.json
-            game_object = games.create_game(data)
-            return jsonify(game_object["message"])
+            print("look at thisssssssss:",data)
+            scorecard_object = scorecards.create_scorecard(data["game_id"], data["user_id"], data["turn_order"])
+            print(scorecard_object)
+            return jsonify(scorecard_object["message"])
         else:
             return {}
     else:
