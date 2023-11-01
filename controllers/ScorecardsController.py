@@ -10,43 +10,87 @@ yahtzee_db_name=f"{os.getcwd()}/models/yahtzeeDB.db"
 users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
 scorecards = Scorecard(yahtzee_db_name)
-def bubbleSort(arr):
-    n = len(arr)
-    # optimize code, so if the array is already sorted, it doesn't need
-    # to go through the entire process
-    swapped = False
-    # Traverse through all array elements
-    for i in range(n-1):
-        # range(n) also work but outer loop will
-        # repeat one time more than needed.
-        # Last i elements are already in place
-        for j in range(0, n-i-1):
- 
-            # traverse the array from 0 to n-i-1
-            # Swap if the element found is greater
-            # than the next element
-            if arr["score"][j] > arr["score"][j + 1]:
-                swapped = True
-                arr["score"][j], arr["score"][j + 1] = arr["score"][j + 1], arr["score"][j]
-         
-        if not swapped:
-            # if we haven't needed to make a single swap, we 
-            # can just exit the main loop.
-            return
- 
+
+# def ten_score_objects():
+#     if request.method == "GET":
+#         game_objects = games.get_games()["message"]
+#         allScorecards = scorecards.get_scorecards()["message"]
+
+#         print(game_objects)
+#         if game_objects == []:
+#             return []
+#         result = bubbleSort(game_objects)
+#         print(result)
+        
+#         return result[0:9]
+
+# def all_scorecards(user_name):
+#     if request.method == "GET":
+#         game_objects = games.get_games()
+#         return game_objects['message']
+
 
 def ten_score_objects():
-    if request.method == "GET":
-        game_objects = games.get_games()
-        print(game_objects)
-        result = bubbleSort(game_objects["message"])
-        print(result)
-        return result[0:9]
+    gamesList = games.get_games()["message"]
+    
+    singleScore = []
+    for game in gamesList:
+        result = scorecards.get_game_scorecards(game["id"])
+        for scorecard in result["message"]:
+            singleScore.append(scorecard["score"])
+    singleScore = reversed(sorted(singleScore))
 
-def all_scorecards(scorecard_name):
-    if request.method == "GET":
-        game_objects = games.get_games()
-        return game_objects['message']
+
+    scores = []
+    for score in singleScore:
+        result = scorecards.get_scorecards()
+        for scorecard in result["message"]:
+            if score == scorecard["score"]:
+                #if {"score":scorecard["score"], "game_name":games.get_game(id =scorecard["game_id"])["message"]["name"], "user_name":users.get_user(id = scorecard["user_id"])["message"]["username"]} not in scores:
+                game = games.get_game(id =scorecard["game_id"])["message"]
+                game_name = game["name"]
+                scores.append({"score": scorecard["score"],"game_name":game_name, "username":users.get_user(id = scorecard["user_id"])["message"]["username"] })
+    
+    scoresNew = set(scores)
+    print(scoresNew)
+    scoresListNew = list(scores)
+    print("Scores", scores)
+
+
+    if len(scores) > 10:
+        scores = [scores[i] for i in range(10)]
+
+    return scores
+
+def all_scorecards(user_name):
+    
+    user = users.get_user(username=user_name)["message"]
+    gamesli = games.get_games()["message"]
+    scores = []
+    score = []
+
+    for game in gamesli:
+        scorecardli = scorecards.get_game_scorecards(game["id"])["message"]
+        for scorecard in  scorecardli:
+
+            if scorecard["user_id"] == user["id"]:
+                score.append(scorecard["score"])
+
+    score = reversed(sorted(score))
+
+    for s in score:
+        scorecardli = scorecards.get_scorecards()["message"]
+        for scorecard in scorecardli:
+            if s == scorecard["score"] and scorecard["user_id"] == user["id"] and {"score":scorecard["score"], "game_name":games.get_game(id =scorecard["game_id"])["message"]["name"]} not in scores:
+                game = games.get_game(id =scorecard["game_id"])["message"]
+                game_name = game["name"]
+                scores.append({"score": scorecard["score"],"game_name":game_name })
+
+    print("Scores", scores)
+
+    return scores
+
+
 
 def all_scorecards_and_create_scorecard():
     #Getting information via the query string portion of a URL
@@ -60,52 +104,52 @@ def all_scorecards_and_create_scorecard():
         content_type = request.headers.get('Content-Type')
         if content_type == 'application/json':
             data = request.json
-            print("look at thisssssssss:",data)
             scorecard_object = scorecards.create_scorecard(data["game_id"], data["user_id"], data["turn_order"])
-            print(scorecard_object)
             return jsonify(scorecard_object["message"])
         else:
             return {}
     else:
         return {"error:" "Invalid request"}
 
-def update_delete_return_one_scorecard(game_name):
+def update_delete_return_one_scorecard(scorecard_name):
     #Getting information via the path portion of a URL
     if request.method == "GET":
-        game = games.get_game(game_name)
-        if game["message"] == "game doesnt exist in get game":
-            print("game no exist")
+        scorecard = scorecards.get_scorecard(scorecard_name)
+        if scorecard["message"] == "Scorecard doesnt exist in get scorecard":
+            print("scorecard no exist")
             return {}
-        return jsonify(game["message"])
+        return jsonify(scorecard["message"])
     
     elif request.method == "PUT":
         data = request.json
-        game_object = games.update_game(data)
-        if game_object["message"] == "game doesn't exist in update":
+        scorecard = scorecards.get_scorecard(scorecard_name)["message"]
+        if scorecard == "Scorecard doesnt exist in get scorecard":
             return {}
-        return jsonify(game_object["message"])
+        scorecard_object = scorecards.update_scorecard(scorecard["id"],data)
+        if scorecard_object["message"] == "Scorecard doesnt exist in get scorecard":
+            return {}
+        return jsonify(scorecard_object["message"])
 
     elif request.method == "DELETE":
-        game_object = games.remove_game(game_name)
-        if game_object["message"] == "Game doesnt exist":
+        
+        scorecard = scorecards.get_scorecard(scorecard_name)["message"]
+        if scorecard == "Scorecard doesnt exist in get scorecard":
             return {}
-        return jsonify(game_object["message"])
+        oldScorecard = scorecards.get_scorecard(scorecard_name)["message"]
+        scorecard_object = scorecards.remove_scorecard(scorecard_name)
+        return jsonify(oldScorecard)
     else:
         return {"error:" "Invalid request"}
             
-def info_of_a_game(game_name):
+def info_of_a_game(scorecard_id):
     #Getting information via the path portion of a URL
-    if games.get_game(name = game_name)["message"] == "game doesnt exist in get game":
-        return []
-    game_id = games.get_game(name = game_name)["message"]["id"]
-    print(games.get_game(name = game_name)["message"])
+    scorecard = scorecards.get_scorecard(scorecard_id)["message"]
+    if scorecard == "Scorecard doesnt exist in get scorecard":
+        print("scorecard no exist")
+        return {}
+    game_id = scorecard["game_id"]
     print(game_id)
-    if scorecards.get_scorecards()["message"] == []:
-        return []
-    listScorecards = scorecards.get_scorecards()["message"]
-    gamesForUser = []
-    for scorecard in listScorecards:
-        if game_id == scorecard["game_id"]:
-            gamesForUser.append(scorecard)
-
-    return gamesForUser
+    game = games.get_game(id = game_id)["message"]
+    return game
+    
+    

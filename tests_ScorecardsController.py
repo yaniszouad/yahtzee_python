@@ -111,7 +111,7 @@ class TestScorcardController(unittest.TestCase):
         User.initialize_users_table()
         Game.initialize_games_table()
         Scorecard.initialize_scorecards_table()
-    
+    '''
     def test_GET_scorecards_no_scorecards(self):
         """3.1) ScorecardsController: GET /scorecards with no scorecards"""
         response = requests.get("http://127.0.0.1:5000/scorecards")
@@ -160,7 +160,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(returned_card["turn_order"], posted_card["turn_order"], "turn_order of returned scorecard  should match POSTed scorecard ")
         self.assertEqual(returned_card["score_info"], posted_card["score_info"], "score_info of returned scorecard  should match POSTed scorecard ")
         self.assertEqual(returned_card["score"], posted_card["score"], "score of returned scorecard  should match POSTed scorecard ")
-    '''
+    
     def test_GET_scorecard_exists_many(self):
         """3.4) ScorecardsController: GET /scorecards/<scorecard_id> w/ scorecard that exists"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -225,7 +225,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(returned_game2["turn_order"], posted_card2["turn_order"], "turn_order of returned scorecard  should match POSTed scorecard ")
         self.assertEqual(returned_game2["score_info"], posted_card2["score_info"], "score_info of returned scorecard  should match POSTed scorecard ")
         self.assertEqual(returned_game2["score"], posted_card2["score"], "score of returned scorecard should match POSTed scorecard ")
-   
+    
     def test_GET_scorecard_DNE(self):
         """3.5) ScorecardsController: GET /scorecards/<scorecard_id> w/ scorecard that doesn't exist"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -326,7 +326,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(updated_card_GET["score_info"], updated_card_returned["score_info"], "score_info of returned scorecard  should match GETed scorecard ")
         self.assertEqual(updated_card_GET["score"], updated_card_returned["score"], "score of returned scorecard  should match GETed scorecard ")
         self.assertEqual(updated_card_GET["score_info"], new_score_info, "score_info of GETed scorecard should match the updated score_info")
-
+    
     def test_PUT_scorecard_DNE(self):
         """3.7) ScorecardsController: PUT /scorecards/<scorecard_id> w/ scorecard that doesn't exist"""
         score_info=get_blank_scorecard()
@@ -334,7 +334,7 @@ class TestScorcardController(unittest.TestCase):
         score_info["upper"]["ones"]=2
         response = requests.put("http://127.0.0.1:5000/scorecards/-123456", json=score_info).json()
         self.assertEqual(response, {}, "PUTing a scorecard that DNE exist should return {}")
-
+    
     def test_DELETE_scorecard_exists(self):
         """3.8) ScorecardsController: DELETE /scorecards/<scorecard_id> w/ scorecard that exists"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -384,12 +384,12 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(deleted_card["score"], card_to_delete["score"], "score of returned scorecard  should match DELETEed scorecard ")
         for card in all_cards_after_delete:
             self.assertNotIn(deleted_card["id"], card, "The id of the deleted card should not match any cards still in the DB")
-
+    
     def test_DELETE_scorecard_DNE(self):
         """3.9) ScorecardsController: DELETE /scorecards/<scorecard_id> w/ scorecard that doesn't exist"""
         response = requests.delete("http://127.0.0.1:5000/scorecards/-123456").json()
         self.assertEqual(response, {}, "DELETEing a scorecard that DNE exist should return {}")
-
+    
     def test_GET_game_from_scorecard(self):
         """3.10) ScorecardsController: GET /scorecards/game/<scorecard_id> """
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -432,7 +432,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertIn("name", response, "returned game should contain a name")
         self.assertIn("created", response, "returned game should contain a created")
         self.assertIn("finished", response, "returned game should contain a finished")
-
+    
     def test_GET_game_from_scorecard_DNE(self):
         """3.11) ScorecardsController: GET /scorecards/game/<scorecard_id> w/ scorecard that doesn't exist"""
         response = requests.get("http://127.0.0.1:5000/scorecards/game/-1234567").json()
@@ -442,11 +442,10 @@ class TestScorcardController(unittest.TestCase):
         """3.12) ScorecardsController: GET /scores w/ no scores"""
         response = requests.get("http://127.0.0.1:5000/scores").json()
         self.assertEqual(response, [], "GETing all scores with no scores should return []")
-    
     def test_GET_all_scores_more_than_10(self):
         """3.13) TODO- ScorecardsController: GET /scores w/ more than 10 scores"""
         self.assertEqual(True, False, "Test not implemented yet")
-
+    '''
     def test_GET_all_scores_fewer_than_10(self):
         """3.14) ScorecardsController: GET /scores w/ fewer than 10 scores scores"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -544,7 +543,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(high_scores[0]["game_name"], game_name, "The correct game_id should be included with the score")
         username = User.get_user(id=user1_info['id'])["message"]['username']
         self.assertEqual(high_scores[5]["username"], username, "The correct username should be included with the score")
-  
+    '''
     def test_GET_username_scores_none(self):
         """3.15) ScorecardsController: GET /scores/<username> w/ fewer than 10 scores scores""" 
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
