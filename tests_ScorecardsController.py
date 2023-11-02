@@ -114,7 +114,7 @@ class TestScorcardController(unittest.TestCase):
         User.initialize_users_table()
         Game.initialize_games_table()
         Scorecard.initialize_scorecards_table()
-    '''
+
     def test_GET_scorecards_no_scorecards(self):
         """3.1) ScorecardsController: GET /scorecards with no scorecards"""
         response = requests.get("http://127.0.0.1:5000/scorecards")
@@ -445,10 +445,167 @@ class TestScorcardController(unittest.TestCase):
         """3.12) ScorecardsController: GET /scores w/ no scores"""
         response = requests.get("http://127.0.0.1:5000/scores").json()
         self.assertEqual(response, [], "GETing all scores with no scores should return []")
+
     def test_GET_all_scores_more_than_10(self):
-        """3.13) TODO- ScorecardsController: GET /scores w/ more than 10 scores"""
-        self.assertEqual(True, False, "Test not implemented yet")
-    '''
+        user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
+        user2_info = requests.post("http://127.0.0.1:5000/users", json=user2).json()
+        user3_info = requests.post("http://127.0.0.1:5000/users", json=user3).json()
+
+        game1_info = requests.post("http://127.0.0.1:5000/games", json=game1).json()
+        game2_info = requests.post("http://127.0.0.1:5000/games", json=game2).json()
+        game3_info = requests.post("http://127.0.0.1:5000/games", json=game3).json()
+        game4_info = requests.post("http://127.0.0.1:5000/games", json=game4).json()
+        game5_info = requests.post("http://127.0.0.1:5000/games", json=game5).json()
+        game6_info = requests.post("http://127.0.0.1:5000/games", json=game6).json()
+        game7_info = requests.post("http://127.0.0.1:5000/games", json=game7).json()
+        game8_info = requests.post("http://127.0.0.1:5000/games", json=game8).json()
+        game9_info = requests.post("http://127.0.0.1:5000/games", json=game9).json()
+        game10_info = requests.post("http://127.0.0.1:5000/games", json=game10).json()
+        game11_info = requests.post("http://127.0.0.1:5000/games", json=game11).json()
+        game12_info = requests.post("http://127.0.0.1:5000/games", json=game12).json()
+        scorecard1={
+            "game_id":game1_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard1_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard1).json() 
+        scorecard2={
+            "game_id":game2_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard2_info= requests.post("http://127.0.0.1:5000/scorecards", json=scorecard2).json()  
+        scorecard3={
+            "game_id":game3_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard3_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard3).json() 
+        scorecard4={
+            "game_id":game4_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard4_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard4).json() 
+        scorecard5={
+            "game_id":game5_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard5_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard5).json() 
+        scorecard6={
+            "game_id":game6_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard6_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard6).json() 
+        scorecard7={
+            "game_id":game7_info["id"],
+            "user_id":user3_info["id"],
+            "turn_order":1
+        }
+        scorecard7_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard7).json() 
+        scorecard8={
+            "game_id":game8_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard8_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard8).json() 
+        scorecard9={
+            "game_id":game9_info["id"],
+            "user_id":user1_info["id"],
+            "turn_order":1
+        }
+        scorecard9_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard9).json() 
+        scorecard10={
+            "game_id":game10_info["id"],
+            "user_id":user3_info["id"],
+            "turn_order":1
+        }
+        scorecard10_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard10).json() 
+        scorecard11={
+            "game_id":game11_info["id"],
+            "user_id":user2_info["id"],
+            "turn_order":1
+        }
+        scorecard11_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard11).json()
+        scorecard12={
+            "game_id":game12_info["id"],
+            "user_id":user2_info["id"],
+            "turn_order":1
+        }
+        scorecard12_info=requests.post("http://127.0.0.1:5000/scorecards", json=scorecard12).json()  
+        new_score_info1=get_blank_scorecard()
+        new_score_info1["upper"]["ones"]=2
+        new_score_info1["upper"]["twos"]=8
+        new_score_info1["upper"]["threes"]=12
+        new_score_info1["upper"]["fours"]=16
+        new_score_info1["upper"]["fives"]=25
+        new_score_info1["upper"]["sixes"]=12
+        new_score_info1["lower"]["three_of_a_kind"]=24
+        new_score_info1["lower"]["four_of_a_kind"]=23
+        new_score_info1["lower"]["full_house"]=25
+        new_score_info1["lower"]["yahtzee"]=50
+        new_score_info1["lower"]["chance"]=10
+        updated_1 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard1_info['id']}", json=new_score_info1).json()
+        new_score_info2=get_blank_scorecard()
+        new_score_info2["upper"]["ones"]=2 
+        new_score_info2["lower"]["full_house"]=25
+        updated_2 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard2_info['id']}", json=new_score_info2).json()
+        new_score_info3=get_blank_scorecard()
+        new_score_info3["lower"]["full_house"]=2
+        updated_3 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard3_info['id']}", json=new_score_info3).json()
+        new_score_info5=get_blank_scorecard()
+        new_score_info5["upper"]["ones"]=2
+        new_score_info5["upper"]["twos"]=8
+        new_score_info5["upper"]["threes"]=12
+        new_score_info5["upper"]["fours"]=16
+        new_score_info5["upper"]["fives"]=25
+        new_score_info5["upper"]["sixes"]=12
+        new_score_info5["lower"]["three_of_a_kind"]=24
+        new_score_info5["lower"]["four_of_a_kind"]=23
+        new_score_info5["lower"]["full_house"]=25
+        new_score_info5["lower"]["yahtzee"]=50
+        updated_5 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard5_info['id']}", json=new_score_info5).json()
+        new_score_info6=get_blank_scorecard()
+        new_score_info6["upper"]["ones"]=2
+        new_score_info6["upper"]["twos"]=8
+        new_score_info6["upper"]["threes"]=12
+        new_score_info6["upper"]["fours"]=16
+        new_score_info6["lower"]["three_of_a_kind"]=24
+        new_score_info6["lower"]["four_of_a_kind"]=23
+        new_score_info6["lower"]["full_house"]=25
+        new_score_info6["lower"]["yahtzee"]=50
+        updated_6 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard6_info['id']}", json=new_score_info6).json()
+        new_score_info10=get_blank_scorecard()
+        new_score_info10["upper"]["ones"]=2
+        new_score_info10["upper"]["twos"]=8
+        new_score_info10["upper"]["threes"]=12
+        new_score_info10["upper"]["fours"]=16
+        new_score_info10["lower"]["three_of_a_kind"]=24
+        new_score_info10["lower"]["four_of_a_kind"]=23
+        new_score_info10["lower"]["yahtzee"]=50
+        updated_10 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard10_info['id']}", json=new_score_info10).json()
+        new_score_info11=get_blank_scorecard()
+        new_score_info11["upper"]["ones"]=2
+        new_score_info11["upper"]["twos"]=8
+        updated_11 = requests.put(f"http://127.0.0.1:5000/scorecards/{scorecard11_info['id']}", json=new_score_info11).json()
+
+        user_scores = requests.get(f"http://127.0.0.1:5000/scores").json()
+        self.assertEqual(len(user_scores), 10, "There should be 10 scores")  
+        self.assertEqual(user_scores[0]["score"], 207, "The 1st score should be 109")  
+        self.assertEqual(user_scores[1]["score"], 197, "The 2nd score should be 27")  
+        self.assertEqual(user_scores[2]["score"], 160, "The 3rd score should be 2")  
+        self.assertEqual(user_scores[3]["score"], 135, "The 4th score should be 0")
+        self.assertEqual(user_scores[4]["score"], 27, "The 5th score should be 0")
+        self.assertEqual(user_scores[5]["score"], 10, "The 6th score should be 0")
+        self.assertEqual(user_scores[6]["score"], 2, "The 7th score should be 0")
+        self.assertEqual(user_scores[7]["score"], 0, "The 8th score should be 0")
+        self.assertEqual(user_scores[8]["score"], 0, "The 9th score should be 0")
+        self.assertEqual(user_scores[9]["score"], 0, "The 10th score should be 0") 
+        game_name = Game.get_game(id=game1_info["id"])["message"]["name"]
+        self.assertEqual(user_scores[0]["game_name"], game_name, "The correct game_id should be included with the score")
+
     def test_GET_all_scores_fewer_than_10(self):
         """3.14) ScorecardsController: GET /scores w/ fewer than 10 scores scores"""
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -546,7 +703,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(high_scores[0]["game_name"], game_name, "The correct game_id should be included with the score")
         username = User.get_user(id=user1_info['id'])["message"]['username']
         self.assertEqual(high_scores[5]["username"], username, "The correct username should be included with the score")
-    '''
+    
     def test_GET_username_scores_none(self):
         """3.15) ScorecardsController: GET /scores/<username> w/ fewer than 10 scores scores""" 
         user1_info = requests.post("http://127.0.0.1:5000/users", json=user1).json()
@@ -769,7 +926,7 @@ class TestScorcardController(unittest.TestCase):
         self.assertEqual(user_scores[3]["score"], 0, "The fourth score should be 0")  
         game_name = Game.get_game(id=game1_info["id"])["message"]["name"]
         self.assertEqual(user_scores[0]["game_name"], game_name, "The correct game_id should be included with the score")
-    '''
+
    
 if __name__ == "__main__":
       unittest.main()

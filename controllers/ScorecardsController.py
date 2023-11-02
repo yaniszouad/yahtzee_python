@@ -1,3 +1,5 @@
+#Yanis Zouad, 11/1/2023, Adv. Topic, Section B
+
 from flask import jsonify
 import json
 from flask import request
@@ -11,86 +13,70 @@ users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
 scorecards = Scorecard(yahtzee_db_name)
 
-# def ten_score_objects():
-#     if request.method == "GET":
-#         game_objects = games.get_games()["message"]
-#         allScorecards = scorecards.get_scorecards()["message"]
-
-#         print(game_objects)
-#         if game_objects == []:
-#             return []
-#         result = bubbleSort(game_objects)
-#         print(result)
-        
-#         return result[0:9]
-
-# def all_scorecards(user_name):
-#     if request.method == "GET":
-#         game_objects = games.get_games()
-#         return game_objects['message']
-
-
 def ten_score_objects():
     gamesList = games.get_games()["message"]
-    
     singleScore = []
     for game in gamesList:
         result = scorecards.get_game_scorecards(game["id"])
         for scorecard in result["message"]:
             singleScore.append(scorecard["score"])
-    singleScore = reversed(sorted(singleScore))
 
-
+    singleScore = sorted(singleScore)
+    singleScore = reversed(singleScore)
     scores = []
     for score in singleScore:
         result = scorecards.get_scorecards()
         for scorecard in result["message"]:
+            game = games.get_game(id =scorecard["game_id"])["message"]
+            game_name = game["name"]
             if score == scorecard["score"]:
-                #if {"score":scorecard["score"], "game_name":games.get_game(id =scorecard["game_id"])["message"]["name"], "user_name":users.get_user(id = scorecard["user_id"])["message"]["username"]} not in scores:
-                game = games.get_game(id =scorecard["game_id"])["message"]
-                game_name = game["name"]
-                scores.append({"score": scorecard["score"],"game_name":game_name, "username":users.get_user(id = scorecard["user_id"])["message"]["username"] })
+                username = users.get_user(id = scorecard["user_id"])["message"]["username"]
+                scores.append({"score": scorecard["score"],
+                               "game_name":game_name, 
+                               "username": username})
     
-    scoresNew = set(scores)
-    print(scoresNew)
-    scoresListNew = list(scores)
-    print("Scores", scores)
-
+    newScores = scores
 
     if len(scores) > 10:
-        scores = [scores[i] for i in range(10)]
+        print("ITSS TOOOOOOO MUCHHHHHH")
+        newScores = []
+        for i in range(10):
+            newScores.append(scores[i])
 
-    return scores
+    ionevenknow = list(reversed(newScores))
+    for score in ionevenknow:
+        if ionevenknow.count(score) > 1:
+            ionevenknow.remove(score)
+
+    return list(reversed(ionevenknow))
 
 def all_scorecards(user_name):
-    
     user = users.get_user(username=user_name)["message"]
-    gamesli = games.get_games()["message"]
+    user_id = user["id"]
+    scorecards_list = scorecards.get_scorecards()["message"]
+   
+    user_scorecards = [sc for sc in scorecards_list if sc["user_id"] == user_id]
+   
+    sorted_scorecards = sorted(user_scorecards, key=lambda sc: sc["score"], reverse=True)
+   
+    game_names = {}
+
     scores = []
-    score = []
-
-    for game in gamesli:
-        scorecardli = scorecards.get_game_scorecards(game["id"])["message"]
-        for scorecard in  scorecardli:
-
-            if scorecard["user_id"] == user["id"]:
-                score.append(scorecard["score"])
-
-    score = reversed(sorted(score))
-
-    for s in score:
-        scorecardli = scorecards.get_scorecards()["message"]
-        for scorecard in scorecardli:
-            if s == scorecard["score"] and scorecard["user_id"] == user["id"] and {"score":scorecard["score"], "game_name":games.get_game(id =scorecard["game_id"])["message"]["name"]} not in scores:
-                game = games.get_game(id =scorecard["game_id"])["message"]
-                game_name = game["name"]
-                scores.append({"score": scorecard["score"],"game_name":game_name })
+    for scorecard in sorted_scorecards:
+        if scorecard["game_id"] not in game_names:
+            game = games.get_game(id=scorecard["game_id"])["message"]
+            game_names[scorecard["game_id"]] = game["name"]
+       
+        score_info = {
+            "score": scorecard["score"],
+            "game_name": game_names[scorecard["game_id"]]
+        }
+       
+        if score_info not in scores:
+            scores.append(score_info)
 
     print("Scores", scores)
-
     return scores
-
-
 
 def all_scorecards_and_create_scorecard():
     #Getting information via the query string portion of a URL
