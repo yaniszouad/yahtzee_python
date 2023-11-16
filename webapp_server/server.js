@@ -65,7 +65,7 @@ app.get('/login', async function(request, response) {
         response.status(200);
         response.setHeader('Content-Type', 'text/html')
         response.render("game/game_details", {
-          feedback:"",
+          feedback:"LOGGED IN",
           username: username
         });
       }else if (details["password"] && details["password"]!=password){
