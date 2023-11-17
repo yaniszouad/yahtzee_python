@@ -61,11 +61,11 @@ class User:
             print(user_details)
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            user_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
+            user_id = random.randint(0, 9007199254740991) #non-negative range of SQLITE3 INTEGER
             unique = False
             while unique != True:
                 if (user_id in cursor.execute("SELECT * FROM users;").fetchall()):
-                    user_id = random.randint(0, 9223372036854775807)
+                    user_id = random.randint(0, 9007199254740991)
                 else:
                     unique = True
             

@@ -56,11 +56,11 @@ class Scorecard:
         try:
             connection = sqlite3.connect(self.db_name)
             cursor = connection.cursor()
-            scorecard_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
+            scorecard_id = random.randint(0, 9007199254740991) #non-negative range of SQLITE3 INTEGER
             unique = False
             while unique != True:
                 if (scorecard_id in cursor.execute("SELECT * FROM scorecards;").fetchall()):
-                    scorecard_id = random.randint(0, 9223372036854775807)
+                    scorecard_id = random.randint(0, 9007199254740991)
                 else:
                     unique = True
 

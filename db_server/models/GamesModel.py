@@ -57,11 +57,11 @@ class Game:
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
-            game_id = random.randint(0, 9223372036854775807) #non-negative range of SQLITE3 INTEGER
+            game_id = random.randint(0, 9007199254740991) #non-negative range of SQLITE3 INTEGER
             unique = False
             while unique != True:
                 if (game_id in cursor.execute("SELECT * FROM games;").fetchall()):
-                    game_id = random.randint(0, 9223372036854775807)
+                    game_id = random.randint(0, 9007199254740991)
                 else:
                     unique = True
 

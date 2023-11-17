@@ -20,7 +20,7 @@ app.get('/', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   //-------------------Testing purposes: Verifying users actually exist in DB------------//
-  let url = 'http://localhost:5000/users';
+  let url = 'http://127.0.0.1:5000/users';
   let res = await fetch(url);
   let details = JSON.parse(await res.text());
   console.log("All Users in DB:")
@@ -54,7 +54,7 @@ app.get('/login', async function(request, response) {
     let password = request.query.password;
     if(username && password){
       //get alleged user 
-      let url = 'http://localhost:5000/users/'+username;
+      let url = 'http://127.0.0.1:5000/users/'+username;
       let res = await fetch(url);
       let details = JSON.parse(await res.text());
       console.log("Requested user per username:")
@@ -65,7 +65,7 @@ app.get('/login', async function(request, response) {
         response.status(200);
         response.setHeader('Content-Type', 'text/html')
         response.render("game/game_details", {
-          feedback:"LOGGED IN",
+          feedback:"",
           username: username
         });
       }else if (details["password"] && details["password"]!=password){
