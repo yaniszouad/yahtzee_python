@@ -4,32 +4,32 @@ users = []
 users.push({
     username:"luigi_test314",
     email:"luigi_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 users.push({
     username:"mario_test314",
     email:"mario_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 users.push({
     username:"toad_test314",
     email:"toad_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 users.push({
     username:"princess_test314",
     email:"princess_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 users.push({
     username:"shyguy_test314",
     email:"shyguy_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 users.push({
     username:"bowser_test314",
     email:"bowser_test314@gmail.com",
-    password:"12345678"
+    password:"aB12345678"
     });
 
 async function add_users_to_DB(n){
