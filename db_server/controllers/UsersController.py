@@ -28,7 +28,7 @@ def all_users_and_create_users():
         if content_type == 'application/json':
             data = request.json
             user_object = users.create_user(data)
-            print("GUAU!!!!!", user_object["message"])
+            print("HERE!!!!!", user_object["message"])
             if "UNIQUE constraint failed" in user_object["message"]:
                 return ("error") # CHECK THIS AGAIN LOOK BACK AT IT !!!!!!
             return jsonify(user_object["message"])

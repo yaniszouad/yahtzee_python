@@ -35,12 +35,12 @@ app.get('/', async function(request, response) {
   });
 });
 
-app.get('/users', async function(request, response) {
+app.get('/user', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
-  response.render("users/user_details",{
+  response.render("user/user_details",{
     feedback:"",
     username:""
   });
@@ -91,7 +91,7 @@ app.get('/login', async function(request, response) {
     
 });//GET /login
 
-app.post('/users', async function(request, response) {
+app.post('/user', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   //Get user information from body of POST request
@@ -99,9 +99,8 @@ app.post('/users', async function(request, response) {
   let email = request.body.email;
   let password = request.body.password;
   // HEADs UP: You really need to validate this information!
-  console.log("Info received:", username, email, password)
-  // NEED TO VERIFY IF INFORMATION IS NEW OR NOT ALREADY IN THE DATABASE
-  
+  console.log("Info recieved:", username, email, password)
+
   const url = 'http://127.0.0.1:5000/users'
   const headers = {
       "Content-Type": "application/json",
@@ -111,7 +110,7 @@ app.post('/users', async function(request, response) {
       headers: headers,
       body: JSON.stringify(request.body),
   });
-  
+
   let posted_user = await res.text();
   let details = JSON.parse(posted_user);
   console.log("Returned user:", details)

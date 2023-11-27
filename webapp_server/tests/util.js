@@ -95,7 +95,7 @@ async function add_1_player_games(users, num_games_per_user){
                 headers: headers,
                 body: JSON.stringify(new_scorecard)
             });
-            let card_details = JSON.parse(await res2.text());
+            let card_details = await res2.text();
 
             scorecard_ids.push(card_details["id"])
         }
