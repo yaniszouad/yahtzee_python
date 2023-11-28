@@ -18,7 +18,7 @@
         <% games.forEach(function(game) { %>
             <li id="game_item_<%= game.name %>">
                 <%= game.name %>
-                <a href="/path/to/delete/game/<%= game.name %>" id="delete_link_<%= game.name %>">Delete</a>
+                <a href="/games/<%= game.name %>" id="delete_link_<%= game.name %>">Delete</a>
             </li>
         <% }); %>
     </ol>

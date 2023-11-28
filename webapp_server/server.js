@@ -35,13 +35,15 @@ app.get('/', async function(request, response) {
   });
 });
 
-app.get('/user', async function(request, response) {
+app.get('/users', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
-  response.render("user/user_details",{
+  response.render("users/user_details",{
     feedback:"",
+    updating:false,
+    email:"",
     username:""
   });
 });
@@ -62,10 +64,16 @@ app.get('/login', async function(request, response) {
 
       //Verify user password matches
       if (details["password"] && details["password"]==password){
+        let urlGames = 'http://127.0.0.1:5000/users/games/'+username;
+        let resGames = await fetch(urlGames);
+        let games = JSON.parse(await resGames.text());
+        console.log("Requested games per username:")
+        console.log(games)
         response.status(200);
         response.setHeader('Content-Type', 'text/html')
         response.render("game/game_details", {
           feedback:"",
+          games: games,
           username: username
         });
       }else if (details["password"] && details["password"]!=password){
@@ -91,7 +99,7 @@ app.get('/login', async function(request, response) {
     
 });//GET /login
 
-app.post('/user', async function(request, response) {
+app.post('/users', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   //Get user information from body of POST request
@@ -100,7 +108,7 @@ app.post('/user', async function(request, response) {
   let password = request.body.password;
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, email, password)
-
+  
   const url = 'http://127.0.0.1:5000/users'
   const headers = {
       "Content-Type": "application/json",
@@ -113,12 +121,14 @@ app.post('/user', async function(request, response) {
 
   let posted_user = await res.text();
   let details = JSON.parse(posted_user);
+  let games = [] // Because new user
   console.log("Returned user:", details)
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("game/game_details", {
       feedback:"",
+      games: games,
       username: username
   });
  
