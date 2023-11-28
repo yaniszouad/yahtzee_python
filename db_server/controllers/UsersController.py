@@ -29,8 +29,10 @@ def all_users_and_create_users():
             data = request.json
             user_object = users.create_user(data)
             print("HERE!!!!!", user_object["message"])
+            if user_object["result"] == "error":
+                return {"result":"error"}
             if "UNIQUE constraint failed" in user_object["message"]:
-                return ("error") # CHECK THIS AGAIN LOOK BACK AT IT !!!!!!
+                return {"error:" "Invalid Username"} # CHECK THIS AGAIN LOOK BACK AT IT !!!!!!
             return jsonify(user_object["message"])
         else:
             return {}

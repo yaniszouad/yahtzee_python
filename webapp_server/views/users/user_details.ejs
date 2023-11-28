@@ -27,6 +27,9 @@
                   <div class="row">
                     <div class="col-md-9 col-lg-8 mx-auto">
                         <h3 class="login-heading mb-4">Register for an account</h3>
+                        <% if (feedback == "You are not creating correctly. Try again.") { %>
+                          <section id="feedback"><h6 class="alert alert-danger" role="alert"><%=feedback%></h6></section></br>
+                        <% } %>
                         <form action="/users" method="POST">
                         <div class="form-floating mb-3">
                             <input type="text" name="username" class="form-control" id="username_input" placeholder="Enter Username" value="<%= username %>" required autofocus>
@@ -60,7 +63,6 @@
           </div>
         </div>
       </div>
-      <section id="feedback"><%=feedback%></section></br>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

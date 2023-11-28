@@ -28,7 +28,7 @@ app.get('/', async function(request, response) {
   //-----------------------------------//
 
   response.status(200);
-  response.setHeader('Content-Type', 'text/html')
+  response.setHeader('Content-Type', 'text/html');
   response.render("login",{
     feedback:"",
     username:""
@@ -59,21 +59,27 @@ app.get('/login', async function(request, response) {
       let url = 'http://127.0.0.1:5000/users/'+username;
       let res = await fetch(url);
       let details = JSON.parse(await res.text());
-      console.log("Requested user per username:")
-      console.log(details)
+      console.log("Requested user per username:");
+      console.log(details);
 
       //Verify user password matches
       if (details["password"] && details["password"]==password){
         let urlGames = 'http://127.0.0.1:5000/users/games/'+username;
         let resGames = await fetch(urlGames);
         let games = JSON.parse(await resGames.text());
-        console.log("Requested games per username:")
-        console.log(games)
+        console.log("Requested games per username:");
+        console.log(games);
+        let urlHighscores = 'http://127.0.0.1:5000/scores';
+        let resHighscores = await fetch(urlHighscores);
+        let highscores = JSON.parse(await resHighscores.text());
+        console.log("Requested highscores:");
+        console.log(highscores);
         response.status(200);
         response.setHeader('Content-Type', 'text/html')
         response.render("game/game_details", {
           feedback:"",
           games: games,
+          highscores: highscores,
           username: username
         });
       }else if (details["password"] && details["password"]!=password){
@@ -108,7 +114,11 @@ app.post('/users', async function(request, response) {
   let password = request.body.password;
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, email, password)
-  
+  let urlHighscores = 'http://127.0.0.1:5000/scores';
+  let resHighscores = await fetch(urlHighscores);
+  let highscores = JSON.parse(await resHighscores.text());
+  console.log("Requested highscores:");
+  console.log(highscores);
   const url = 'http://127.0.0.1:5000/users'
   const headers = {
       "Content-Type": "application/json",
@@ -118,19 +128,29 @@ app.post('/users', async function(request, response) {
       headers: headers,
       body: JSON.stringify(request.body),
   });
-
   let posted_user = await res.text();
   let details = JSON.parse(posted_user);
   let games = [] // Because new user
   console.log("Returned user:", details)
-
-  response.status(200);
-  response.setHeader('Content-Type', 'text/html')
-  response.render("game/game_details", {
-      feedback:"",
-      games: games,
-      username: username
-  });
+  if (details["result"] == "error"){
+      console.log("JHDSKFLJHFJDHFKJSDHLKJFHDKJSHSDHFJKDSHKJFHDSKJFHDSKJHFDKJHFSJF")
+      response.status(405); //404 Unauthorized
+      response.setHeader('Content-Type', 'text/html')
+      response.render("users/user_details", {
+        feedback:"You are not creating correctly. Try again.",
+        username: "",
+        updating:false,
+        email: ""
+      });}
+  else{
+    response.status(200);
+    response.setHeader('Content-Type', 'text/html')
+    response.render("game/game_details", {
+        feedback:"",
+        games: games,
+        highscores: highscores,
+        username: username
+  });}
  
 }); //POST /user
 

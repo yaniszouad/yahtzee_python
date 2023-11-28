@@ -6,19 +6,27 @@
 </head>
 <body>
     <input type="hidden" id="username_input" name="username" value="<%= username %>">
-
+    <ol id="user_games_ol">
+        <h3><%= username %>'s Games</h3>
+        <% games.forEach(function(game) { %>
+            <li id="game_item_<%= game.name %>">
+                <%= game.name %>
+                <a href="/games/<%= game.name %>" id="delete_link_<%= game.name %>">Delete</a>
+            </li>
+        <% }); %>
+    </ol>
     <form id="create_game_form" action="/games" method="post">
         <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
         <button type="submit" id="create_button">Create</button>
     </form>
 
-    <div id="feedback"></div>
+    <section id="feedback"></section>
 
     <ol id="user_games_ol">
-        <% games.forEach(function(game) { %>
-            <li id="game_item_<%= game.name %>">
-                <%= game.name %>
-                <a href="/games/<%= game.name %>" id="delete_link_<%= game.name %>">Delete</a>
+        <h3>Yahtzee High Scores</h3>
+        <% highscores.forEach(function(score) { %>
+            <li id="score_item <%= score %>">
+                <%= score.game_name %> <%= score.username%>
             </li>
         <% }); %>
     </ol>
