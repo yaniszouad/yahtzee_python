@@ -14,7 +14,7 @@ describe('user_games.html', () => {
   let game_names;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({headless:false}); 
+    browser = await puppeteer.launch({headless:true}); 
     await delete_all_scorecards_from_DB()
     await delete_all_games_from_DB()
     await delete_all_users_from_DB()
@@ -38,8 +38,8 @@ describe('user_games.html', () => {
     await delete_all_users_from_DB()   
   });
 
-  describe('Required HTML Elements', () => {
-    it("user_games.html should contain all required elements", async () => {
+  describe('1) Required HTML Elements', () => {
+    it("1.1: user_games.html should contain all required elements", async () => {
       await page.goto(url_base+'/games/'+users[0]["username"], {waitUntil: 'domcontentloaded'})
       let  required={
         '#game_name_input':{
@@ -71,7 +71,7 @@ describe('user_games.html', () => {
       } 
       
       for (let i=1; i<=num_games_per_user; i++){
-        let game_name=users[0]["username"]+"_game_"+i;
+        let game_name=users[0]["username"]+"game"+i;
         let play_game_id="#game_link_"+game_name;
         required[play_game_id]={
           "tagName":"A",
@@ -87,6 +87,7 @@ describe('user_games.html', () => {
 
       for (let key in required){
         const element = await page.$(key);
+        console.log(key, element)
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);
         expect(element_tagName).toBe(required[key]["tagName"]);//Element is correct tag type
@@ -100,9 +101,9 @@ describe('user_games.html', () => {
     })
   });//Required HTML Elements
 
-  describe('Create Game Button', () => {
-    it('should create a game when Create Game button clicked with a valid game name', async () => {
-      let new_game_name = users[0]["username"]+"__game__ghj";
+  describe('2) Create Game Button', () => {
+    it('2.1: should create a game when Create Game button clicked with a valid game name', async () => {
+      let new_game_name = users[0]["username"]+"gameghj";
       let new_game_link_id = "#game_link_"+new_game_name;
 
       await page.goto(url_base+'/games/'+users[0]["username"], {waitUntil: 'domcontentloaded'})
@@ -136,7 +137,7 @@ describe('user_games.html', () => {
       expect(found).toBe(true);
     });//Create Game Button
 
-    it('should provide feedback when Create Game button clicked with no information', async () => {
+    it('2.2: should provide feedback when Create Game button clicked with no information', async () => {
       let new_game_name = "";
       let new_game_link_id = "#game_link_"+new_game_name;
 
@@ -169,7 +170,7 @@ describe('user_games.html', () => {
       expect(found).toBe(false);
     });
   
-    it('should provide feedback when Create Game button clicked with a duplicate game name', async () => {
+    it('2.3: should provide feedback when Create Game button clicked with a duplicate game name', async () => {
       url='http://127.0.0.1:5000/games'
       res = await fetch(url);
       let returned_games = await res.text();
@@ -195,10 +196,10 @@ describe('user_games.html', () => {
   
   });//Create Game Button
 
-  describe('Delete Game Links', () => {
-    it('should delete a game when the delete link is pressed', async () => {
+  describe('3) Delete Game Links', () => {
+    it('3.1: should delete a game when the delete link is pressed', async () => {
       await page.goto(url_base+'/games/'+users[2]["username"], {waitUntil: 'domcontentloaded'})
-      let game_name=users[2]["username"]+"_game_1";
+      let game_name=users[2]["username"]+"game1";
       let play_game_id="#game_link_"+game_name;
       let element = await page.$(play_game_id);
       expect(element).toBeTruthy(); //Element is present

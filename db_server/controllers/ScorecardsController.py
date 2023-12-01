@@ -28,6 +28,9 @@ def ten_score_objects():
         result = scorecards.get_scorecards()
         for scorecard in result["message"]:
             game = games.get_game(id =scorecard["game_id"])["message"]
+            print(game)
+            if game == "game doesnt exist in get game":
+                return {"error": "There are no current games"}
             game_name = game["name"]
             if score == scorecard["score"]:
                 username = users.get_user(id = scorecard["user_id"])["message"]["username"]
@@ -95,7 +98,7 @@ def all_scorecards_and_create_scorecard():
         else:
             return {}
     else:
-        return {"error:" "Invalid request"}
+        return {"error": "Invalid request"}
 
 def update_delete_return_one_scorecard(scorecard_name):
     #Getting information via the path portion of a URL
@@ -125,7 +128,7 @@ def update_delete_return_one_scorecard(scorecard_name):
         scorecard_object = scorecards.remove_scorecard(scorecard_name)
         return jsonify(oldScorecard)
     else:
-        return {"error:" "Invalid request"}
+        return {"error": "Invalid request"}
             
 def info_of_a_game(scorecard_id):
     #Getting information via the path portion of a URL

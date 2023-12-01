@@ -26,7 +26,7 @@ def all_games_and_create_games():
         content_type = request.headers.get('Content-Type')
         if content_type == 'application/json':
             data = request.json
-            print(data)
+            print("THIS IS THE DATA WE GET ARE WE MISSING THE LINK",data)
             game_object = games.create_game(data)
             return jsonify(game_object["message"])
         else:

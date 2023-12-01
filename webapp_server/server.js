@@ -111,7 +111,7 @@ app.post('/users', async function(request, response) {
   //Get user information from body of POST request
   let username = request.body.username;
   let email = request.body.email;
-  let password = request.body.password;
+  let password = request.body.password
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, email, password)
   let urlHighscores = 'http://127.0.0.1:5000/scores';
@@ -133,7 +133,6 @@ app.post('/users', async function(request, response) {
   let games = [] // Because new user
   console.log("Returned user:", details)
   if (details["result"] == "error"){
-      console.log("JHDSKFLJHFJDHFKJSDHLKJFHDKJSHSDHFJKDSHKJFHDSKJFHDSKJHFDKJHFSJF")
       response.status(405); //404 Unauthorized
       response.setHeader('Content-Type', 'text/html')
       response.render("users/user_details", {
@@ -148,11 +147,99 @@ app.post('/users', async function(request, response) {
     response.render("game/game_details", {
         feedback:"",
         games: games,
+        email: email,
         highscores: highscores,
         username: username
   });}
  
 }); //POST /user
+
+app.get('/users/:username', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  //Get user information from body of POST request
+  let username = request.params.username;
+  let url = 'http://127.0.0.1:5000/users/'+username;
+  let res = await fetch(url);
+  let details = JSON.parse(await res.text());
+  console.log("Requested user per username:");
+  console.log(details);
+
+  let password = details["password"];
+  let email = details["email"];
+  console.log("Info received:", username, email, password)
+  let urlScoresUser = 'http://127.0.0.1:5000/scores/'+username;
+  let ScoresUserRes = await fetch(urlScoresUser);
+  let detailsScoreUser = JSON.parse(await ScoresUserRes.text());
+  console.log("Requested user per username:");
+  console.log(detailsScoreUser);
+  
+  let games = detailsScoreUser;
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("users/user_details", {
+      feedback:"",
+      games: games,
+      updating: true,
+      username: username,
+      password: password,
+      email: email
+  });
+ 
+});
+
+
+app.get('/games/:username', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  //Get user information from body of POST request
+  let username = request.params.username;
+  let url = 'http://127.0.0.1:5000/users/'+username;
+  let res = await fetch(url);
+  let details = JSON.parse(await res.text());
+  console.log("Requested user per username:");
+  console.log(details);
+
+  let password = details["password"];
+  let email = details["email"];
+
+  console.log("Info received:", username, email, password)
+
+  let urlScoresUser = 'http://127.0.0.1:5000/scores/'+username;
+  let ScoresUserRes = await fetch(urlScoresUser);
+  let detailsScoreUser = JSON.parse(await ScoresUserRes.text());
+  console.log("Requested score per username:");
+  console.log(detailsScoreUser);
+
+  let urlHighscores = 'http://127.0.0.1:5000/scores';
+  let resHighscores = await fetch(urlHighscores);
+  textedResHighscores = await resHighscores.text()
+  console.log("wow", textedResHighscores);
+  let highscores = JSON.parse( textedResHighscores);
+  console.log("Requested highscores:");
+  console.log(highscores);
+
+  // if (highscores == { "error": "There are no current games" }){
+  //   console.log("THERE ARE NO GAMES??")
+  //   highscores = ["There", "are", "no", "current", "games"];}
+  //   <ol id="high_scores_ol">
+  //       <h3>Yahtzee High Scores</h3>
+  //       <% highscores.forEach(function(score) { %>
+  //           <li id="score_item <%= score %>">
+  //               <%= score.game_name %> <%= score.username%>
+  //           </li>
+  //       <% }); %>
+  //   </ol>
+
+  let games = detailsScoreUser;
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.render("game/game_details", {
+    feedback:"",
+    games: games,
+    highscores: highscores,
+    username: username
+  });
+ 
+});
 
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of

@@ -68,23 +68,23 @@ class Game:
             dateToday = datetime.datetime.now()
             game_info["created"] = str(dateToday)
             game_info["finished"] = str(dateToday)
-
+            print("ARE WE MISSING THE LINK AQUI???",game_info)
             for i in game_info["name"]:
                 if i in string.punctuation:
                     return {"result":"error",
                     "message": "name uses invalid characters"}
-            for i in game_info["link"]:
-                if i in string.punctuation or i == " ":
-                    return {"result":"error",
-                    "message": "link uses invalid characters"}
+            # for i in game_info["link"]:
+            #     if i in string.punctuation or i == " ":
+            #         return {"result":"error",
+            #         "message": "link uses invalid characters"}
             
 
-            user_data = (game_id, game_info["name"], game_info["link"], game_info["created"], game_info["finished"])
+            user_data = (game_id, game_info["name"], game_info["name"], game_info["created"], game_info["finished"])
             #are you sure you have all data in the correct format?
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?);", user_data)
             db_connection.commit()
             return {"result": "success",
-                    "message": {"id": game_id, "name": game_info["name"], "link" : game_info["link"], "created": game_info["created"], "finished": game_info["finished"]}
+                    "message": {"id": game_id, "name": game_info["name"], "link" : game_info["name"], "created": game_info["created"], "finished": game_info["finished"]}
                     }
         except sqlite3.Error as error:
             return {"result":"error",

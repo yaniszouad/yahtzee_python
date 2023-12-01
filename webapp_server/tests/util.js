@@ -2,33 +2,33 @@ const fetch = require('node-fetch');
 
 users = []
 users.push({
-    username:"luigi_test314",
-    email:"luigi_test314@gmail.com",
+    username:"luigitest314",
+    email:"luigitest314@gmail.com",
     password:"aB12345678"
     });
 users.push({
-    username:"mario_test314",
-    email:"mario_test314@gmail.com",
+    username:"mariotest314",
+    email:"mariotest314@gmail.com",
     password:"aB12345678"
     });
 users.push({
-    username:"toad_test314",
-    email:"toad_test314@gmail.com",
+    username:"toadtest314",
+    email:"toadtest314@gmail.com",
     password:"aB12345678"
     });
 users.push({
-    username:"princess_test314",
-    email:"princess_test314@gmail.com",
+    username:"princesstest314",
+    email:"princesstest314@gmail.com",
     password:"aB12345678"
     });
 users.push({
-    username:"shyguy_test314",
-    email:"shyguy_test314@gmail.com",
+    username:"shyguytest314",
+    email:"shyguytest314@gmail.com",
     password:"aB12345678"
     });
 users.push({
-    username:"bowser_test314",
-    email:"bowser_test314@gmail.com",
+    username:"bowsertest314",
+    email:"bowsertest314@gmail.com",
     password:"aB12345678"
     });
 
@@ -75,15 +75,16 @@ async function add_1_player_games(users, num_games_per_user){
         game_names[user["username"]] = []
         for (let i=1; i<=num_games_per_user; i++ ){
             new_game={
-                "name":user["username"]+"_game_"+i
+                "name":user["username"]+"game"+i
             }
             let res1 = await fetch(game_url, {
                 method: "POST",
                 headers: headers,
                 body: JSON.stringify(new_game)
             });
-
-            let game_details = JSON.parse(await res1.text());
+            let out = await res1.text();
+            console.log(out);
+            let game_details = JSON.parse(out);
             game_names[user["username"]].push(game_details["name"])
             new_scorecard={
                 "game_id":game_details["id"],
@@ -95,7 +96,7 @@ async function add_1_player_games(users, num_games_per_user){
                 headers: headers,
                 body: JSON.stringify(new_scorecard)
             });
-            let card_details = await res2.text();
+            let card_details = JSON.parse(await res2.text());
 
             scorecard_ids.push(card_details["id"])
         }
