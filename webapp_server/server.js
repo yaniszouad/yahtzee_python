@@ -190,8 +190,9 @@ app.get('/users/:username', async function(request, response) {
 
 app.get('/games/:username', async function(request, response) {
   console.log(request.method, request.url) //event logging
-  //Get user information from body of POST request
-  let username = request.params.username;
+
+  let username = request.params.username; // why the hell is username "style.css"????
+  console.log("USERNAME NHHDFHFHSDHFH:", username);
   let url = 'http://127.0.0.1:5000/users/'+username;
   let res = await fetch(url);
   let details = JSON.parse(await res.text());
@@ -205,40 +206,119 @@ app.get('/games/:username', async function(request, response) {
 
   let urlScoresUser = 'http://127.0.0.1:5000/scores/'+username;
   let ScoresUserRes = await fetch(urlScoresUser);
-  let detailsScoreUser = JSON.parse(await ScoresUserRes.text());
-  console.log("Requested score per username:");
-  console.log(detailsScoreUser);
+  
+  let games;
+
+  ScoresUserText = await ScoresUserRes.text()
+  console.log("Scores User Text:", ScoresUserText);
+  if (ScoresUserText == {"error": "This user does not exist"}){
+    console.log([{"name":"ion"}, {"name":"ion"}, {"name":"ion"}, {"name":"ion"}]);
+    
+    games = [{"name":"ion"}, {"name":"ion"}, {"name":"ion"}, {"name":"ion"}];
+    console.log("Scores User Text: Theres a problem with it...", games);
+  }
+  
+
+  let detailsScoreUser = JSON.parse(ScoresUserText);
+  console.log("Requested score per username:", detailsScoreUser);
 
   let urlHighscores = 'http://127.0.0.1:5000/scores';
   let resHighscores = await fetch(urlHighscores);
   textedResHighscores = await resHighscores.text()
-  console.log("wow", textedResHighscores);
+  console.log("High Score as Text", textedResHighscores);
   let highscores = JSON.parse( textedResHighscores);
-  console.log("Requested highscores:");
-  console.log(highscores);
+  console.log("JSONed Requested highscores:", highscores);
 
-  // if (highscores == { "error": "There are no current games" }){
-  //   console.log("THERE ARE NO GAMES??")
-  //   highscores = ["There", "are", "no", "current", "games"];}
-  //   <ol id="high_scores_ol">
-  //       <h3>Yahtzee High Scores</h3>
-  //       <% highscores.forEach(function(score) { %>
-  //           <li id="score_item <%= score %>">
-  //               <%= score.game_name %> <%= score.username%>
-  //           </li>
-  //       <% }); %>
-  //   </ol>
-
-  let games = detailsScoreUser;
+  if (highscores == { "error": "There are no current games" }){
+    console.log("THERE ARE NO GAMES??");
+    highscores = [{"name":"ion"}, {"name":"ion"}, {"name":"ion"}, {"name":"ion"}];}
+    
+  
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
-  response.render("game/game_details", {
-    feedback:"",
-    games: games,
-    highscores: highscores,
-    username: username
-  });
+  console.log("Games data:", games);
+  try {
+    response.render("game/game_details", {
+      feedback:"",
+      games: games,
+      highscores: highscores,
+      username: username
+    });
+  } catch (error) {
+    console.error("Error rendering template:", error);
+    response.status(500).send("Internal Server Error");
+  }
  
+});
+
+app.post('/games/create', async function(request, response) {
+  let username = request.body.username; 
+  let gameName = request.body.game_name;
+
+  if (!gameName) {
+      return response.render('game/game_details', {
+          feedback: 'Please enter a game name',
+          games: [],
+          highscores: [], 
+          username: username
+      });
+  }
+
+  try {
+      let apiResponse = await fetch('http://127.0.0.1:5000/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: gameName })
+      });
+      
+      // if (!apiResponse.statusText) { // Annie are you NOT okay? are you NOT okay annie?
+      //     throw new Error('Failed to create the game');}
+      let updatedGames = JSON.parse(await apiResponse.text()); // I NEED TO ADD IT TO THE CURRENT LIST OF UPDATED GAMES
+
+      console.log('API Response:', updatedGames);
+      let existingGameResponse = await fetch("http://127.0.0.1:5000/games/"+gameName);
+      if (existingGameResponse.ok) {
+          let existingGameData = await existingGameResponse.json();
+          if (existingGameData) {
+              return response.render('game/game_details', {
+                  feedback: 'Added',
+                  games: updatedGames,
+                  highscores: [], 
+                  username: username
+              });
+          }
+      }
+
+      return response.render('game/game_details', {
+          feedback: 'A game with that name already exists',
+          games: updatedGames,
+          highscores: [], 
+          username: username
+      });
+
+  } catch (error) {
+      console.error('Error creating game:', error);
+      return response.render('game/game_details', {
+          feedback: 'Error creating game',
+          games: [], 
+          highscores: [],
+          username: username
+      });
+  }
+});
+
+app.get('/games/delete/:gameName/:username', async function(request, response) {
+  const { gameName, username } = request.params;
+
+  try {
+      await fetch(`http://127.0.0.1:5000/games/${gameName}`, {
+          method: 'DELETE'
+      });
+
+      response.redirect('/games/' + username);
+  } catch (error) {
+      console.error('Error deleting game:', error);
+  }
 });
 
 // Because routes/middleware are applied in order,

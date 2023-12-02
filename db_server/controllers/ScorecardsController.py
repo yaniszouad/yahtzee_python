@@ -27,11 +27,18 @@ def ten_score_objects():
     for score in singleScore:
         result = scorecards.get_scorecards()
         for scorecard in result["message"]:
-            game = games.get_game(id =scorecard["game_id"])["message"]
-            print(game)
-            if game == "game doesnt exist in get game":
+            game = games.get_game(id =scorecard["game_id"])
+            gameMessage = game["message"]
+            if gameMessage == "game doesnt exist in get game":
+                print("-------------------")
+                print(scorecard["game_id"])
+                print("---------")
+                print("Game:", game)
+                print("Game Message:", gameMessage)
+                print("Game doesnt exist in get game")
+                print("-------------------")
                 return {"error": "There are no current games"}
-            game_name = game["name"]
+            game_name = gameMessage["name"]
             if score == scorecard["score"]:
                 username = users.get_user(id = scorecard["user_id"])["message"]["username"]
                 scores.append({"score": scorecard["score"],
@@ -55,6 +62,9 @@ def ten_score_objects():
 
 def all_scorecards(user_name):
     user = users.get_user(username=user_name)["message"]
+    print (user_name, user)
+    if user == "User doesnt exist in get user":
+        return {"error": "This user does not exist"}
     user_id = user["id"]
     scorecards_list = scorecards.get_scorecards()["message"]
    

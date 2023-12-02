@@ -69,6 +69,7 @@ class Game:
             game_info["created"] = str(dateToday)
             game_info["finished"] = str(dateToday)
             print("ARE WE MISSING THE LINK AQUI???",game_info)
+           
             for i in game_info["name"]:
                 if i in string.punctuation:
                     return {"result":"error",
