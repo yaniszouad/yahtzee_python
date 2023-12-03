@@ -86,8 +86,8 @@ describe('user_games.html', () => {
 
 
       for (let key in required){
+        console.log(key);
         const element = await page.$(key);
-        console.log(key, element)
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);
         expect(element_tagName).toBe(required[key]["tagName"]);//Element is correct tag type
@@ -137,62 +137,62 @@ describe('user_games.html', () => {
       expect(found).toBe(true);
     });//Create Game Button
 
-    // it('2.2: should provide feedback when Create Game button clicked with no information', async () => {
-    //   let new_game_name = "";
-    //   let new_game_link_id = "#game_link_"+new_game_name;
+    it('2.2: should provide feedback when Create Game button clicked with no information', async () => {
+      let new_game_name = "";
+      let new_game_link_id = "#game_link_"+new_game_name;
 
-    //   await page.goto(url_base+'/games/'+users[1]["username"], {waitUntil: 'domcontentloaded'})
-    //   await page.type('#game_name_input', "");
-    //   await page.click('#create_button');
-    //   await page.waitForTimeout(1000)//pause to let the browser load the DOM
-    //   const title = await page.title();
-    //   expect(title).toBe('Yahtzee: My Games');
-    //   let feedback = await page.$eval("#feedback", element => element.innerHTML);
-    //   expect(feedback.length).toBeGreaterThan(10);
+      await page.goto(url_base+'/games/'+users[1]["username"], {waitUntil: 'domcontentloaded'})
+      await page.type('#game_name_input', "");
+      await page.click('#create_button');
+      await page.waitForTimeout(1000)//pause to let the browser load the DOM
+      const title = await page.title();
+      expect(title).toBe('Yahtzee: My Games');
+      let feedback = await page.$eval("#feedback", element => element.innerHTML);
+      expect(feedback.length).toBeGreaterThan(10);
 
-    //   //New game should not appear in the list of user games
-    //   const element = await page.$(new_game_link_id);
-    //   expect(element).toBe(null); //Element is not present
+      //New game should not appear in the list of user games
+      const element = await page.$(new_game_link_id);
+      expect(element).toBe(null); //Element is not present
 
-    //   //New game should not be added to the DB server
-    //   url='http://127.0.0.1:5000/games'
-    //   res = await fetch(url);
-    //   let returned_games = await res.text();
-    //   let all_games = JSON.parse(returned_games)
+      //New game should not be added to the DB server
+      url='http://127.0.0.1:5000/games'
+      res = await fetch(url);
+      let returned_games = await res.text();
+      let all_games = JSON.parse(returned_games)
 
-    //   let found = false;
-    //   for(let game of all_games){
-    //     if(game.name==new_game_name){
-    //       found=true;
-    //       break
-    //     }
-    //   }
-    //   expect(found).toBe(false);
-    // });
+      let found = false;
+      for(let game of all_games){
+        if(game.name==new_game_name){
+          found=true;
+          break
+        }
+      }
+      expect(found).toBe(false);
+    });
   
-    // it('2.3: should provide feedback when Create Game button clicked with a duplicate game name', async () => {
-    //   url='http://127.0.0.1:5000/games'
-    //   res = await fetch(url);
-    //   let returned_games = await res.text();
-    //   let orig_all_games = JSON.parse(returned_games)
+    it('2.3: should provide feedback when Create Game button clicked with a duplicate game name', async () => {
+      url='http://127.0.0.1:5000/games'
+      res = await fetch(url);
+      let returned_games = await res.text();
+      let orig_all_games = JSON.parse(returned_games)
      
-    //   await page.goto(url_base+'/games/'+users[2]["username"], {waitUntil: 'domcontentloaded'})
-    //   await page.type('#game_name_input', game_names[users[2]["username"]][0]);
-    //   await page.click('#create_button');
-    //   await page.waitForTimeout(1000)//pause to let the browser load the DOM
-    //   const title = await page.title();
-    //   expect(title).toBe('Yahtzee: My Games');
-    //   let feedback = await page.$eval("#feedback", element => element.innerHTML);
-    //   expect(feedback.length).toBeGreaterThan(10);
+      await page.goto(url_base+'/games/'+users[2]["username"], {waitUntil: 'domcontentloaded'})
+      await page.type('#game_name_input', game_names[users[2]["username"]][0]);
+      await page.click('#create_button');
+      await page.waitForTimeout(1000)//pause to let the browser load the DOM
+      const title = await page.title();
+      expect(title).toBe('Yahtzee: My Games');
+      let feedback = await page.$eval("#feedback", element => element.innerHTML);
+      expect(feedback.length).toBeGreaterThan(10);
 
-    //   //New game should not be added to the DB server
-    //   url='http://127.0.0.1:5000/games'
-    //   res = await fetch(url);
-    //   returned_games = await res.text();
-    //   let final_all_games = JSON.parse(returned_games)
+      //New game should not be added to the DB server
+      url='http://127.0.0.1:5000/games'
+      res = await fetch(url);
+      returned_games = await res.text();
+      let final_all_games = JSON.parse(returned_games)
 
-    //   expect(final_all_games.length).toBe(orig_all_games.length);
-    // });
+      expect(final_all_games.length).toBe(orig_all_games.length);
+    });
   
   });//Create Game Button
 

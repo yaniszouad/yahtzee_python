@@ -1,4 +1,4 @@
-<%- include('../partials/header', {title:"Yahtzee: My Games", username:username}) -%>
+<%- include('../partials/header', {title:'Yahtzee: ' + gameName + '|' + username , username:username}) -%>
 
   <section id="dice">
     <table>
@@ -18,6 +18,13 @@
   </section>
 
   <section id="feedback"></section>
+  <form action="">
+    <p><label>Chat Area</label></p>
+    <textarea id="chat_textarea" name="textarea" rows="4" cols="50"></textarea>
+    <br>
+    <input id="chat_input">
+  </form><br>
+
 
   <section id="scorecard">
     <table>
@@ -79,12 +86,12 @@
       <tr>
         <td>3 of a kind</td>
         <td>Add Total of All Dice</td>
-        <td><input type="text" class="lower category" id="3_of_a_kind_input" size="3"></td>
+        <td><input type="text" class="lower category" id="three_of_a_kind_input" size="3"></td>
       </tr>
       <tr>
         <td>4 of a kind</td>
         <td>Add Total of All Dice</td>
-        <td><input type="text" class="lower category" id="4_of_a_kind_input" size="3"></td>
+        <td><input type="text" class="lower category" id="four_of_a_kind_input" size="3"></td>
       </tr>
       <tr>
         <td>Full House</td>
@@ -126,6 +133,19 @@
         <td></td>
         <td class="lower score" id="grand_total"></td>
       </tr>
+      <td>
+        <form action="">
+            <p><label>Chat Area</label></p>
+            <textarea id="chat_textarea" name="textarea" rows="4" cols="50"></textarea>
+            <br>
+            <input id="chat_input">
+        </form><br>
+        <button id="chat_button" type="submit">Submit</button><br>
+        <section><%=feedback%></section>
+        <a id="my_games_link" href="/games/<%=username%>">My Games</a><!--Change this href! : "/games/"+users[0]["username"]-->
+        <a id="user_details_link" href="/users/<%=username%>">User Details</a><!--Change this href! : "/users/"+users[0]["username"]-->
+
+    </td>
     </table>
   </section>
 

@@ -1,54 +1,34 @@
 <%- include('../partials/header', {title:"Yahtzee: My Games", username:username}) -%>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Yahtzee: My Games</title>
-</head>
-<body>
-    
-    
-    <ol id="user_games_ol">
-        <h3><%= username %>'s Games</h3>
-        <% if (games && Array.isArray(games)) { %>
-            <% games.forEach(function(game) { %>
-                <li id="game_link_<%= game.game_name %>">
-                    <a href="/games/<%= game.game_name %>/<%= username %>"><%= game.game_name %></a>
-                    <a href="/games/delete/<%= game.game_name %>/<%= username %>" id="delete_link_<%= game.game_name %>">Delete</a>
-                </li>
-            <% }); %>
-        <% } else { %>
-            <p>No games available.</p>
-        <% } %>
-    </ol>
+        <h1>"Username" Games</h1>
 
-    <form id="create_game_form" action="/games/create" method="post">
-        <input type="hidden" id="username_input" name="username" value="<%= username %>">
-        <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
-        <button type="submit" id="create_button">Create</button>
-    </form>
+        <form id="create_game_form" action="/games" method="post">
+            <input type="hidden" id="username_input" name="username" value="<%= username %>">
+            <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
+            <button type="submit" id="create_button">Create</button>
+        </form>
+        <section id="feedback"><%=feedback%></section></br>
 
-    <ol id="high_scores_ol">
-        <h3>Yahtzee High Scores</h3>
-        <% if (highscores && Array.isArray(highscores)) { %>
-            <% highscores.forEach(function(score) { %>
-                <li>
-                    <%= score.game_name %> <%= score.username %>
-                </li>
-            <% }); %>
-        <% } else { %>
-            <p>No highscores available.</p>
-        <% } %>
-    </ol>
-    <section id="feedback"><%= feedback %></section>
+        <a id="delete_link" class="btn btn-primary" href="/users">Delete Account</a>
 
-    <a id="my_games_link" href="/games/<%= username %>">My Games</a>
-    <a id="user_details_link" href="/users/<%= username %>">User Details</a>
+        <ol id="user_games_ol">
+            <h3><%= username %>'s Games</h3>
+                <% if (games && Array.isArray(games)) { %>
+                <%for (let game of games){ %>
+                        <li>
+                        <a id="game_link_<%=game.name%>" href="/games/<%= game.name %>/<%= username %>">Specific Game</a>
+                        <a id="delete_link_<%=game.name%>" href="/games/delete/<%= game.name %>/<%= username %>">Delete</a>
+                        </li>
+                <% } %>
+                <% } else { %>
+                    <p>No games available.</p>
+                <% } %>
+        </ol>
+        <ol id="high_scores_ol">
+            <li>OL Test</li>
+        </ol>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
+        <a id="my_games_link" href="/games/<%= username %>">My Games</a>
+        <a id="user_details_link" href="/users/<%= username %>">User Details</a>
 
 <%- include('../partials/footer') -%>

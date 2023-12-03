@@ -16,8 +16,8 @@ class Game:
         schema=f"""
                 CREATE TABLE {self.table_name} (
                     id INTEGER PRIMARY KEY UNIQUE,
-                    name TEXT UNIQUE,
-                    link TEXT UNIQUE,
+                    name TEXT,
+                    link TEXT,
                     created TIMESTAMP,
                     finished TIMESTAMP
                 )
@@ -74,19 +74,18 @@ class Game:
                 if i in string.punctuation:
                     return {"result":"error",
                     "message": "name uses invalid characters"}
-            # for i in game_info["link"]:
-            #     if i in string.punctuation or i == " ":
-            #         return {"result":"error",
-            #         "message": "link uses invalid characters"}
             
 
             user_data = (game_id, game_info["name"], game_info["name"], game_info["created"], game_info["finished"])
+            print("ARE WE MISSING THE LINK AQUI???",user_data)
             #are you sure you have all data in the correct format?
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?);", user_data)
             db_connection.commit()
+            print("ARE WE MISSING THE LINK AQUI???",user_data)
             return {"result": "success",
                     "message": {"id": game_id, "name": game_info["name"], "link" : game_info["name"], "created": game_info["created"], "finished": game_info["finished"]}
                     }
+                    
         except sqlite3.Error as error:
             return {"result":"error",
                     "message":error}
@@ -94,7 +93,7 @@ class Game:
         finally:
             db_connection.close()
     
-    def get_game(self, name = None, id = None):
+    def get_game1(self, name = None, id = None):
         try: 
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
@@ -120,6 +119,39 @@ class Game:
         
         finally:
             db_connection.close()
+
+    def get_game(self, id = None, name = None):
+        try:
+            db_connection = sqlite3.connect(self.db_name)
+            cursor = db_connection.cursor()
+
+            if id:
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.id = {id};"
+                results = cursor.execute(query)
+                results = results.fetchone()
+                if results:
+                    return {"result": "success",
+                            "message": self.to_dict(results)
+                            }
+
+            elif name:
+                query = f"SELECT * from {self.table_name} WHERE {self.table_name}.name = '{name}';"
+                results = cursor.execute(query)
+                results = results.fetchone()
+                if results:
+                    return {"result": "success",
+                            "message": self.to_dict(results)
+                            }
+            return {"result": "error",
+                    "message": "There is no game with this name/id."
+                    }
+        except sqlite3.Error as error:
+            return {"result":"error",
+                    "message":error}
+        
+        finally:
+            db_connection.close()
+
 
     def get_games(self):
         try: 

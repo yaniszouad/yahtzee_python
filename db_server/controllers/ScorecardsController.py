@@ -13,7 +13,7 @@ users = User(yahtzee_db_name)
 games = Game(yahtzee_db_name)
 scorecards = Scorecard(yahtzee_db_name)
 
-def ten_score_objects():
+def ten_score_objects1():
     gamesList = games.get_games()["message"]
     singleScore = []
     for game in gamesList:
@@ -59,6 +59,19 @@ def ten_score_objects():
             ionevenknow.remove(score)
 
     return list(reversed(ionevenknow))
+
+def ten_score_objects():
+    scorecard_list = sorted(scorecards.get_scorecards()["message"], key=lambda x: x["score"], reverse=True)
+    top_10 = scorecard_list[0:10]
+    returned_top_10 = []
+    for scorecard in top_10:
+        print(games.get_games())
+        print("YO", scorecard, "HJKSAKJ",scorecard["game_id"])
+        print(games.get_game(id = scorecard["game_id"]))
+        game_name = games.get_game(id = scorecard["game_id"])["message"]["name"]
+        username = users.get_user(id = scorecard["user_id"])["message"]["username"]
+        returned_top_10.append({"score": scorecard["score"], "game_name": game_name, "username": username})
+    return returned_top_10
 
 def all_scorecards(user_name):
     user = users.get_user(username=user_name)["message"]

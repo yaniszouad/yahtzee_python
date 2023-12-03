@@ -27,9 +27,23 @@ def all_games_and_create_games():
         if content_type == 'application/json':
             data = request.json
             game_object = games.create_game(data)
-            return jsonify(game_object["message"])
+            print("PAST THIS THIS IS THE CREATING GAME", game_object["message"])
+            return game_object["message"]
         else:
             return {}
+        
+    # elif request.method == 'POST':
+    #     content_type = request.headers.get('Content-Type')
+    #     if content_type == 'application/json':
+    #         data = request.json
+    #         if data["name"] == '':
+    #             return {}
+    #         created_game = games.create_game(data)['message']
+    #         print("CREATED GAME MESSAGE", created_game)
+    #         return created_game
+
+    #     else:
+    #         return {}
     else:
         return {"error:" "Invalid request"}
 
@@ -37,9 +51,14 @@ def update_delete_return_one_game(game_name):
     #Getting information via the path portion of a URL
     if request.method == "GET":
         game = games.get_game(game_name)
+        print("WOA", game)
+        print("JEESUS:", game["message"])
         if game["message"] == "game doesnt exist in get game":
             print("game no exist")
             return {}
+        if type(game["message"]) != str:
+            print("operational error")
+            return jsonify("operational error")
         return jsonify(game["message"])
     
     elif request.method == "PUT":
