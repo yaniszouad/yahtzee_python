@@ -61,16 +61,12 @@ app.get('/login', async function(request, response) {
       let url = 'http://127.0.0.1:5000/users/'+username;
       let res = await fetch(url);
       let details = JSON.parse(await res.text());
-      console.log("Requested user per username:");
-      console.log(details);
 
       //Verify user password matches
       if (details["password"] && details["password"]==password){
         let urlGames = 'http://127.0.0.1:5000/users/games/'+username;
         let resGames = await fetch(urlGames);
         let games = JSON.parse(await resGames.text());
-        console.log("Requested games per username:");
-        console.log(games);
         // let urlHighscores = 'http://127.0.0.1:5000/scores';
         // let resHighscores = await fetch(urlHighscores);
         // let highscores = JSON.parse(await resHighscores.text());
@@ -338,32 +334,23 @@ app.get('/games/:username', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   let username = request.params.username;
-  console.log("INFO RECIEVED", username)
+  
 
   let url = 'http://127.0.0.1:5000/users/games/'+username
   let res = await fetch(url);
   let details = JSON.parse(await res.text());
-  console.log(details)
   let gameNames = [];
-  // if (Array.isArray(details)){
-  //   console.log("its a array")
-  //   for (const game of details) {
-  //     gameNames.push(game["name"]);
-  //   }
-  //   console.log("Requested list games names for toad test whatever:", gameNames);
-  //   response.status(200);
-  //   response.setHeader('Content-Type', 'text/html')
-  // }else if (!Array.isArray(details)){
-  //   console.log("Requested normal games names for toad test whatever:", details["name"]);
-  //   gameNames = details["name"];};
 
+  let urlAllGames = 'http://127.0.0.1:5000/games'
+  let resAllGames = await fetch(urlAllGames);
+  let detailsAllGames = JSON.parse(await resAllGames.text());
   
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   try {
     response.render("game/game_details", {
       feedback:"",
-      games: details,
+      games: detailsAllGames,
       username: username
       });
   } catch (error) {
@@ -560,7 +547,6 @@ app.post('/games', async function(request, response) {
   let res_2 = await fetch(url_2); 
   let text_2 = await res_2.text();
   let details_2 = JSON.parse(text_2);
-  console.log("Returned games:", details_2);
 
   let total_games = [];
   for (let p = 0; p < details_2.length; p++) {
@@ -568,7 +554,6 @@ app.post('/games', async function(request, response) {
    }
 
   if (total_games.includes(gamename)){
-    console.log("THIS INCLUDES THE GAME NAME")
     response.status(200);
     response.setHeader('Content-Type', 'text/html');
     response.render("game/game_details", {
@@ -579,7 +564,6 @@ app.post('/games', async function(request, response) {
   }
 
   else{
-    console.log("POEEEROEOROROEOROEROEOROEOROEOR")
     let url = 'http://127.0.0.1:5000/games';
     const headers = {
       "Content-Type": "application/json",
@@ -591,20 +575,16 @@ app.post('/games', async function(request, response) {
     });
     let text = await res.text();
     let details = JSON.parse(text);
-    console.log("Returned game:", details);
     
-    console.log(details["name"])
     if (details["name"]){
       if(details.length > 1){
         for (let i = 0; i < details.length; i++) {
-          console.log("All the details I'm adding", details[i]);
           total_games.push(details[i]["name"]);
         }
       }
       else{
         total_games.push(details["name"]);
       }
-      console.log("WHY SO LONG:", total_games)  
       response.status(200);
       response.setHeader('Content-Type', 'text/html');
       response.render("game/game_details", {
@@ -613,7 +593,6 @@ app.post('/games', async function(request, response) {
           games: total_games
       });
     }else{
-      console.log("There is no name here")
       response.status(200);
       response.setHeader('Content-Type', 'text/html');
       response.render("game/game_details", {
@@ -633,7 +612,6 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
       await fetch(`http://127.0.0.1:5000/games/${gameName}`, {
           method: 'DELETE'
       });
-      console.log("Deleted game:", gameName);
       response.redirect('/games/' + username);
   } catch (error) {
       console.error('Error deleting game:', error);
@@ -644,7 +622,6 @@ app.get('/games/:gameName/:username', async function(request, response) {
   console.log("THIS IS THE GAME NAME OF /games/gameName/username", request.params.gameName)
   let username = request.params.username; 
   let gameName = request.params.gameName;
-  console.log("GAME NAME AQUI HOMBRE:", gameName)
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')

@@ -1,7 +1,5 @@
 <%- include('../partials/header', {title:"Yahtzee: My Games", username:username}) -%>
 
-        <h1>"Username" Games</h1>
-
         <form id="create_game_form" action="/games" method="post">
             <input type="hidden" id="username_input" name="username" value="<%= username %>">
             <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
@@ -17,13 +15,20 @@
                 </tr>
               </thead>
               <tbody>
-                <% games.forEach(function(game) { %>
-                    <% console.log("wow",game) %>
+                <% games.forEach(function(gamu) { %>
+                    <% console.log("jeez", typeof gamu) %>
                   <li>
                     <tr>
                       <th scope="row">1</th>
-                      <td><a href="/games/<%=game%>/<%=username%>" id="game_link_<%=game%>"><%= game %></a></td>
-                      <td><a class="btn btn-danger" id="delete_link_<%=game%>" href="/games/delete/<%=game%>/<%=username%>" role="button">Delete Game</a></td>
+                      <% if (typeof gamu == "string"){ %>
+                      <% console.log("glapaa",gamu) %>
+                      <td><a href="/games/<%=gamu%>/<%=username%>" id="game_link_<%=gamu%>"><%= gamu %></a></td>
+                      <td><a class="btn btn-danger" id="delete_link_<%=gamu%>" href="/games/delete/<%=gamu%>/<%=username%>" role="button">Delete Game</a></td>
+                      <%} else {%>
+                      <% console.log("sleesh",gamu.name) %>
+                      <td><a href="/games/<%=gamu.name%>/<%=username%>" id="game_link_<%=gamu.name%>"><%= gamu.name %></a></td>
+                      <td><a class="btn btn-danger" id="delete_link_<%=gamu.name%>" href="/games/delete/<%=gamu.name%>/<%=username%>" role="button">Delete Game</a></td>
+                      <%}%>
                     </tr>
                   </li>
                 <% }); %>
@@ -32,7 +37,7 @@
         </ol>    
         
         <ol id="high_scores_ol">
-            <li>OL Test</li>
+            <li>Highscores OL Test</li>
         </ol>
 
         <a id="my_games_link" href="/games/<%= username %>">My Games</a>
