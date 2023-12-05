@@ -343,7 +343,21 @@ app.get('/games/:username', async function(request, response) {
   let url = 'http://127.0.0.1:5000/users/games/'+username
   let res = await fetch(url);
   let details = JSON.parse(await res.text());
+  console.log(details)
+  let gameNames = [];
+  // if (Array.isArray(details)){
+  //   console.log("its a array")
+  //   for (const game of details) {
+  //     gameNames.push(game["name"]);
+  //   }
+  //   console.log("Requested list games names for toad test whatever:", gameNames);
+  //   response.status(200);
+  //   response.setHeader('Content-Type', 'text/html')
+  // }else if (!Array.isArray(details)){
+  //   console.log("Requested normal games names for toad test whatever:", details["name"]);
+  //   gameNames = details["name"];};
 
+  
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   try {
@@ -351,11 +365,12 @@ app.get('/games/:username', async function(request, response) {
       feedback:"",
       games: details,
       username: username
-    });
+      });
   } catch (error) {
     console.error("Error rendering template:", error);
     response.status(500).send("Internal Server Error");
   }
+
 });
 // app.post('/games', async function(request, response) {
 //   console.log(request.method, request.url) //event logging
@@ -474,74 +489,151 @@ app.get('/games/:username', async function(request, response) {
 
 // });
 
-app.post('/games', async function(request, response) {
-  let username = request.body.username; 
-  let gameName = request.body.game_name;
-  console.log("GAME NAME AQUI MOFO:", gameName)
-  if (gameName == "" || gameName == null || username == "" || username == null) {
-    console.log("GAME NAME AQUI THIS SHIT IS EMPTTYYYY AS HELKLLLLLLLL:", gameName)
-      return response.render('game/game_details', {
-          feedback: 'Please enter a game name',
-          games: [],
-          username: username
-      });
-  }
+// app.post('/games', async function(request, response) {
+//   let username = request.body.username; 
+//   let gameName = request.body.game_name;
+//   console.log("GAME NAME AQUI MOFO:", gameName)
+//   if (gameName == "" || gameName == null || username == "" || username == null) {
+//     console.log("GAME NAME AQUI THIS SHIT IS EMPTTYYYY AS HELKLLLLLLLL:", gameName)
+//       return response.render('game/game_details', {
+//           feedback: 'Please enter a game name',
+//           games: [],
+//           username: username
+//       });
+//   }
 
-  try {
-      let existingGameResponse = await fetch("http://127.0.0.1:5000/games/"+gameName); // Checking if the game already exists
-      console.log('API Response Existing Game Response:', existingGameResponse);
-      if (existingGameResponse.ok) {
-          console.log('DONT DO THAT SHIT')
-          let existingGameData = JSON.parse(await existingGameResponse.text());
-              return response.render('game/game_details', {
-                  feedback: 'A game with that name already exists',
-                  games: existingGameData,
-                  username: username
-              });
-      }
+//   try {
+//       let existingGameResponse = await fetch("http://127.0.0.1:5000/games/"+gameName); // Checking if the game already exists
+//       console.log('API Response Existing Game Response:', existingGameResponse);
+//       if (existingGameResponse.ok) {
+//           console.log('DONT DO THAT SHIT')
+//           let existingGameData = JSON.parse(await existingGameResponse.text());
+//               return response.render('game/game_details', {
+//                   feedback: 'A game with that name already exists',
+//                   games: existingGameData,
+//                   username: username
+//               });
+//       }
 
-      let resCreate = await fetch('http://127.0.0.1:5000/games', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: gameName })
-      });
+//       let resCreate = await fetch('http://127.0.0.1:5000/games', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({ name: gameName })
+//       });
         
-      console.log("New Game Response:", resCreate);
+//       console.log("New Game Response:", resCreate);
   
-      let resTexted = await resCreate.text();
-      console.log('API Response 1:', resTexted);
-      let resTextedJson = JSON.parse(resTexted); 
-      console.log('json response:', resTextedJson);
-      let updatedGames = resTextedJson;
+//       let resTexted = await resCreate.text();
+//       console.log('API Response 1:', resTexted);
+//       let resTextedJson = JSON.parse(resTexted); 
+//       console.log('json response:', resTextedJson);
+//       let updatedGames = resTextedJson;
 
-      if (resCreate.status !== 200) { // Annie are you NOT okay? are you NOT okay annie?
-        throw new Error(resCreate.statusText);}
+//       if (resCreate.status !== 200) { // Annie are you NOT okay? are you NOT okay annie?
+//         throw new Error(resCreate.statusText);}
 
-      console.log('YES THATS ITS THATS THAT SHIT THAT SHIT')
-      return response.render('game/game_details', {
-          feedback: 'Added',
-          games: updatedGames,
-          username: username
-      });
+//       console.log('YES THATS ITS THATS THAT SHIT THAT SHIT')
+//       return response.render('game/game_details', {
+//           feedback: 'Added',
+//           games: updatedGames,
+//           username: username
+//       });
 
-  } catch (error) {
-      console.error('Error creating game:', error);
-      return response.render('game/game_details', {
-          feedback: 'Error creating game',
-          games: [], 
-          username: username
-      });
+//   } catch (error) {
+//       console.error('Error creating game:', error);
+//       return response.render('game/game_details', {
+//           feedback: 'Error creating game',
+//           games: [], 
+//           username: username
+//       });
+//   }
+// });
+
+app.post('/games', async function(request, response) {
+  let gamename = request.body.game_name;
+  let username = request.body.username;
+  console.log("/games")
+  console.log(gamename)
+   
+  const url_2 = 'http://127.0.0.1:5000/games';
+
+  let res_2 = await fetch(url_2); 
+  let text_2 = await res_2.text();
+  let details_2 = JSON.parse(text_2);
+  console.log("Returned games:", details_2);
+
+  let total_games = [];
+  for (let p = 0; p < details_2.length; p++) {
+    total_games.push(details_2[p]["name"]);
+   }
+
+  if (total_games.includes(gamename)){
+    console.log("THIS INCLUDES THE GAME NAME")
+    response.status(200);
+    response.setHeader('Content-Type', 'text/html');
+    response.render("game/game_details", {
+      feedback:"Please enter a valid gamename",
+      username: username,
+      games:total_games
+  });
   }
+
+  else{
+    console.log("POEEEROEOROROEOROEROEOROEOROEOR")
+    let url = 'http://127.0.0.1:5000/games';
+    const headers = {
+      "Content-Type": "application/json",
+  }  
+    let res = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({name:gamename}),
+    });
+    let text = await res.text();
+    let details = JSON.parse(text);
+    console.log("Returned game:", details);
+    
+    console.log(details["name"])
+    if (details["name"]){
+      if(details.length > 1){
+        for (let i = 0; i < details.length; i++) {
+          console.log("All the details I'm adding", details[i]);
+          total_games.push(details[i]["name"]);
+        }
+      }
+      else{
+        total_games.push(details["name"]);
+      }
+      console.log("WHY SO LONG:", total_games)  
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html');
+      response.render("game/game_details", {
+          feedback:"",
+          username: username,
+          games: total_games
+      });
+    }else{
+      console.log("There is no name here")
+      response.status(200);
+      response.setHeader('Content-Type', 'text/html');
+      response.render("game/game_details", {
+        feedback:"Please enter a valid gamename",
+        username: username,
+        games: total_games
+    });
+  }
+}
 });
 
 app.get('/games/delete/:gameName/:username', async function(request, response) {
-  const { gameName, username } = request.params;
-
+  let username = request.params.username;
+  let gameName = request.params.gameName;
+  console.log("THIS IS THE GAME NAME OF /games/delete/gameName/username", request.params.gameName)
   try {
       await fetch(`http://127.0.0.1:5000/games/${gameName}`, {
           method: 'DELETE'
       });
-
+      console.log("Deleted game:", gameName);
       response.redirect('/games/' + username);
   } catch (error) {
       console.error('Error deleting game:', error);
@@ -549,9 +641,10 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
 });
 
 app.get('/games/:gameName/:username', async function(request, response) {
+  console.log("THIS IS THE GAME NAME OF /games/gameName/username", request.params.gameName)
   let username = request.params.username; 
   let gameName = request.params.gameName;
-  console.log("GAME NAME AQUI MOFO:", gameName)
+  console.log("GAME NAME AQUI HOMBRE:", gameName)
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')

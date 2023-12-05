@@ -9,21 +9,28 @@
         </form>
         <section id="feedback"><%=feedback%></section></br>
 
-        <a id="delete_link" class="btn btn-primary" href="/users">Delete Account</a>
-
         <ol id="user_games_ol">
-            <h3><%= username %>'s Games</h3>
-                <% if (games && Array.isArray(games)) { %>
-                <%for (let game of games){ %>
-                        <li>
-                        <a id="game_link_<%=game.name%>" href="/games/<%= game.name %>/<%= username %>">Specific Game</a>
-                        <a id="delete_link_<%=game.name%>" href="/games/delete/<%= game.name %>/<%= username %>">Delete</a>
-                        </li>
-                <% } %>
-                <% } else { %>
-                    <p>No games available.</p>
-                <% } %>
-        </ol>
+            <table class="table table-borderless caption-top">
+              <thead>
+                <tr>
+                  <h1><%=username%>'s Games</h1>
+                </tr>
+              </thead>
+              <tbody>
+                <% games.forEach(function(game) { %>
+                    <% console.log("wow",game) %>
+                  <li>
+                    <tr>
+                      <th scope="row">1</th>
+                      <td><a href="/games/<%=game%>/<%=username%>" id="game_link_<%=game%>"><%= game %></a></td>
+                      <td><a class="btn btn-danger" id="delete_link_<%=game%>" href="/games/delete/<%=game%>/<%=username%>" role="button">Delete Game</a></td>
+                    </tr>
+                  </li>
+                <% }); %>
+              </tbody>
+            </table>
+        </ol>    
+        
         <ol id="high_scores_ol">
             <li>OL Test</li>
         </ol>
