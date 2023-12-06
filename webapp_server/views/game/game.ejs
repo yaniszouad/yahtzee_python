@@ -17,14 +17,6 @@
     <br>
   </section>
 
-  <section id="feedback"></section>
-  <form action="">
-    <p><label>Chat Area</label></p>
-    <textarea id="chat_textarea" name="textarea" rows="4" cols="50"></textarea>
-    <br>
-    <input id="chat_input">
-  </form><br>
-
 
   <section id="scorecard">
     <table>
@@ -133,20 +125,16 @@
         <td></td>
         <td class="lower score" id="grand_total"></td>
       </tr>
-      <td>
-        <form action="">
-            <p><label>Chat Area</label></p>
-            <textarea id="chat_textarea" name="textarea" rows="4" cols="50"></textarea>
-            <br>
-            <input id="chat_input">
-        </form><br>
-        <button id="chat_button" type="submit">Submit</button><br>
-        <section><%=feedback%></section>
-        <a id="my_games_link" href="/games/<%=username%>">My Games</a><!--Change this href! : "/games/"+users[0]["username"]-->
-        <a id="user_details_link" href="/users/<%=username%>">User Details</a><!--Change this href! : "/users/"+users[0]["username"]-->
-
-    </td>
     </table>
-  </section>
+  <form action="">
+      <p><label>Chat Area</label></p>
+      <textarea id="chat_textarea" name="textarea" rows="4" cols="50"></textarea>
+      <br>
+      <input id="chat_input">
+  </form><br>
+  <button id="chat_button" type="submit">Submit</button><br>
+  <section><%=feedback%></section>
 
+  </section>
+  <script src="/js/UI.js"  type="module"></script> 
   <%- include('../partials/footer') -%>

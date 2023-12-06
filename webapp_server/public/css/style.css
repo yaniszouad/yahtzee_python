@@ -28,7 +28,7 @@ button:focus {
 
 table {
   border-collapse: collapse;
-  background-color: #4dffe7;
+  background-color: rgb(251, 147, 115);
   margin: auto;
   width: 50%;
 }
