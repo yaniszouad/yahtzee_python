@@ -23,8 +23,12 @@ class Dice{
      * @return {Array} an array of integers representing dice values of dice pictures
     */
     get_values(){
-
-        //let arrayNums = (this.photo_names).map((namePhoto) => ((namePhoto == false): return true));
+        let valuesToReturn = []
+        for (let i = 0; i < (this.dice_elements).length; i++)
+            for (let photoNums = 0; photoNums <(this.photo_names).length; photoNums++)
+                if ((this.dice_elements)[i].src == ("http://127.0.0.1:3000/images/"+this.photo_names[photoNums]+".svg"))
+                    valuesToReturn.push(photoNums);
+        return valuesToReturn
     }
 
     /**
@@ -34,7 +38,7 @@ class Dice{
      * @return {Number} an integer represenitng the sum of all five dice
     */
     get_sum(){
-        return get_values().reduce((acc, int) => {return acc + int},0);  
+        return this.get_values().reduce((acc, int) => {return acc + int},0);  
     }
 
     /**
@@ -44,7 +48,16 @@ class Dice{
      * @return {Array} an array of six integers representing counts of the six die faces
     */
     get_counts(){
-
+        let arrayNums = this.get_values()
+        let arrayToReturn = [0, 0, 0, 0, 0, 0]
+        for (let i = 0; i < arrayNums.length; i++){
+            for (let listNums = 0; listNums < arrayToReturn.length; listNums ++){
+                if (arrayNums[i] === listNums){
+                    arrayToReturn[listNums] += 1
+                }
+            }
+        }
+        return arrayToReturn
     }
 
     /**
