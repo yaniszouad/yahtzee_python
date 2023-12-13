@@ -86,7 +86,6 @@ describe('user_games.html', () => {
 
 
       for (let key in required){
-        console.log(key);
         const element = await page.$(key);
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);

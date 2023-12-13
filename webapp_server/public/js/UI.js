@@ -6,14 +6,14 @@ import Dice from './Dice.js';
 let roll_button = document.getElementById('roll_button'); 
 roll_button.addEventListener('click', roll_dice_handler);
 
-let rolls_remainging_element = document.getElementById("rolls_remaining");
+let rolls_remaining_element = document.getElementById("rolls_remaining");
 let dice_elements =[];
 for (let i = 0; i<5; i++){
     let die = document.getElementById("die_"+i);
     die.addEventListener('dblclick', reserve_die_handler);
     dice_elements.push(die);
 }
-let dice = new Dice(dice_elements, rolls_remainging_element);
+let dice = new Dice(dice_elements, rolls_remaining_element);
 window.dice = dice;
 
 //-----Scorecard Setup---------//
@@ -36,7 +36,7 @@ function reserve_die_handler(event){
 
 function roll_dice_handler(){
     display_feedback("Rolling the dice...", "good");
-
+    dice.roll()
     console.log("Dice values:", dice.get_values());
     console.log("Sum of all dice:", dice.get_sum());
     console.log("Count of all dice faces:", dice.get_counts());

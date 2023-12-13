@@ -85,7 +85,6 @@ describe('user_details.html', () => {
 
       for (let key in required){
         const element = await page.$(key);
-        console.log(key, element)
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);
         expect(element_tagName).toBe(required[key]["tagName"]);//Element is correct tag type

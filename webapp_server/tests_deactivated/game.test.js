@@ -40,7 +40,7 @@ describe('game.html', () => {
 
   describe('1) Required HTML Elements', () => {
     it("1.1: game.html should contain all required elements", async () => {
-      let game_name=users[0]["username"]+"_game_0";
+      let game_name=users[0]["username"]+"game0";
       let username=users[0]["username"];
       await page.goto(url_base+'/games/'+game_name+'/'+username, {waitUntil: 'domcontentloaded'})
       let  required={
@@ -125,7 +125,6 @@ describe('game.html', () => {
 
       for (let key in required){
         const element = await page.$(key);
-        console.log(key,element)
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);
         expect(element_tagName).toBe(required[key]["tagName"]);//Element is correct tag type

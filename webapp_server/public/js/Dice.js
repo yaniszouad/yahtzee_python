@@ -2,6 +2,7 @@ console.log("Dice.js connected")
 class Dice{
     constructor(dice_elements, rolls_remaining_element){
         this.rolls_remaining_element= rolls_remaining_element;
+        console.log(dice_elements)
         this.dice_elements= dice_elements;
         this.photo_names=["blank", "one", "two", "three", "four", "five", "six"]
     }
@@ -24,9 +25,11 @@ class Dice{
     */
     get_values(){
         let valuesToReturn = []
+        console.log(this.dice_elements)
         for (let i = 0; i < (this.dice_elements).length; i++)
-            for (let photoNums = 0; photoNums <(this.photo_names).length; photoNums++)
-                if ((this.dice_elements)[i].src == ("http://127.0.0.1:3000/images/"+this.photo_names[photoNums]+".svg"))
+            for (let photoNums = 0; photoNums < (this.photo_names).length; photoNums++)
+                //console.log(((this.dice_elements)[i].src), ("http://127.0.0.1:3000/images/"+this.photo_names[photoNums]+".svg"))
+                if (((this.dice_elements)[i].src) == ("http://127.0.0.1:3000/images/"+this.photo_names[photoNums]+".svg"))
                     valuesToReturn.push(photoNums);
         return valuesToReturn
     }
@@ -41,6 +44,7 @@ class Dice{
         return this.get_values().reduce((acc, int) => {return acc + int},0);  
     }
 
+
     /**
      * Calculates a count of each die face in dice_elements
      * <br> Ex - would return [0, 0, 0, 0, 2, 3] for two fives and three sixes
@@ -48,25 +52,18 @@ class Dice{
      * @return {Array} an array of six integers representing counts of the six die faces
     */
     get_counts(){
-        let arrayNums = this.get_values()
-        let arrayToReturn = [0, 0, 0, 0, 0, 0]
-        for (let i = 0; i < arrayNums.length; i++){
-            for (let listNums = 0; listNums < arrayToReturn.length; listNums ++){
-                if (arrayNums[i] === listNums){
-                    arrayToReturn[listNums] += 1
-                }
-            }
-        }
-        return arrayToReturn
+        let counts = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
+        this.get_values().forEach(value => counts[value]++);
+        return [counts[1], counts[2], counts[3], counts[4],counts[5],counts[6]];
     }
 
     /**
-     * Performs all necessary actions to roll and update display of dice_elements
+     * Perforxms all necessary actions to roll and update display of dice_elements
      * Also updates rolls remaining
      * <br> Uses this.set to update dice
     */
     roll(){
-
+        this.set([...Array(5)].map(e=>~~(Math.floor(Math.random() * 6 + 1))) ,this.get_rolls_remaining()-1)
     }
 
     /**
@@ -74,7 +71,10 @@ class Dice{
      * <br> Uses this.#setDice to update dice
     */
     reset(){
-
+        for (let i = 0; i <= 6; i++){
+            (document.getElementById('die_'+toString(i))).src = "http://127.0.0.1:3000/images/blank.svg"
+        }
+        document.getElementById("rolls_remaining") = 3
     }
 
     /**
@@ -100,6 +100,12 @@ class Dice{
     */
     set(new_dice_values, new_rolls_remaining){
 
+        this.dice_elements.forEach((die,index) =>{
+            if (!die.classList.contains("reserved") && new_dice_values[index] !== -1){
+                die.src = `http://127.0.0.1:3000/images/${this.photo_names[new_dice_values[index]]}.svg`
+            }
+        })
+        this.rolls_remaining_element.innerHTML = new_rolls_remaining
     }
 }
 
