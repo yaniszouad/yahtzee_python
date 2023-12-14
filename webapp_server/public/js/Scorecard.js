@@ -7,12 +7,12 @@ class Scorecard{
 
     /**
      * Determines whether the scorecard is full/finished
-     * A full scorecard is a scorecard where all categores are disabled.
+     * A full scorecard is a scorecard where all categories are disabled.
      *
-     * @return {Boolean} a Boolean value indicating whether the scorecard is full
+     * @return {} a Boolean value indicating whether the scorecard is full
      */
     is_finished(){
-
+        console.log(this.score_elements)
     }
 
     /**

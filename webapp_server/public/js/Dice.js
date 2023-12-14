@@ -63,7 +63,7 @@ class Dice{
      * <br> Uses this.set to update dice
     */
     roll(){
-        this.set([...Array(5)].map(e=>~~(Math.floor(Math.random() * 6 + 1))) ,this.get_rolls_remaining()-1)
+        this.set([...Array(5)].map(e=>~~(Math.floor(Math.random()*6+1))),this.get_rolls_remaining()-1)
     }
 
     /**
@@ -71,10 +71,7 @@ class Dice{
      * <br> Uses this.#setDice to update dice
     */
     reset(){
-        for (let i = 0; i <= 6; i++){
-            (document.getElementById('die_'+toString(i))).src = "http://127.0.0.1:3000/images/blank.svg"
-        }
-        document.getElementById("rolls_remaining") = 3
+        this.set([...Array(5)].map(e=>~~(0)),3)
     }
 
     /**
@@ -86,7 +83,9 @@ class Dice{
      * @param {Object} element the <img> element representing the die to reserve
     */
     reserve(die_element){
-
+        if (die_element.src !== "http://127.0.0.1:3000/images/blank.svg" && this.get_rolls_remaining() > 0)
+            die_element.classList.toggle("reserved");
+        return die_element.src
     }
 
     /**
