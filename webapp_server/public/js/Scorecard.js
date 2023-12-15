@@ -12,7 +12,7 @@ class Scorecard{
      * @return {} a Boolean value indicating whether the scorecard is full
      */
     is_finished(){
-        console.log(this.score_elements)
+        return this.category_elements.every(iterated => iterated.disabled)
     }
 
     /**
@@ -72,7 +72,29 @@ class Scorecard{
      * @param {Object} gameObject the object version of the scorecard
     */
     load_scorecard(score_info){
-       
+        console.log(score_info)
+        console.log(this.score_elements)
+        let objectToPass = {
+            "rolls_remaining":score_info.dice_rolls,
+            "upper":{
+                "one":score_info.ones,
+                "two":score_info.twos,
+                "three":score_info.threes,
+                "four":score_info.fours,
+                "five":score_info.fives,
+                "sixe":score_info.sixes
+            },
+            "lower":{
+                "three_of_a_kind":score_info.three_of_a_kind,
+                "four_of_a_kind":score_info.four_of_a_kind,
+                "full_house":score_info.full_house,
+                "small_straight":score_info.small_straight,
+                "large_straight":score_info.large_straight,
+                "yahtzee":score_info.yahtzee,
+                "chance":score_info.chance
+            }
+        }
+        return objectToPass
     }
 
     /**
