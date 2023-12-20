@@ -36,9 +36,16 @@ class Scorecard{
     */
     get_score(){
         let count = 0;
-        return this.category_elements
-        for (let i = 0; i < this.category_elements["upper"].length; i++)
-            count += parseInt(this.category_elements["upper"][i].innerHTML)
+        for (let i = 0; i < this.category_elements.length; i++)
+            if (this.category_elements[i].disabled === true)
+                count += parseInt(this.category_elements[i].value)
+
+        let uppercount = 0
+        for (let i = 0; i<6; i++)
+            uppercount += parseInt(this.category_elements[i].value)
+        
+        if (uppercount > 63)
+            count += 35
         return count
     }
 
@@ -46,7 +53,23 @@ class Scorecard{
      * Updates all score elements for a scorecard
     */
     update_scores(){
-       
+        let score_info = this.to_object()
+        for (let i = 0; i < score_info["upper"].length; i ++)
+            if (score_info["upper"] != -1)
+                this.score_elements["upper_score"] += score_info["upper"][i]
+        if (this.score_elements["upper_score"] > 63){
+            this.score_elements["upper_bonus"] = 35
+            this.score_elements["upper_total"] = this.score_elements["upper_bonus"] + this.score_elements["upper_score"]
+        }
+        else
+            this.score_elements["upper_total"] = this.score_elements["upper_score"]
+
+        for (let i = 0; i < score_info["lower"].length; i ++)
+            if (score_info["lower"] != -1)
+                this.score_elements["lower_score"] += score_info["lower"][i]
+        
+        this.score_elements["grand_total"] = this.score_elements["upper_total"] + this.score_elements["lower_score"]
+        
     }
 
     /**
