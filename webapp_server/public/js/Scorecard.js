@@ -54,9 +54,11 @@ class Scorecard{
     */
     update_scores(){
         let score_info = this.to_object()
-        for (let i = 0; i < score_info["upper"].length; i ++)
-            if (score_info["upper"] != -1)
-                this.score_elements["upper_score"] += score_info["upper"][i]
+
+        for (const key in score_info["upper"]){
+            if (score_info["upper"][key] != -1) {
+                this.score_elements["upper_score"] += score_info["upper"][key]}
+        }
         if (this.score_elements["upper_score"] > 63){
             this.score_elements["upper_bonus"] = 35
             this.score_elements["upper_total"] = this.score_elements["upper_bonus"] + this.score_elements["upper_score"]
@@ -69,7 +71,6 @@ class Scorecard{
                 this.score_elements["lower_score"] += score_info["lower"][i]
         
         this.score_elements["grand_total"] = this.score_elements["upper_total"] + this.score_elements["lower_score"]
-        
     }
 
     /**
