@@ -335,265 +335,265 @@ describe('Scorecard', () => {
    });
   });
   
-  // describe('4) Scorecard - is_valid_score() Tests', () => {
-  //  const upper_tests={
-  //     "one" : [
-  //       [0, [6, 2, 3, 4, 5], true],
-  //       [1,[1, 2, 3, 4, 5], true],
-  //       [2,[1, 2, 3, 1, 5], true],
-  //       [3,[1, 2, 1, 1, 5], true],
-  //       [4,[1, 2, 1, 1, 1], true],
-  //       [5,[1, 1, 1, 1, 1], true],
-  //       [0, [0,0,0,0,0], false],
-  //       [-4, [1, 2, 3, 4, 5], false],
-  //       [4, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["four", [1, 2, 1, 1, 1], false]
-  //     ],
-  //     "two":[
-  //       [0,[6, 1, 3, 4, 5],true],
-  //       [2,[1, 2, 3, 4, 5],true],
-  //       [4,[1, 2, 3, 2, 5],true],
-  //       [6,[1, 2, 2, 2, 5],true],
-  //       [8,[2, 2, 2, 2, 1],true],
-  //       [10,[2, 2, 2, 2, 2],true],
-  //       [0, [0,0,0,0,0], false],
-  //       [4, [1, 2, 3, 4, 5], false],
-  //       [-4, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["two", [1, 2, 1, 1, 1], false]
-  //     ],
-  //     "three":[
-  //       [0,[6, 1, 2, 4, 5],true],
-  //       [3,[1, 2, 3, 4, 5],true],
-  //       [6,[1, 2, 3, 3, 5],true],
-  //       [9,[3, 2, 3, 2, 3],true],
-  //       [12,[3, 2, 3, 3, 3],true],
-  //       [15,[3, 3, 3, 3, 3],true],
-  //       [0, [0,0,0,0,0], false],
-  //       [4, [1, 2, 3, 4, 5], false],
-  //       [-4, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["three", [1, 2, 3, 1, 1], false]
-  //     ],
-  //     "four":[
-  //       [0,[2, 3, 5, 6, 1],true],
-  //       [4,[1, 2, 3, 4, 5],true],
-  //       [8,[1, 4, 4, 2, 5],true],
-  //       [12,[4, 4, 2, 4, 5],true],
-  //       [16,[4, 4, 2, 4, 4],true],
-  //       [20,[4, 4, 4, 4, 4],true],
-  //       [0, [0,0,0,0,0], false],
-  //       [8, [1, 2, 3, 4, 5], false],
-  //       [-8, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["four", [1, 2, 1, 1, 1], false]
-  //     ],
-  //     "five":[
-  //       [0,[1, 2, 3, 4, 6],true],
-  //       [5,[1, 2, 3, 4, 5],true],
-  //       [10,[1, 5, 3, 2, 5],true],
-  //       [15,[1, 5, 5, 2, 5],true],
-  //       [20,[5, 5, 5, 5, 1],true],
-  //       [25,[5, 5, 5, 5, 5],true],
-  //       [0, [0,0,0,0,0], false],
-  //       [10, [1, 2, 3, 4, 5], false],
-  //       [-10, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["five", [1, 2, 1, 5, 1], false]
-  //     ],
-  //     "six":[
-  //       [0,[5, 5, 4, 3, 2],true],
-  //       [6,[1, 2, 6, 4, 5],true],
-  //       [12,[1, 6, 3, 6, 5],true],
-  //       [18,[1, 2, 6, 6, 6],true],
-  //       [24,[6, 6, 6, 2, 6],true],
-  //       [30,[6, 6, 6, 6, 6],true],
-  //       [0, [0,0,0,0,0], false],
-  //       [6, [1, 2, 3, 4, 5], false],
-  //       [-6, [1, 2, 3, 4, 5], false],
-  //       ["", [1, 2, 3, 4, 5], false],
-  //       [" ", [1, 2, 3, 4, 5], false],
-  //       ["six", [1, 2, 6, 1, 1], false]
-  //     ]
-  //   }
-  //   let count =1;
-  //   for (let category_id in upper_tests){
-  //   let cat_tests = upper_tests[category_id];
-  //   for(let test of cat_tests){
-  //      let newDice = test[1];
-  //      let score_value = test[0];
-  //      let expected_result = test[2];
-  //     it(`4.1.${count} Upper: ${ category_id}- ${score_value} for ${newDice} -> ${expected_result}`, async() => {
+  describe('4) Scorecard - is_valid_score() Tests', () => {
+   const upper_tests={
+      "one" : [
+        [0, [6, 2, 3, 4, 5], true],
+        [1,[1, 2, 3, 4, 5], true],
+        [2,[1, 2, 3, 1, 5], true],
+        [3,[1, 2, 1, 1, 5], true],
+        [4,[1, 2, 1, 1, 1], true],
+        [5,[1, 1, 1, 1, 1], true],
+        [0, [0,0,0,0,0], false],
+        [-4, [1, 2, 3, 4, 5], false],
+        [4, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["four", [1, 2, 1, 1, 1], false]
+      ],
+      "two":[
+        [0,[6, 1, 3, 4, 5],true],
+        [2,[1, 2, 3, 4, 5],true],
+        [4,[1, 2, 3, 2, 5],true],
+        [6,[1, 2, 2, 2, 5],true],
+        [8,[2, 2, 2, 2, 1],true],
+        [10,[2, 2, 2, 2, 2],true],
+        [0, [0,0,0,0,0], false],
+        [4, [1, 2, 3, 4, 5], false],
+        [-4, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["two", [1, 2, 1, 1, 1], false]
+      ],
+      "three":[
+        [0,[6, 1, 2, 4, 5],true],
+        [3,[1, 2, 3, 4, 5],true],
+        [6,[1, 2, 3, 3, 5],true],
+        [9,[3, 2, 3, 2, 3],true],
+        [12,[3, 2, 3, 3, 3],true],
+        [15,[3, 3, 3, 3, 3],true],
+        [0, [0,0,0,0,0], false],
+        [4, [1, 2, 3, 4, 5], false],
+        [-4, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["three", [1, 2, 3, 1, 1], false]
+      ],
+      "four":[
+        [0,[2, 3, 5, 6, 1],true],
+        [4,[1, 2, 3, 4, 5],true],
+        [8,[1, 4, 4, 2, 5],true],
+        [12,[4, 4, 2, 4, 5],true],
+        [16,[4, 4, 2, 4, 4],true],
+        [20,[4, 4, 4, 4, 4],true],
+        [0, [0,0,0,0,0], false],
+        [8, [1, 2, 3, 4, 5], false],
+        [-8, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["four", [1, 2, 1, 1, 1], false]
+      ],
+      "five":[
+        [0,[1, 2, 3, 4, 6],true],
+        [5,[1, 2, 3, 4, 5],true],
+        [10,[1, 5, 3, 2, 5],true],
+        [15,[1, 5, 5, 2, 5],true],
+        [20,[5, 5, 5, 5, 1],true],
+        [25,[5, 5, 5, 5, 5],true],
+        [0, [0,0,0,0,0], false],
+        [10, [1, 2, 3, 4, 5], false],
+        [-10, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["five", [1, 2, 1, 5, 1], false]
+      ],
+      "six":[
+        [0,[5, 5, 4, 3, 2],true],
+        [6,[1, 2, 6, 4, 5],true],
+        [12,[1, 6, 3, 6, 5],true],
+        [18,[1, 2, 6, 6, 6],true],
+        [24,[6, 6, 6, 2, 6],true],
+        [30,[6, 6, 6, 6, 6],true],
+        [0, [0,0,0,0,0], false],
+        [6, [1, 2, 3, 4, 5], false],
+        [-6, [1, 2, 3, 4, 5], false],
+        ["", [1, 2, 3, 4, 5], false],
+        [" ", [1, 2, 3, 4, 5], false],
+        ["six", [1, 2, 6, 1, 1], false]
+      ]
+    }
+    let count =1;
+    for (let category_id in upper_tests){
+    let cat_tests = upper_tests[category_id];
+    for(let test of cat_tests){
+       let newDice = test[1];
+       let score_value = test[0];
+       let expected_result = test[2];
+      it(`4.1.${count} Upper: ${ category_id}- ${score_value} for ${newDice} -> ${expected_result}`, async() => {
 
-  //       let actual_result = await page.evaluate((category_id, newDice, score_value) => {
-  //         window.dice.set(newDice, 2);
-  //         return window.scorecard.is_valid_score(category_id, score_value);
-  //       }, category_id, newDice, score_value);
+        let actual_result = await page.evaluate((category_id, newDice, score_value) => {
+          window.dice.set(newDice, 2);
+          return window.scorecard.is_valid_score(category_id, score_value);
+        }, category_id, newDice, score_value);
 
-  //        expect(actual_result).toBe(expected_result);
-  //      });
-  //      count+=1;
-  //    }
-  //  }
+         expect(actual_result).toBe(expected_result);
+       });
+       count+=1;
+     }
+   }
    
-  //  const lower_tests={
-  //     "three_of_a_kind":[
-  //        [7,[1, 1, 1, 2, 2],true],
-  //        [7,[1, 1, 2, 1, 2],true],
-  //        [7,[1, 1, 2, 2, 1],true],
-  //        [7,[1, 2, 1, 1, 2],true],
-  //        [11,[1, 2, 1, 6, 1],true],
-  //        [8,[2, 1, 1, 1, 3],true],
-  //        [7,[2, 1, 1, 2, 1],true],
-  //        [18,[4, 5, 3, 3, 3],true],
-  //        [18,[4, 3, 5, 3, 3],true],
-  //        [18,[3, 4, 5, 3, 3],true],
-  //        [27,[6, 4, 6, 5, 6],true],
-  //        [9,[2, 2, 2, 1, 2],true],
-  //        [16,[3, 3, 4, 3, 3],true],
-  //        [21,[4, 5, 4, 4, 4],true],
-  //        [26,[6, 5, 5, 5, 5],true],
-  //        [20,[4, 4, 4, 4, 4],true],
-  //        [25,[5, 5, 5, 5, 5],true],
-  //        [30,[6, 6, 6, 6, 6],true],
-  //        [0,[2, 3, 4, 4, 5],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [6, [1, 3, 3, 3, 5], false],
-  //        [4, [1, 2, 1, 1, 1], false],
-  //        [-3, [1, 2, 3, 4, 5], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["four", [1, 2, 1, 1, 1], false]
-  //     ],
-  //     "four_of_a_kind":[
-  //        [6,[1, 1, 1, 1, 2],true],
-  //        [9,[2, 2, 2, 1, 2],true],
-  //        [16,[3, 3, 4, 3, 3],true],
-  //        [21,[4, 5, 4, 4, 4],true],
-  //        [26,[6, 5, 5, 5, 5],true],
-  //        [20,[4, 4, 4, 4, 4],true],
-  //        [25,[5, 5, 5, 5, 5],true],
-  //        [30,[6, 6, 6, 6, 6],true],
-  //        [0,[4, 5, 5, 5, 6],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [12, [1, 3, 3, 3, 3], false],
-  //        [3, [1, 2, 1, 1, 1], false],
-  //        [-3, [1, 2, 3, 4, 5], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["six", [1, 2, 1, 1, 1], false]
-  //     ],
-  //     "full_house":[
-  //        [25,[1, 1, 1, 2, 2],true],
-  //        [25,[1, 1, 2, 1, 2],true],
-  //        [25,[1, 1, 2, 2, 1],true],
-  //        [25,[1, 2, 1, 1, 2],true],
-  //        [25,[1, 2, 1, 2, 1],true],
-  //        [25,[3, 1, 1, 1, 3],true],
-  //        [25,[2, 1, 1, 2, 1],true],
-  //        [25,[5, 5, 3, 3, 3],true],
-  //        [25,[5, 3, 5, 3, 3],true],
-  //        [25,[3, 5, 5, 3, 3],true],
-  //        [25,[6, 5, 6, 5, 6],true],
-  //        [0,[3, 3, 3, 3, 3],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [11, [1, 3, 3, 3, 1], false],
-  //        [25, [1, 1, 1, 1, 1], false],
-  //        [-25, [2, 2, 3, 3, 3], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["full-house", [1, 2, 2, 1, 1], false]
-  //     ],
-  //     "small_straight":[
-  //        [30,[1, 2, 3, 4, 5],true],
-  //        [30,[1, 2, 3, 4, 6],true],
-  //        [30,[2, 3, 4, 5, 6],true],
-  //        [30,[2, 2, 3, 4, 5],true],
-  //        [30,[2, 3, 4, 5, 3],true],
-  //        [30,[1, 2, 3, 4, 5],true],
-  //        [30,[4, 3, 4, 5, 6],true],
-  //        [30,[2, 3, 4, 3, 1],true],
-  //        [30,[2, 3, 4, 6, 1],true],
-  //        [0,[1, 2, 3, 5, 6],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [30, [1, 3, 3, 3, 1], false],
-  //        [25, [1, 2, 3, 4, 1], false],
-  //        [-30, [2, 3, 4, 5, 6], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["small-straight", [1, 2, 3, 4, 1], false]
-  //     ],
-  //     "large_straight":[
-  //        [40,[1, 2, 3, 4, 5],true],
-  //        [40,[3, 2, 1, 4, 5],true],
-  //        [40,[1, 4, 3, 5, 2],true],
-  //        [40,[2, 3, 4, 5, 6],true],
-  //        [40,[4, 5, 3, 2, 6],true],
-  //        [40,[2, 5, 3, 4, 6],true],
-  //        [0,[1, 2, 3, 4, 6],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [40, [1, 3, 3, 3, 1], false],
-  //        [30, [1, 2, 3, 4, 5], false],
-  //        [-40, [2, 3, 4, 5, 6], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["large-straight", [1, 2, 3, 4, 5], false]
-  //     ],
-  //     "yahtzee":[
-  //        [50,[1, 1, 1, 1, 1],true],
-  //        [50,[2, 2, 2, 2, 2],true],
-  //        [50,[3, 3, 3, 3, 3],true],
-  //        [50,[4, 4, 4, 4, 4],true],
-  //        [50,[5, 5, 5, 5, 5],true],
-  //        [50,[6, 6, 6, 6, 6],true],
-  //        [0,[3, 3, 3, 4, 3],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [50, [1, 3, 3, 3, 1], false],
-  //        [25, [2, 2, 2, 2, 2], false],
-  //        [-50, [4, 4, 4, 4, 4], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["yahtzee", [2, 2, 2, 2, 2], false]
-  //     ],
-  //     "chance":[
-  //        [6,[1, 1, 1, 1, 2],true],
-  //        [9,[2, 2, 2, 1, 2],true],
-  //        [16,[3, 3, 4, 3, 3],true],
-  //        [21,[4, 5, 4, 4, 4],true],
-  //        [26,[6, 5, 5, 5, 5],true],
-  //        [0, [0,0,0,0,0], false],
-  //        [25, [5, 5, 5, 5, 4], false],
-  //        ["", [1, 2, 3, 4, 5], false],
-  //        [" ", [1, 2, 3, 4, 5], false],
-  //        ["chance", [1, 2, 3, 4, 1], false]
-  //     ]
-  //     }
-  //     count =1;
-  //     for (let category_id in lower_tests){
-  //     let cat_tests = lower_tests[category_id];
-  //     for(let test of cat_tests){
-  //       let newDice = test[1];
-  //       let score_value = test[0];
-  //       let expected_result = test[2];
-  //      it(`4.2.${count} Lower: ${ category_id}- ${score_value} for ${newDice} -> ${expected_result}`, async() => {
+   const lower_tests={
+      "three_of_a_kind":[
+         [7,[1, 1, 1, 2, 2],true],
+         [7,[1, 1, 2, 1, 2],true],
+         [7,[1, 1, 2, 2, 1],true],
+         [7,[1, 2, 1, 1, 2],true],
+         [11,[1, 2, 1, 6, 1],true],
+         [8,[2, 1, 1, 1, 3],true],
+         [7,[2, 1, 1, 2, 1],true],
+         [18,[4, 5, 3, 3, 3],true],
+         [18,[4, 3, 5, 3, 3],true],
+         [18,[3, 4, 5, 3, 3],true],
+         [27,[6, 4, 6, 5, 6],true],
+         [9,[2, 2, 2, 1, 2],true],
+         [16,[3, 3, 4, 3, 3],true],
+         [21,[4, 5, 4, 4, 4],true],
+         [26,[6, 5, 5, 5, 5],true],
+         [20,[4, 4, 4, 4, 4],true],
+         [25,[5, 5, 5, 5, 5],true],
+         [30,[6, 6, 6, 6, 6],true],
+         [0,[2, 3, 4, 4, 5],true],
+         [0, [0,0,0,0,0], false],
+         [6, [1, 3, 3, 3, 5], false],
+         [4, [1, 2, 1, 1, 1], false],
+         [-3, [1, 2, 3, 4, 5], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["four", [1, 2, 1, 1, 1], false]
+      ],
+      "four_of_a_kind":[
+         [6,[1, 1, 1, 1, 2],true],
+         [9,[2, 2, 2, 1, 2],true],
+         [16,[3, 3, 4, 3, 3],true],
+         [21,[4, 5, 4, 4, 4],true],
+         [26,[6, 5, 5, 5, 5],true],
+         [20,[4, 4, 4, 4, 4],true],
+         [25,[5, 5, 5, 5, 5],true],
+         [30,[6, 6, 6, 6, 6],true],
+         [0,[4, 5, 5, 5, 6],true],
+         [0, [0,0,0,0,0], false],
+         [12, [1, 3, 3, 3, 3], false],
+         [3, [1, 2, 1, 1, 1], false],
+         [-3, [1, 2, 3, 4, 5], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["six", [1, 2, 1, 1, 1], false]
+      ],
+      "full_house":[
+         [25,[1, 1, 1, 2, 2],true],
+         [25,[1, 1, 2, 1, 2],true],
+         [25,[1, 1, 2, 2, 1],true],
+         [25,[1, 2, 1, 1, 2],true],
+         [25,[1, 2, 1, 2, 1],true],
+         [25,[3, 1, 1, 1, 3],true],
+         [25,[2, 1, 1, 2, 1],true],
+         [25,[5, 5, 3, 3, 3],true],
+         [25,[5, 3, 5, 3, 3],true],
+         [25,[3, 5, 5, 3, 3],true],
+         [25,[6, 5, 6, 5, 6],true],
+         [0,[3, 3, 3, 3, 3],true],
+         [0, [0,0,0,0,0], false],
+         [11, [1, 3, 3, 3, 1], false],
+         [25, [1, 1, 1, 1, 1], false],
+         [-25, [2, 2, 3, 3, 3], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["full-house", [1, 2, 2, 1, 1], false]
+      ],
+      "small_straight":[
+         [30,[1, 2, 3, 4, 5],true],
+         [30,[1, 2, 3, 4, 6],true],
+         [30,[2, 3, 4, 5, 6],true],
+         [30,[2, 2, 3, 4, 5],true],
+         [30,[2, 3, 4, 5, 3],true],
+         [30,[1, 2, 3, 4, 5],true],
+         [30,[4, 3, 4, 5, 6],true],
+         [30,[2, 3, 4, 3, 1],true],
+         [30,[2, 3, 4, 6, 1],true],
+         [0,[1, 2, 3, 5, 6],true],
+         [0, [0,0,0,0,0], false],
+         [30, [1, 3, 3, 3, 1], false],
+         [25, [1, 2, 3, 4, 1], false],
+         [-30, [2, 3, 4, 5, 6], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["small-straight", [1, 2, 3, 4, 1], false]
+      ],
+      "large_straight":[
+         [40,[1, 2, 3, 4, 5],true],
+         [40,[3, 2, 1, 4, 5],true],
+         [40,[1, 4, 3, 5, 2],true],
+         [40,[2, 3, 4, 5, 6],true],
+         [40,[4, 5, 3, 2, 6],true],
+         [40,[2, 5, 3, 4, 6],true],
+         [0,[1, 2, 3, 4, 6],true],
+         [0, [0,0,0,0,0], false],
+         [40, [1, 3, 3, 3, 1], false],
+         [30, [1, 2, 3, 4, 5], false],
+         [-40, [2, 3, 4, 5, 6], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["large-straight", [1, 2, 3, 4, 5], false]
+      ],
+      "yahtzee":[
+         [50,[1, 1, 1, 1, 1],true],
+         [50,[2, 2, 2, 2, 2],true],
+         [50,[3, 3, 3, 3, 3],true],
+         [50,[4, 4, 4, 4, 4],true],
+         [50,[5, 5, 5, 5, 5],true],
+         [50,[6, 6, 6, 6, 6],true],
+         [0,[3, 3, 3, 4, 3],true],
+         [0, [0,0,0,0,0], false],
+         [50, [1, 3, 3, 3, 1], false],
+         [25, [2, 2, 2, 2, 2], false],
+         [-50, [4, 4, 4, 4, 4], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["yahtzee", [2, 2, 2, 2, 2], false]
+      ],
+      "chance":[
+         [6,[1, 1, 1, 1, 2],true],
+         [9,[2, 2, 2, 1, 2],true],
+         [16,[3, 3, 4, 3, 3],true],
+         [21,[4, 5, 4, 4, 4],true],
+         [26,[6, 5, 5, 5, 5],true],
+         [0, [0,0,0,0,0], false],
+         [25, [5, 5, 5, 5, 4], false],
+         ["", [1, 2, 3, 4, 5], false],
+         [" ", [1, 2, 3, 4, 5], false],
+         ["chance", [1, 2, 3, 4, 1], false]
+      ]
+      }
+      count =1;
+      for (let category_id in lower_tests){
+      let cat_tests = lower_tests[category_id];
+      for(let test of cat_tests){
+        let newDice = test[1];
+        let score_value = test[0];
+        let expected_result = test[2];
+       it(`4.2.${count} Lower: ${ category_id}- ${score_value} for ${newDice} -> ${expected_result}`, async() => {
  
-  //        let actual_result = await page.evaluate((category_id, newDice, score_value) => {
-  //          window.dice.set(newDice, 2);
-  //          return window.scorecard.is_valid_score(category_id, score_value);
-  //        }, category_id, newDice, score_value);
+         let actual_result = await page.evaluate((category_id, newDice, score_value) => {
+           window.dice.set(newDice, 2);
+           return window.scorecard.is_valid_score(category_id, score_value);
+         }, category_id, newDice, score_value);
  
-  //         expect(actual_result).toBe(expected_result);
-  //       });
-  //       count+=1;
-  //      }
-  //    }
-  // });
+          expect(actual_result).toBe(expected_result);
+        });
+        count+=1;
+       }
+     }
+  });
 
   describe('5) Scorecard- update_scores() Tests', () => {
    it("5.1: update_scores() should correctly update score elements for a full scorecard w/ no bonus", async () => {

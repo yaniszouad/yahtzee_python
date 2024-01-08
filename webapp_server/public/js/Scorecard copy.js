@@ -31,7 +31,6 @@ class Scorecard{
           } else if (value === 0) {
             return true;
           }
-          console.log("WOOWOA", category.id)
           const type = category.id.slice(0, -6);
           const uppers = ["one", "two", "three", "four", "five", "six"];
           const dice_counts = this.dice.get_counts();
