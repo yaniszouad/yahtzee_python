@@ -28,41 +28,64 @@ class Scorecard{
     is_valid_score(category, value){
         if (this.dice.get_sum() === 0) {
             return false;
-          } else if (value === 0) {
+        } else if (value === 0) {
+            return true;
+        }
+
+        let uppers = ["one", "two", "three", "four", "five", "six"];
+        let dice_counts = this.dice.get_counts();
+        if (uppers.includes(category)) {
+            let indexN = uppers.indexOf(category);
+            return value === dice_counts[indexN] * (indexN + 1);
+        }
+        if (category === "three_of_a_kind" || category === "four_of_a_kind") {
+            let requiredCount = category === "three_of_a_kind" ? 3 : 4;
+            return Math.max(...dice_counts) >= requiredCount && value === this.dice.get_sum();
+        }
+        if (category === "full_house"){
+            if (category === "full_house") {
+                let hasThree = dice_counts.some(count => count === 3);
+                let hasTwo = dice_counts.some(count => count === 2);
+                return hasThree && hasTwo && value === 25;
+            }}
+        if (category === "large_straight")
+            return this.isLargeStraight(dice_counts) && value === 40;
+        if (category === "small_straight")
+            return this.isSmallStraight(dice_counts) && value === 30;  
+        if (category === "yahtzee"){
+            return Math.max(...dice_counts) === 5 && value === 50;}
+        if (category === "chance"){
+            return value === this.dice.get_sum();}
+        else{
+            return "Error";}
+          
+    }
+    isSmallStraight(dice_counts) {
+        let straights = [
+          [1,2,3,4],
+          [2,3,4,5],
+          [3,4,5,6]
+        ];
+        for (let straight of straights) {
+          if (straight.every(num => dice_counts[num-1] > 0)) {
             return true;
           }
-          console.log("WOOWOA", category.id)
-          const type = category.id.slice(0, -6);
-          const uppers = ["one", "two", "three", "four", "five", "six"];
-          const dice_counts = this.dice.get_counts();
-          if (uppers.includes(type)) {
-            const number_index = uppers.indexOf(type);
-            return value === dice_counts[number_index] * (number_index + 1);
+        }
+        return false;
+      }
+      
+      isLargeStraight(dice_counts) {
+        let straights = [
+          [1,2,3,4,5],
+          [2,3,4,5,6]
+        ];
+        for (let straight of straights) {
+          if (straight.every(num => dice_counts[num-1] > 0)) {
+            return true;
           }
-          switch (type) {
-            case "three_of_a_kind":
-              return Math.max(...dice_counts) >= 3 && value === this.dice.get_sum();
-            case "four_of_a_kind":
-              return Math.max(...dice_counts) >= 4 && value === this.dice.get_sum();
-            case "full_house":
-              let three = false;
-              let two = false;
-              for (const val of dice_counts) {
-                if (val === 2) two = true;
-                else if (val === 3) three = true;
-              }
-              return two && three && value === 25;
-            case "small_straight":
-              return Math.max(...dice_counts) <= 2 && value === 30;
-            case "large_straight":
-              return Math.max(...dice_counts) === 1 && value === 40;
-            case "yahtzee":
-              return Math.max(...dice_counts) === 5 && value === 50;
-            case "chance":
-              return value === this.dice.get_sum();
-          }
-    }
-
+        }
+        return false;
+      }
     /**
     * Returns the current Grand Total score for a scorecard
     * 

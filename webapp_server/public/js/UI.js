@@ -32,7 +32,14 @@ window.scorecard = scorecard;
 //---------Event Handlers-------//
 function reserve_die_handler(event){
     console.log("Trying to reserve "+event.target.id);
-    dice.reserve(document.getElementById(event.target.id))
+    console.log(event.target.src.slice(29,-4))
+    if (event.target.src.slice(29,-4) == "blank"){
+        console.log("this should work")
+        display_feedback("Cannot reserve a blank die", "bad");
+    }
+    else{
+        dice.reserve(document.getElementById(event.target.id))
+    }
 }
 
 function roll_dice_handler(){
@@ -50,14 +57,24 @@ function roll_dice_handler(){
 
 function enter_score_handler(event){
     console.log("Score entry attempted for: ", event.target.id);
-    if (scorecard.is_valid_score(event.target, parseInt(event.target.value))) {
-        event.target.disabled = true;
+    if (scorecard.is_valid_score(event.target.id, parseInt(event.target.value))) {
+        display_feedback("Correctly entered the score", "good");
+        setAttribute(String(event.target), "disabled");
         scorecard.update_scores();
         dice.reset();
     }
+    else
+        display_feedback("Incorrect score", "bad");
+    
 }
 
 //------Feedback ---------//
 function display_feedback(message, context){
-
+    let feedback_element = document.getElementById("feedback");
+    feedback_element.innerHTML = message;
+    if (context == "good"){
+        feedback_element.className = "good";
+    } else {
+        feedback_element.className = "bad";
+    }
 }
