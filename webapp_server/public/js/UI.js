@@ -56,10 +56,10 @@ function roll_dice_handler(){
 }
 
 function enter_score_handler(event){
-    console.log("Score entry attempted for: ", event.target.id);
-    if (scorecard.is_valid_score(event.target.id, parseInt(event.target.value))) {
+    console.log("Score entry attempted for: ", event.target.id.slice(0,-6));
+    if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
         display_feedback("Correctly entered the score", "good");
-        setAttribute(String(event.target), "disabled");
+        document.getElementById(event.target.id).disabled = true
         scorecard.update_scores();
         dice.reset();
     }
