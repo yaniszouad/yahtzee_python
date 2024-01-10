@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const tools = require('./util');
+const fetch = require('node-fetch');
 
 let url_base='http://127.0.0.1:3000'
 let num_games_per_user=3;
@@ -232,7 +233,7 @@ describe('Scorecard', () => {
   });
   describe('2) UI - Scorecard Feedback Tests', () => {
     it("2.1: .good feedback should be displayed on a valid score entry", async () => {
-      await enterCategory(page, [1, 2, 3, 4, 5], "large_straight_input", 40);  //valid
+      await enterCategory(page, [1, 2, 3, 4, 5], "one_input", 1);  //valid
 
       let feedback = await page.evaluate('document.getElementById("feedback").innerHTML;');
       expect(feedback.length).toBeGreaterThan(10);
@@ -242,7 +243,7 @@ describe('Scorecard', () => {
       expect(feedback_bad).toBe(false);
     });
     it("2.2: .bad feedback should be displayed on an invalid score entry ", async () => {
-      await enterCategory(page, [1, 2, 6, 4, 5], "large_straight_input", 40);  //invalid
+      await enterCategory(page, [1, 2, 6, 4, 5], "two_input", 4);  //invalid
 
       let feedback = await page.evaluate('document.getElementById("feedback").innerHTML;');
       expect(feedback.length).toBeGreaterThan(10);
@@ -251,9 +252,18 @@ describe('Scorecard', () => {
       expect(feedback_good).toBe(false);
       expect(feedback_bad).toBe(true);
     });
-    it("2.3: .good feedback should be displayed on a completed scorecard", async () => {
-      /*
-        let score_info_partial_bonus={
+    it("2.3: .bad feedback for score entry w/ blank dice", async () => {
+      await enterCategory(page, [0, 0, 0, 0, 0], "large_straight_input", 40);  //invalid
+
+      let feedback = await page.evaluate('document.getElementById("feedback").innerHTML;');
+      expect(feedback.length).toBeGreaterThan(10);
+      let feedback_good = await page.evaluate('document.getElementById("feedback").classList.contains("good")');
+      let feedback_bad = await page.evaluate('document.getElementById("feedback").classList.contains("bad")');
+      expect(feedback_good).toBe(false);
+      expect(feedback_bad).toBe(true);
+    });
+    it("2.4: .good feedback should be displayed on a completed scorecard", async () => {
+        /*let score_info_partial_bonus={
           "dice_rolls":2,
           "upper":{
               "ones":4,
@@ -272,8 +282,11 @@ describe('Scorecard', () => {
               "yahtzee":0,
               "chance":8
           }
-        }
-      */
+        }*/
+      
+      let game_name = users[3]["username"]+"game1";
+      let username = users[3]["username"];
+      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
       await page.evaluate((score_info_partial_bonus) => {
         window.scorecard.load_scorecard(score_info_partial_bonus);
       }, score_info_partial_bonus);
@@ -287,16 +300,7 @@ describe('Scorecard', () => {
       expect(feedback_good).toBe(true);
       expect(feedback_bad).toBe(false);
     });
-    it("2.4: .bad feedback for score entry w/ blank dice", async () => {
-      await enterCategory(page, [0, 0, 0, 0, 0], "large_straight_input", 40);  //invalid
 
-      let feedback = await page.evaluate('document.getElementById("feedback").innerHTML;');
-      expect(feedback.length).toBeGreaterThan(10);
-      let feedback_good = await page.evaluate('document.getElementById("feedback").classList.contains("good")');
-      let feedback_bad = await page.evaluate('document.getElementById("feedback").classList.contains("bad")');
-      expect(feedback_good).toBe(false);
-      expect(feedback_bad).toBe(true);
-    });
   });
   describe('3) UI - Score Entry Tests', () => {
     it("3.1:  A valid score entry should result in a disabled category", async () => {
@@ -305,7 +309,7 @@ describe('Scorecard', () => {
       expect(isDisabled).toBe(true);
     }); 
     it("3.2:  A valid score entry should result in dice reset", async () => {
-      await enterCategory(page, [1, 2, 3, 4, 5], "large_straight_input", 40);
+      await enterCategory(page, [1, 2, 3, 4, 5], "small_straight_input", 30);
 
       let die0 = await page.evaluate('document.getElementById("die_0").getAttribute("src")');
       let die1 = await page.evaluate('document.getElementById("die_1").getAttribute("src")');
@@ -321,13 +325,14 @@ describe('Scorecard', () => {
       expect(rolls_remaining).toBe(3);
     });
     it("3.3:  An invalid score entry should not result in a disabled category", async () => {
-      await enterCategory(page, [1, 2, 6, 4, 5], "large_straight_input", 40);
-      let isDisabled = await page.evaluate(`document.getElementById("large_straight_input").disabled;`);
+      await enterCategory(page, [1, 2, 6, 4, 5], "yahtzee_input", 40);
+
+      let isDisabled = await page.evaluate(`document.getElementById("yahtzee_input").disabled;`);
       expect(isDisabled).toBe(false);
     }); 
     it("3.4:  An invalid score entry should not result in dice reset", async () => {
       await enterCategory(page, [1, 2, 6, 4, 5], "large_straight_input", 40);
-
+     
       let die0 = await page.evaluate('document.getElementById("die_0").getAttribute("src")');
       let die1 = await page.evaluate('document.getElementById("die_1").getAttribute("src")');
       let die2 = await page.evaluate('document.getElementById("die_2").getAttribute("src")');
@@ -342,6 +347,7 @@ describe('Scorecard', () => {
       expect(rolls_remaining).toBe(2);
     });
   });
+  
   describe('4) Roll Count Tests', () => {
     it("4.1: Roll count should decrease roll count by 1 after a roll", async () => {
       const rollButton = await page.$('#roll_button')
@@ -464,7 +470,6 @@ describe('Scorecard', () => {
           body: JSON.stringify(new_score_info)
       });
 
-      console.log("Modified Scorecard:", await res.text());
       //visit page
       await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
       await page.screenshot({
@@ -540,14 +545,159 @@ describe('Scorecard', () => {
     });
 
     it("5.3: A valid score entry should result in the scorecard being updated in the db_server", async () => {
-      expect(false).toBe(true);
+      let username = users[1]["username"];
+      let game_name = username+"game1";
+      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
+      //loads scores from test 5.1
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_3_page_load.png",   
+        "fullPage": true,   
+      });
+      let scorecard_before = await page.evaluate('window.scorecard.to_object();');
+      await enterCategory(page, [1, 5, 3, 5, 5], "five_input", 15);
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_3_after_valid_score_entry.png",   
+        "fullPage": true,   
+      });
+      let scorecard_after= await page.evaluate('window.scorecard.to_object();');
+       
+      //Get scorecard id
+      let url = 'http://127.0.0.1:5000/users/'+username;
+      let res = await fetch(url);
+      let user_info = JSON.parse(await res.text());
+
+      url = 'http://127.0.0.1:5000/games/'+game_name;
+      res = await fetch(url);
+      game_info = JSON.parse(await res.text());
+
+      //get scorecard for user with game_id
+      url = 'http://127.0.0.1:5000/scorecards';
+      res = await fetch(url);
+      let all_scorecards = JSON.parse(await res.text());
+      let DB_route_scorecard_info = {}
+      for (scorecard of all_scorecards){
+        if (scorecard.user_id == user_info["id"] && scorecard.game_id== game_info["id"]){
+          DB_route_scorecard_info = scorecard;
+          break;
+        }
+      }
+      
+      expect(scorecard_before["upper"]["fives"]).toBe(-1);
+      expect(scorecard_after["upper"]["fives"]).toBe(DB_route_scorecard_info.score_info["upper"]["fives"]);
+      expect(DB_route_scorecard_info.score_info["upper"]["fives"]).toBe(15);
+      expect(DB_route_scorecard_info.score_info["upper"]["ones"]).toBe(3);
+      expect(DB_route_scorecard_info.score_info["upper"]["sixes"]).toBe(12);
     });
     it("5.4: An invalid score entry should not result in an updated scorecard being in the db_server", async () => {
-      expect(false).toBe(true);
+      let username = users[1]["username"];
+      let game_name = username+"game1";
+      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
+      //loads scores from test 5.1
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_4_page_load.png",   
+        "fullPage": true,   
+      });
+      let scorecard_before = await page.evaluate('window.scorecard.to_object();');
+
+      await enterCategory(page, [4, 5, 3, 5, 5], "four_input", 8);
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_4_after_invalid_score_entry.png",   
+        "fullPage": true,   
+      });
+      let scorecard_after= await page.evaluate('window.scorecard.to_object();');
+      //Get scorecard id
+      let url = 'http://127.0.0.1:5000/users/'+username;
+      let res = await fetch(url);
+      let user_info = JSON.parse(await res.text());
+
+      url = 'http://127.0.0.1:5000/games/'+game_name;
+      res = await fetch(url);
+      game_info = JSON.parse(await res.text());
+
+      //get scorecard for user with game_id
+      url = 'http://127.0.0.1:5000/scorecards';
+      res = await fetch(url);
+      let all_scorecards = JSON.parse(await res.text());
+      let DB_route_scorecard_info = {}
+      for (scorecard of all_scorecards){
+        if (scorecard.user_id == user_info["id"] && scorecard.game_id== game_info["id"]){
+          DB_route_scorecard_info = scorecard;
+          break;
+        }
+      }
+
+      expect(scorecard_before["upper"]["fours"]).toBe(-1);
+      expect(scorecard_after["upper"]["fours"]).toBe(DB_route_scorecard_info.score_info["upper"]["fours"]);
+      expect(DB_route_scorecard_info.score_info["upper"]["fours"]).toBe(-1);
+      expect(DB_route_scorecard_info.score_info["upper"]["fives"]).toBe(15);
+      expect(DB_route_scorecard_info.score_info["upper"]["ones"]).toBe(3);
+      expect(DB_route_scorecard_info.score_info["upper"]["sixes"]).toBe(12);
+
     });
     it("5.5: Game page should update the correct scorecard in DB after a game is finished", async () => {
-      expect(false).toBe(true);
+      let username = users[1]["username"];
+      let game_name = username+"game1";
+      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
+      //loads scores from test 5.1
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_5_page_load.png",   
+        "fullPage": true,   
+      });
+      let scorecard_before = await page.evaluate('window.scorecard.to_object();');
+
+      await enterCategory(page, [4, 5, 3, 5, 5], "two_input", 0);
+      await enterCategory(page, [4, 5, 3, 5, 5], "four_input", 4);
+      await enterCategory(page, [4, 5, 3, 5, 5], "three_of_a_kind_input", 22);
+      await enterCategory(page, [4, 5, 5, 5, 5], "four_of_a_kind_input", 24);
+      await enterCategory(page, [5, 5, 5, 5, 5], "chance_input", 25);
+      await page.screenshot({
+        "type": "png", 
+        "path": "./5_5_after_full.png",   
+        "fullPage": true,   
+      });
+      let scorecard_after_full = await page.evaluate('window.scorecard.to_object();');
+
+       //Get scorecard id
+       let url = 'http://127.0.0.1:5000/users/'+username;
+       let res = await fetch(url);
+       let user_info = JSON.parse(await res.text());
+ 
+       url = 'http://127.0.0.1:5000/games/'+game_name;
+       res = await fetch(url);
+       game_info = JSON.parse(await res.text());
+ 
+       //get scorecard for user with game_id
+       url = 'http://127.0.0.1:5000/scorecards';
+       res = await fetch(url);
+       let all_scorecards = JSON.parse(await res.text());
+       let DB_route_scorecard_info = {}
+       for (scorecard of all_scorecards){
+         if (scorecard.user_id == user_info["id"] && scorecard.game_id== game_info["id"]){
+           DB_route_scorecard_info = scorecard;
+           break;
+         }
+       }
+
+        expect(DB_route_scorecard_info.score_info["upper"]["ones"]).toBe(3);
+        expect(DB_route_scorecard_info.score_info["upper"]["twos"]).toBe(0);
+        expect(DB_route_scorecard_info.score_info["upper"]["threes"]).toBe(9);
+        expect(DB_route_scorecard_info.score_info["upper"]["fours"]).toBe(4);
+        expect(DB_route_scorecard_info.score_info["upper"]["fives"]).toBe(15);
+        expect(DB_route_scorecard_info.score_info["upper"]["sixes"]).toBe(12);
+        expect(DB_route_scorecard_info.score_info["lower"]["three_of_a_kind"]).toBe(22);
+        expect(DB_route_scorecard_info.score_info["lower"]["four_of_a_kind"]).toBe(24);
+        expect(DB_route_scorecard_info.score_info["lower"]["full_house"]).toBe(25);
+        expect(DB_route_scorecard_info.score_info["lower"]["small_straight"]).toBe(0);
+        expect(DB_route_scorecard_info.score_info["lower"]["large_straight"]).toBe(0);
+        expect(DB_route_scorecard_info.score_info["lower"]["yahtzee"]).toBe(50);
+        expect(DB_route_scorecard_info.score_info["lower"]["chance"]).toBe(25);
     });
  
   });
+  
 });

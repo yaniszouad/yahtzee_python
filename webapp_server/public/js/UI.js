@@ -34,7 +34,6 @@ function reserve_die_handler(event){
     console.log("Trying to reserve "+event.target.id);
     console.log(event.target.src.slice(29,-4))
     if (event.target.src.slice(29,-4) == "blank"){
-        console.log("this should work")
         display_feedback("Cannot reserve a blank die", "bad");
     }
     else{
