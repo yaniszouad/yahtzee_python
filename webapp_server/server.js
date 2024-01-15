@@ -399,7 +399,24 @@ app.post('/games', async function(request, response) {
     });
     let text = await res.text();
     let details = JSON.parse(text);
-    
+
+
+    let user_url = "http://127.0.0.1:5000/users/" + username;
+    let user_res = await fetch(user_url);
+    let user = JSON.parse(await user_res.text());
+
+    let scorecard_url = "http://127.0.0.1:5000/scorecards";
+    let scorecard_res = await fetch(scorecard_url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ game_id: details.id, user_id: user.id, turn_order: 1 }),
+    });
+
+    let posted_scorecard = await scorecard_res.text();
+    let scorecard = JSON.parse(posted_scorecard);
+    console.log("Returned scorecard:", scorecard);
+
+
     if (details["name"]){
       if(details.length > 1){
         for (let i = 0; i < details.length; i++) {
@@ -447,12 +464,55 @@ app.get('/games/:gameName/:username', async function(request, response) {
   let username = request.params.username; 
   let gameName = request.params.gameName;
 
+
+  res = await fetch('http://127.0.0.1:5000/users/'+username);
+  let details = JSON.parse(await res.text());
+  let user_id = details["id"];
+
+  res2 = await fetch('http://127.0.0.1:5000/scorecards')
+  let scorecards = JSON.parse(await res2.text());
+
+  let goodScorecard
+
+  for (let i = 0; i < scorecards.length; i++) {
+    if (scorecards[i]["user_id"] == user_id){
+      resDeletedScorecard = await fetch('http://127.0.0.1:5000/scorecards/' +scorecards[i].id);  
+      goodScorecard = await resDeletedScorecard.text();
+    }
+  }
+
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   response.render("game/game",{
     feedback:"",
     gameName:gameName,
+    scorecard: goodScorecard,
     username:username
+  });
+});
+
+app.post('/scorecards/:scorecard_id', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  let scorecard_id = request.params.scorecard_id;
+  let scorecard_data = request.body;
+  console.log("THIS IS THE SCORECARD ID", scorecard_id, scorecard_data)
+
+  url = 'https://127.0.0.1:5000/scorecards/' + scorecard_id;
+  headers = {"Content-Type": "application/json"}
+
+  let res = await fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify(scorecard_data)
+  });
+
+  res_data = JSON.parse(await res.text());
+  console.log("THIS THE DATA OF RES", res_data)
+
+  response.status(200);
+  response.setHeader('Content-Type', 'text/html')
+  response.send({
+    message: "Scorecard updated successfully"
   });
 });
 

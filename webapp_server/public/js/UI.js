@@ -28,6 +28,9 @@ for (let category of category_elements){
 let score_elements = Array.from(document.getElementsByClassName("score"));
 let scorecard = new Scorecard(category_elements, score_elements, dice);
 window.scorecard = scorecard;
+scorecard.load_scorecard(JSON.parse(document.getElementById("scorecard_values").dataset.score));
+window.scorecard = scorecard;
+
 
 //---------Event Handlers-------//
 function reserve_die_handler(event){
@@ -54,13 +57,26 @@ function roll_dice_handler(){
       console.log("Count of all dice faces:", dice.get_counts());
 }
 
-function enter_score_handler(event){
+async function enter_score_handler(event){
     console.log("Score entry attempted for: ", event.target.id.slice(0,-6));
     if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
         display_feedback("Correctly entered the score", "good");
         document.getElementById(event.target.id).disabled = true
-        scorecard.update_scores();
         dice.reset();
+        let url_routes = window.location.href.split("/");
+        let username = url_routes[url_routes.length-1];
+        let scorecard_id = document.getElementById(username).innerHTML;
+        let data = window.scorecard.to_object();
+        
+        const res = await fetch("/scorecard/"+scorecard_id, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+        console.log(await res.json());
+        
     }
     else
         display_feedback("Incorrect score", "bad");
