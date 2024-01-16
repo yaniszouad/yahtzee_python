@@ -78,7 +78,7 @@ users_data = [
 ]
 
 blank_card={
-            "dice_rolls":0,
+            "dice_rolls":3,
             "upper":{
                 "ones":-1,
                 "twos":-1,

@@ -28,10 +28,10 @@ for (let category of category_elements){
 let score_elements = Array.from(document.getElementsByClassName("score"));
 let scorecard = new Scorecard(category_elements, score_elements, dice);
 window.scorecard = scorecard;
+console.log("What to put into the scorecard: ",JSON.parse(document.getElementById("scorecard_values").dataset.score))
 scorecard.load_scorecard(JSON.parse(document.getElementById("scorecard_values").dataset.score));
 window.scorecard = scorecard;
-
-
+dice.reset();
 //---------Event Handlers-------//
 function reserve_die_handler(event){
     console.log("Trying to reserve "+event.target.id);
@@ -62,12 +62,14 @@ async function enter_score_handler(event){
     if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
         display_feedback("Correctly entered the score", "good");
         document.getElementById(event.target.id).disabled = true
-        dice.reset();
+        
         let url_routes = window.location.href.split("/");
         let username = url_routes[url_routes.length-1];
-        let scorecard_id = document.getElementById(username).innerHTML;
+        console.log(username)
+        console.log("This is the value of the thing ", document.getElementById("scorecard_id").dataset.score)
+        let scorecard_id = document.getElementById("scorecard_id").dataset.score;
         let data = window.scorecard.to_object();
-        
+        dice.reset();
         const res = await fetch("/scorecard/"+scorecard_id, {
             method: "POST",
             headers: {
@@ -75,7 +77,7 @@ async function enter_score_handler(event){
             },
             body: JSON.stringify(data),
         });
-        console.log(await res.json());
+        console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJ:FLKJSDLKJF:LK ", await res.json());
         
     }
     else

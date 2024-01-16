@@ -476,16 +476,19 @@ app.get('/games/:gameName/:username', async function(request, response) {
 
   for (let i = 0; i < scorecards.length; i++) {
     if (scorecards[i]["user_id"] == user_id){
-      resDeletedScorecard = await fetch('http://127.0.0.1:5000/scorecards/' +scorecards[i].id);  
-      goodScorecard = await resDeletedScorecard.text();
+      res = await fetch('http://127.0.0.1:5000/scorecards/' +scorecards[i].id);  
+      goodScorecard = await res.text();
+      goodScorecard = JSON.parse(goodScorecard);
     }
   }
-
+  console.log("scorecard ", goodScorecard)
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
+
   response.render("game/game",{
     feedback:"",
     gameName:gameName,
+    scorecard_id: goodScorecard["id"],  
     scorecard: goodScorecard,
     username:username
   });

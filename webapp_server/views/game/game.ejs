@@ -17,9 +17,11 @@
     <br>
   </section>
   <div class="d-flex justify-content-center">
-    <section id = "feedback"><%=feedback%></section>
+    <section id = "feedback"><%=feedback%><%- scorecard_id %></section>
   </div>
-  <input type="text" id="scorecard_values" data-score='<%- JSON.stringify(scorecard["score_info"]) %>' hidden>
+  <input type="text" id="scorecard_values" data-score='<%- scorecard["score_info"] %>' hidden>
+  
+  <input type="text" id="scorecard_id" data-score='<%- scorecard_id %>' hidden>
   <br>
   <section id="scorecard">
     <table>
@@ -135,7 +137,7 @@
       <br>
       <input id="chat_input">
   </form><br>
-  <button id="chat_button" type="submit">Submit</button><br>
+  <button id="chat_button" type="submit">Send</button><br>
 
   </section>
   <script src="/js/UI.js"  type="module"></script> 

@@ -78,6 +78,9 @@ class Dice{
      * <br> Uses this.#setDice to update dice
     */
     reset(){
+        console.log("SHEESH ",this.rolls_remaining_element.innerHTML);
+        this.rolls_remaining_element.innerHTML = 3
+        console.log("SHEESH 2",this.rolls_remaining_element.innerHTML);
         this.set([...Array(5)].map(e=>~~(0)),3)
     }
 
