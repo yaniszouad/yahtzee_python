@@ -19,7 +19,7 @@
   <div class="d-flex justify-content-center">
     <section id = "feedback"><%=feedback%><%- scorecard_id %></section>
   </div>
-  <input type="text" id="scorecard_values" data-score='<%- scorecard["score_info"] %>' hidden>
+  <input type="text" id="scorecard_values" data-score='<%- JSON.stringify(scorecard) %>' hidden>
   
   <input type="text" id="scorecard_id" data-score='<%- scorecard_id %>' hidden>
   <br>

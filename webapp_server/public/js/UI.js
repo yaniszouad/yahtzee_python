@@ -57,7 +57,7 @@ function roll_dice_handler(){
       console.log("Count of all dice faces:", dice.get_counts());
 }
 
-async function enter_score_handler(event){
+function enter_score_handler(event){
     console.log("Score entry attempted for: ", event.target.id.slice(0,-6));
     if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
         display_feedback("Correctly entered the score", "good");
@@ -70,14 +70,14 @@ async function enter_score_handler(event){
         let scorecard_id = document.getElementById("scorecard_id").dataset.score;
         let data = window.scorecard.to_object();
         dice.reset();
-        const res = await fetch("/scorecard/"+scorecard_id, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-        console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJ:FLKJSDLKJF:LK ", await res.json());
+        // const res = await fetch("/scorecard/"+scorecard_id, {
+        //     method: "POST",
+        //     headers: {
+        //     "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify(data),
+        // });
+        // console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJ:FLKJSDLKJF:LK ", await res.json());
         
     }
     else
