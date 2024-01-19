@@ -481,6 +481,7 @@ app.post("/games", async function (request, response) {
   console.log("Info received:", username, game_name);
 
   if (game_name == ""){
+    console.log("this is empty")
     response.status(200);
     response.render("game/game_details", {
       feedback:"Please enter a valid gamename",
@@ -489,8 +490,9 @@ app.post("/games", async function (request, response) {
     });
     return;
   }
-
+  let resGame
   if (total_games.includes(game_name)){
+    console.log("this is invalid game name")
     response.status(200);
     response.render("game/game_details", {
       feedback:"Please enter a valid gamename",
@@ -498,24 +500,28 @@ app.post("/games", async function (request, response) {
       games:users_games
     });
     return;
+  }
+  else{
+    let urlGame = 'http://127.0.0.1:5000/games'
+    let headers = {"Content-Type": "application/json"}
+
+    resGame = await fetch(urlGame, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({name:game_name})
+    });
+
+    console.log("RES GAME: ",resGame)
   }
   
-  let game_url = "http://127.0.0.1:5000/games";
-  let headers = {
-    "Content-Type": "application/json",
-  };
-  let game_res = await fetch(game_url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ name: game_name }),
-  });
-
-  let posted_game = await game_res.text();
+  let posted_game = await resGame.text();
   let game = JSON.parse(posted_game);
 
   console.log("Returned game:", game);
 
-  if (typeof(game) != "object"){
+  if (typeof(game) == "object"){
+    let headers = {"Content-Type": "application/json"}
+    console.log("returned object: ", game)
     let scorecard_url = "http://127.0.0.1:5000/scorecards";
     let scorecard_res = await fetch(scorecard_url, {
       method: "POST",
@@ -606,17 +612,18 @@ app.get('/games/:game_name/:username', async function(request, response) {
   url = 'http://127.0.0.1:5000/scorecards';
   res = await fetch(url);
   let all_scorecards = JSON.parse(await res.text());
-  let scorecard_info = {};
+  console.log(all_scorecards)
+  let scorecard1 = {};
   for (scorecard of all_scorecards){
       if (scorecard.user_id == userDetails["id"] && scorecard.game_id == gameDetails["id"]){
-          scorecard_info = scorecard;
+          scorecard1 = scorecard;
           break;
       }
   }
 
-  url = 'http://127.0.0.1:5000/scorecards/' + scorecard_info.id;
+  url = 'http://127.0.0.1:5000/scorecards/' + scorecard1.id;
   res = await fetch(url);
-  scorecard_info = JSON.parse(await res.text());
+  let scorecard_info = JSON.parse(await res.text());
 
   console.log("scorecard info: ", scorecard_info)
 
@@ -627,6 +634,7 @@ app.get('/games/:game_name/:username', async function(request, response) {
       gameName:game_name,
       username:username,
       scorecard_id: scorecard_info.id,
+      scorecard:scorecard_info,
       scorecard_info:scorecard_info
   });
 });

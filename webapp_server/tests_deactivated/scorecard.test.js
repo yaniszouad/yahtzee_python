@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const tools = require('./util');
+const tools = require('../tests/util');
 
 let url_base='http://127.0.0.1:3000'
 let num_games_per_user=3;

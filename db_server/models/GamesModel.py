@@ -68,7 +68,6 @@ class Game:
             dateToday = datetime.datetime.now()
             game_info["created"] = str(dateToday)
             game_info["finished"] = str(dateToday)
-            print("ARE WE MISSING THE LINK AQUI???",game_info)
            
             for i in game_info["name"]:
                 if i in string.punctuation:
@@ -77,11 +76,9 @@ class Game:
             
 
             user_data = (game_id, game_info["name"], game_info["name"], game_info["created"], game_info["finished"])
-            print("ARE WE MISSING THE LINK AQUI???",user_data)
             #are you sure you have all data in the correct format?
             cursor.execute(f"INSERT INTO {self.table_name} VALUES (?, ?, ?, ?, ?);", user_data)
             db_connection.commit()
-            print("ARE WE MISSING THE LINK AQUI???",user_data)
             return {"result": "success",
                     "message": {"id": game_id, "name": game_info["name"], "link" : game_info["name"], "created": game_info["created"], "finished": game_info["finished"]}
                     }

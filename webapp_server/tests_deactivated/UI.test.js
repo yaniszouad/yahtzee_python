@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const tools = require('./util');
+const tools = require('../tests/util');
 const fetch = require('node-fetch');
 
 let url_base='http://127.0.0.1:3000'

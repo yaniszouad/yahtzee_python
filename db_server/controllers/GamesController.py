@@ -30,7 +30,6 @@ def all_games_and_create_games():
                 print("name is empty")
                 return {}
             game_object = games.create_game(data)
-            print("PAST THIS THIS IS THE CREATING GAME", game_object["message"])
             return game_object["message"]
         else:
             return {}

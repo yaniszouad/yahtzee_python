@@ -82,7 +82,6 @@ class Scorecard:
             
             new_scorecard = cursor.execute(f"SELECT * FROM scorecards WHERE id = {scorecard_id};").fetchone()
             dicted_scorecard = self.dict_transformer(new_scorecard)
-            print("THIS IS A DICTED SCORECARD: ",dicted_scorecard)
             return {"result": "success", 
                     "message": dicted_scorecard}
         

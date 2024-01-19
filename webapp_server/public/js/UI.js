@@ -28,9 +28,6 @@ for (let category of category_elements){
 let score_elements = Array.from(document.getElementsByClassName("score"));
 let scorecard = new Scorecard(category_elements, score_elements, dice);
 window.scorecard = scorecard;
-console.log("What to put into the scorecard: ",JSON.parse(document.getElementById("scorecard_values").dataset.score))
-scorecard.load_scorecard(JSON.parse(document.getElementById("scorecard_values").dataset.score));
-window.scorecard = scorecard;
 dice.reset();
 //---------Event Handlers-------//
 function reserve_die_handler(event){

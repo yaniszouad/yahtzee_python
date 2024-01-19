@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 
 let {add_users_to_DB, add_1_player_games, delete_all_scorecards_from_DB, delete_all_games_from_DB, delete_all_users_from_DB }
-= require('./util.js')
+= require('../tests/util.js')
 
 let url_base='http://127.0.0.1:3000'
 let num_games_per_user=3;
