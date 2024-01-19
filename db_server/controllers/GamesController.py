@@ -83,7 +83,8 @@ def scorecards_for_game(game_name):
     #Getting information via the path portion of a URL
     if games.get_game(name = game_name)["message"] == "game doesnt exist in get game":
         return []
-    game_id = games.get_game(name = game_name)["message"]["id"]
+    print("Is this where we failing? ",games.get_game(name = game_name)["message"])
+    game_id = games.get_game(name = game_name)["message"]["id"] # games.get_game(game_name)["message"] returns a simple string
     print(games.get_game(name = game_name)["message"])
     print(game_id)
     if scorecards.get_scorecards()["message"] == []:

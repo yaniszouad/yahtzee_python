@@ -25,7 +25,7 @@
                       <td><a href="/games/<%=gamu%>/<%=username%>" id="game_link_<%=gamu%>"><%= gamu %></a></td>
                       <td><a class="btn btn-danger" id="delete_link_<%=gamu%>" href="/games/delete/<%=gamu%>/<%=username%>" role="button">Delete Game</a></td>
                       <%} else {%>
-                      <% console.log("sleesh",gamu.name) %>
+                      <% console.log("sleesh",gamu.name, username) %>
                       <td><a href="/games/<%=gamu.name%>/<%=username%>" id="game_link_<%=gamu.name%>"><%= gamu.name %></a></td>
                       <td><a class="btn btn-danger" id="delete_link_<%=gamu.name%>" href="/games/delete/<%=gamu.name%>/<%=username%>" role="button">Delete Game</a></td>
                       <%}%>

@@ -452,52 +452,84 @@ app.post("/games", async function (request, response) {
   //Get game information from body of POST request
   const username = request.body.username;
   const game_name = request.body.game_name;
+  
+  response.setHeader("Content-Type", "text/html");
 
-  // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", username, game_name);
+  let url = 'http://127.0.0.1:5000/users/'+username;
+  let res = await fetch(url);
+  let user = JSON.parse(await res.text());
 
-  const game_url = "http://127.0.0.1:5000/games";
-  const headers = {
+  let url_2 = 'http://127.0.0.1:5000/games';
+  let res_2 = await fetch(url_2); 
+  let text_2 = await res_2.text();
+  let details_2 = JSON.parse(text_2);
+  
+  let total_games = [];
+  for (let i = 0; i < details_2.length; i++) {
+    total_games.push(details_2[i]["name"]);
+  }
+
+  let users_games = [];
+  for (let i = 0; i < total_games.length; i++){
+    if (details_2[i]["user_id"] == user["id"]){
+      users_games.push(details_2[i]);
+    }
+  }
+
+  console.log("Info received:", username, game_name);
+
+  if (game_name == ""){
+    response.status(200);
+    response.render("game/game_details", {
+      feedback:"Please enter a valid gamename",
+      username: username,
+      games:users_games
+    });
+    return;
+  }
+
+  if (total_games.includes(game_name)){
+    response.status(200);
+    response.render("game/game_details", {
+      feedback:"Please enter a valid gamename",
+      username: username,
+      games:users_games
+    });
+    return;
+  }
+  
+  let game_url = "http://127.0.0.1:5000/games";
+  let headers = {
     "Content-Type": "application/json",
   };
-  const game_res = await fetch(game_url, {
+  let game_res = await fetch(game_url, {
     method: "POST",
     headers,
     body: JSON.stringify({ name: game_name }),
   });
 
-  const posted_game = await game_res.text();
-  const game = JSON.parse(posted_game);
-  if (
-    game === "UNIQUE constraint failed: games.link" ||
-    game === "game details is of the wrong format"
-  ) {
-    response.status(401);
-    response.setHeader("Content-Type", "text/html");
-    response.redirect("/games/" + username + "?feedback=invalid");
-    return;
-  }
+  let posted_game = await game_res.text();
+  let game = JSON.parse(posted_game);
 
   console.log("Returned game:", game);
 
-  const user_url = "http://127.0.0.1:5000/users/" + username;
-  const user_res = await fetch(user_url);
-  const user = JSON.parse(await user_res.text());
+  if (typeof(game) != "object"){
+    let scorecard_url = "http://127.0.0.1:5000/scorecards";
+    let scorecard_res = await fetch(scorecard_url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
+    });
 
-  const scorecard_url = "http://127.0.0.1:5000/scorecards";
-  const scorecard_res = await fetch(scorecard_url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
-  });
-
-  const posted_scorecard = await scorecard_res.text();
-  const scorecard = JSON.parse(posted_scorecard);
-  console.log("Returned scorecard:", scorecard);
-
+    let posted_scorecard = await scorecard_res.text();
+    console.log("posted scorecard ", posted_scorecard);
+    let scorecard = JSON.parse(posted_scorecard);
+    console.log("Returned scorecard:", scorecard);
+}
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.redirect("/games/" + username);
+  return;
 }); //POST /games
 
 app.get('/games/delete/:gameName/:username', async function(request, response) {
@@ -560,12 +592,14 @@ app.get("/games/:gameName/:username", async function (request, response) {
     request.url,
     request.params
   ); //event logging
-
+  console.log(gameName)
   let url = `http://127.0.0.1:5000/games/scorecards/${gameName}`;
   let res = await fetch(url);
-  let scorecard_details = JSON.parse(await res.text());
+  let textedRes = await res.text()
+  console.log("DIS SHIT BOTHERING US? ", textedRes);
+  let scorecard_details = JSON.parse(textedRes);
   let scorecard = scorecard_details[0].score_info;
-  console.log(scorecard_details);
+  
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
