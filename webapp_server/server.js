@@ -582,33 +582,49 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
 //   });
 // });
 
-app.get("/games/:gameName/:username", async function (request, response) {
-  let gameName = request.params.gameName;
+app.get('/games/:game_name/:username', async function(request, response) {
+  console.log(request.method, request.url) //event logging
+  //Get User information from body of POST request
   let username = request.params.username;
-  // add link
-  console.log(
-    "games/:gameName/:username",
-    request.method,
-    request.url,
-    request.params
-  ); //event logging
-  console.log(gameName)
-  let url = `http://127.0.0.1:5000/games/scorecards/${gameName}`;
+  let game_name = request.params.game_name;
+  console.log("stuff: ", username, game_name)
+
+  //Get scorecard id –
+  let url = 'http://127.0.0.1:5000/users/' + username;
   let res = await fetch(url);
-  let textedRes = await res.text()
-  console.log("DIS SHIT BOTHERING US? ", textedRes);
-  let scorecard_details = JSON.parse(textedRes);
-  let scorecard = scorecard_details[0].score_info;
-  
+  let userDetails = JSON.parse(await res.text());
+  console.log("user info: ", userDetails)
+
+  url = 'http://127.0.0.1:5000/games/' + game_name;
+  res = await fetch(url);
+  let gameDetails = JSON.parse(await res.text());
+  console.log("game info: ", gameDetails)
+
+  //get scorecard for user with game_id
+  url = 'http://127.0.0.1:5000/scorecards';
+  res = await fetch(url);
+  let all_scorecards = JSON.parse(await res.text());
+  let scorecard_info = {};
+  for (scorecard of all_scorecards){
+      if (scorecard.user_id == userDetails["id"] && scorecard.game_id == gameDetails["id"]){
+          scorecard_info = scorecard;
+          break;
+      }
+  }
+
+  url = 'http://127.0.0.1:5000/scorecards/' + scorecard_info.id;
+  res = await fetch(url);
+  scorecard_info = JSON.parse(await res.text());
+
+  console.log("scorecard info: ", scorecard_info)
 
   response.status(200);
-  response.setHeader("Content-Type", "text/html");
+  response.setHeader('Content-Type', 'text/html')
   response.render("game/game", {
-    feedback: "",
-    username,
-    gameName,
-    scorecard,
-    scorecard_id: scorecard.id
+      feedback: "",
+      game_name:game_name,
+      username:username,
+      scorecard_info:scorecard_info,
   });
 });
 
