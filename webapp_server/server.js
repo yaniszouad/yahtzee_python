@@ -250,7 +250,9 @@ app.get('/users/:username', async function(request, response) {
   let email = details["email"];
   let urlScoresUser = 'http://127.0.0.1:5000/scores/'+username;
   let ScoresUserRes = await fetch(urlScoresUser);
-  let detailsScoreUser = JSON.parse(await ScoresUserRes.text());
+  let scoreUserText = await ScoresUserRes.text()
+  console.log(scoreUserText)
+  let detailsScoreUser = JSON.parse(scoreUserText);
   
   let games = detailsScoreUser;
   response.status(200);
@@ -622,9 +624,10 @@ app.get('/games/:game_name/:username', async function(request, response) {
   response.setHeader('Content-Type', 'text/html')
   response.render("game/game", {
       feedback: "",
-      game_name:game_name,
+      gameName:game_name,
       username:username,
-      scorecard_info:scorecard_info,
+      scorecard_id: scorecard_info.id,
+      scorecard_info:scorecard_info
   });
 });
 

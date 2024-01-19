@@ -54,7 +54,6 @@ def update_delete_return_one_scorecard(scorecard_name):
     else:
         return {}
 
-
 def info_of_a_game(scorecard_id):
     if request.method == "GET":
         res1 = Scorecard.get_scorecard(id=scorecard_id)
@@ -94,13 +93,11 @@ def ten_score_objects():
     else:
         return {}
 
-def all_scorecards(username):
+def all_scorecards(user_name):
     if request.method == "GET":
-        user = User.get_user(username=username)
+        user = User.get_user(username=user_name)
         print("scores_user user", user)
-        res = Scorecard.get_scorecards_by_user(
-            user_id=User.get_user(username=username)["message"]["id"]
-        )
+        res = Scorecard.get_scorecard(id=User.get_user(username=user_name)["message"]["id"])
         if not res["message"] or res["result"] == "error":
             return []
         largest = sorted(res["message"], key=lambda e: e["score"], reverse=True)
@@ -111,7 +108,7 @@ def all_scorecards(username):
                     "game_name": Game.get_game(id=scorecard["game_id"])["message"][
                         "name"
                     ],
-                    "username": username,
+                    "username": user_name,
                 }
                 for scorecard in largest
             ]

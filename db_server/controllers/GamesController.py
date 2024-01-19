@@ -53,14 +53,15 @@ def all_games_and_create_games():
 def update_delete_return_one_game(game_name):
     #Getting information via the path portion of a URL
     if request.method == "GET":
-        game = games.get_game(game_name)
-        print("WOA", game)
-        print("JEESUS:", game["message"])
+        game = games.get_game(name = game_name)
+        if game["result"] == "success":
+            return jsonify(game["message"])
         if game["message"] == "game doesnt exist in get game":
             print("game no exist")
             return {}
         if type(game["message"]) != str:
             print("operational error")
+            print(game["message"])
             return jsonify("operational error")
         return jsonify(game["message"])
     
