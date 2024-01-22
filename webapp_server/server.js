@@ -638,9 +638,6 @@ app.get('/games/:game_name/:username', async function(request, response) {
   });
 });
 
-
-
-
 app.post('/scorecards/:scorecard_id', async function(request, response) {
   console.log(request.method, request.url) //event logging
   let scorecard_id = request.params.scorecard_id;

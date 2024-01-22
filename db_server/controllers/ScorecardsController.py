@@ -35,14 +35,14 @@ def all_scorecards_and_create_scorecard():
         return {}
 
 def update_delete_return_one_scorecard(scorecard_name):
-    # print(f"request.url={request.url}")
-    # print(f"request.url={request.query_string}")
-    # print(f"request.url={request.args.get('index')}")
+    print(f"request.url={request.url}")
+    print(f"request.url={request.query_string}")
     if request.method == "GET":
         res = Scorecard.get_scorecard(id=scorecard_name)
         return {} if res["result"] == "error" else jsonify(res["message"])
 
     elif request.method == "PUT":
+        print(request.json)
         res = Scorecard.update_scorecard(id=scorecard_name, score_info=request.json)
         return {} if res["result"] == "error" else jsonify(res["message"])
 
