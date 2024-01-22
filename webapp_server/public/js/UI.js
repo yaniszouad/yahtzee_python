@@ -68,7 +68,7 @@ async function enter_score_handler(event){
         let data = window.scorecard.to_object();
         console.log(data)
         dice.reset();
-        let res = await fetch("https://127.0.0.1:3000//scorecards//"+scorecard_id, {
+        let res = await fetch("http://127.0.0.1:3000/scorecards/"+scorecard_id, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
