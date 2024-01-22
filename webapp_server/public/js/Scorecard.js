@@ -214,6 +214,7 @@ class Scorecard{
      *
      */
   to_object() {
+    console.log("running to object")
     let dice_rolls = this.dice.rolls_remaining_element.innerHTML;
     let upper = {};
     let lower = {};

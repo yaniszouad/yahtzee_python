@@ -54,7 +54,7 @@ function roll_dice_handler(){
       console.log("Count of all dice faces:", dice.get_counts());
 }
 
-function enter_score_handler(event){
+async function enter_score_handler(event){
     console.log("Score entry attempted for: ", event.target.id.slice(0,-6));
     if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
         display_feedback("Correctly entered the score", "good");
@@ -66,16 +66,17 @@ function enter_score_handler(event){
         console.log("This is the value of the thing ", document.getElementById("scorecard_id").dataset.score)
         let scorecard_id = document.getElementById("scorecard_id").dataset.score;
         let data = window.scorecard.to_object();
+        console.log(data)
         dice.reset();
-        // const res = await fetch("/scorecard/"+scorecard_id, {
-        //     method: "POST",
-        //     headers: {
-        //     "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify(data),
-        // });
-        // console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJ:FLKJSDLKJF:LK ", await res.json());
-        
+        let res = await fetch("https://127.0.0.1:3000//scorecards//"+scorecard_id, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+        console.log("wow!!!")
+        console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJFLKJSDLKJFLK ", await res.json());   
     }
     else
         display_feedback("Incorrect score", "bad");

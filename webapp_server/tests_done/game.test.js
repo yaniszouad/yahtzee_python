@@ -124,7 +124,9 @@ describe('game.html', () => {
       } 
 
       for (let key in required){
+        console.log(key)
         const element = await page.$(key);
+        console.log(element)
         expect(element).toBeTruthy(); //Element is present
         const element_tagName = await page.$eval(key, element => element.tagName);
         expect(element_tagName).toBe(required[key]["tagName"]);//Element is correct tag type
