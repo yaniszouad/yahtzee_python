@@ -612,12 +612,11 @@ app.get('/games/:game_name/:username', async function(request, response) {
   url = 'http://127.0.0.1:5000/scorecards';
   res = await fetch(url);
   let all_scorecards = JSON.parse(await res.text());
-  console.log(all_scorecards)
   let scorecard1 = {};
   for (scorecard of all_scorecards){
       if (scorecard.user_id == userDetails["id"] && scorecard.game_id == gameDetails["id"]){
-          scorecard1 = scorecard;
-          break;
+        scorecard1 = scorecard;
+        break;
       }
   }
 

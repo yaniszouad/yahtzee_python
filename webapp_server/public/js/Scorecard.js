@@ -160,101 +160,31 @@ class Scorecard{
      *
      * @param {Object} gameObject the object version of the scorecard
     */
-    load_scorecard(score_info){
-        this.dice.rolls_remaining_element.innerHTML = score_info["dice_rolls"];
-        if (score_info["upper"]["ones"] == -1){
-            this.category_elements[0].disabled = false;
-        }else{
-            this.category_elements[0].value = score_info["upper"]["ones"];
-            this.category_elements[0].disabled = true;
-        }
-        
-        if (score_info["upper"]["twos"] == -1){
-            this.category_elements[1].disabled = false;
-        }else{
-            this.category_elements[1].value = score_info["upper"]["twos"];
-            this.category_elements[1].disabled = true;
-        }
-
-        if (score_info["upper"]["threes"] == -1){
-            this.category_elements[2].disabled = false;
-        }else{
-            this.category_elements[2].value = score_info["upper"]["threes"];
-            this.category_elements[2].disabled = true;
-        }
-
-        if (score_info["upper"]["fours"] == -1){
-            this.category_elements[3].disabled = false;
-        }else{
-            this.category_elements[3].value = score_info["upper"]["fours"];
-            this.category_elements[3].disabled = true;
-        }
-
-        if (score_info["upper"]["fives"] == -1){
-            this.category_elements[4].disabled = false;
-        }else{
-            this.category_elements[4].value = score_info["upper"]["fives"];
-            this.category_elements[4].disabled = true;
-        }
-
-        if (score_info["upper"]["sixes"] == -1){
-            this.category_elements[5].disabled = false;
-        }else{
-            this.category_elements[5].value = score_info["upper"]["sixes"];
-            this.category_elements[5].disabled = true;
-        }
-
-        if (score_info["lower"]["three_of_a_kind"] == -1){
-            this.category_elements[6].disabled = false;
-        }else{
-            this.category_elements[6].value = score_info["lower"]["three_of_a_kind"];
-            this.category_elements[6].disabled = true;
-        }
-
-        if (score_info["lower"]["four_of_a_kind"] == -1){
-            this.category_elements[7].disabled = false;
-        }else{
-            this.category_elements[7].value = score_info["lower"]["four_of_a_kind"];
-            this.category_elements[7].disabled = true;
-        }
-
-        if (score_info["lower"]["full_house"] == -1){
-            this.category_elements[8].disabled = false;
-        }else{
-            this.category_elements[8].value = score_info["lower"]["full_house"];
-            this.category_elements[8].disabled = true;
-        }
-
-        if (score_info["lower"]["small_straight"] == -1){
-            this.category_elements[9].disabled = false;
-        }else{
-            this.category_elements[9].value = score_info["lower"]["small_straight"];
-            this.category_elements[9].disabled = true;
-        }
-
-        if (score_info["lower"]["large_straight"] == -1){
-            this.category_elements[10].disabled = false;
-        }else{
-            this.category_elements[10].value = score_info["lower"]["large_straight"];
-            this.category_elements[10].disabled = true;
-        }
-
-        if (score_info["lower"]["yahtzee"] == -1){
-            this.category_elements[11].disabled = false;
-        }else{
-            this.category_elements[11].value = score_info["lower"]["yahtzee"];
-            this.category_elements[11].disabled = true;
-        }
-
-        if (score_info["lower"]["chance"] == -1){
-            this.category_elements[12].disabled = false;
-        }else{
-            this.category_elements[12].value = score_info["lower"]["chance"];
-            this.category_elements[12].disabled = true;
-        }
+    load_scorecard(score_info) {
+        this.dice.rolls_remaining_element.innerHTML = score_info.dice_rolls;
+        let scores = {
+        ...score_info.upper,
+        ...score_info.lower};
+        this.category_elements.forEach((element) => {
+        let raw_id = element.id.slice(0, -6);
+        //because the score_info format doesn't match the score_elements' ids
+        let id = element.classList.contains("upper")
+            ? raw_id === "six"
+            ? "sixes"
+            : raw_id + "s"
+            : raw_id;
+        let val = scores[id];
+        if (val === -1) {
+            element.value = "";
+            element.disabled = false;
+        } else {
+            element.value = val;
+            element.disabled = true;}
+        });
+        this.update_scores();
     }
 
-    /**
+  /**
      * Creates a JS object from the scorecard in the specified format
      * Useful for preparing a scorecard to send to the webapp server
      * 
@@ -283,56 +213,25 @@ class Scorecard{
      * @return {Object} an object version of the scorecard
      *
      */
-    to_object(){
-        let score_info = {
-            "dice_rolls": this.dice.rolls_remaining_element.innerHTML,
-            "upper":{
-                "ones":-1,
-                "twos":-1,
-                "threes":-1,
-                "fours":-1,
-                "fives":-1,
-                "sixes":-1
-            },
-            "lower":{
-                "three_of_a_kind":-1,
-                "four_of_a_kind":-1,
-                "full_house":-1,
-                "small_straight":-1,
-                "large_straight":-1,
-                "yahtzee":-1,
-                "chance":-1
-            }
-        }
-        if (this.category_elements[0].disabled == true)
-            score_info["upper"]["ones"] = this.category_elements[0].value
-        if (this.category_elements[1].disabled == true)
-            score_info["upper"]["twos"] = this.category_elements[1].value
-        if (this.category_elements[2].disabled == true)
-            score_info["upper"]["threes"] = this.category_elements[2].value
-        if (this.category_elements[3].disabled == true)
-            score_info["upper"]["fours"] = this.category_elements[3].value
-        if (this.category_elements[4].disabled == true)
-            score_info["upper"]["fives"] = this.category_elements[4].value
-        if (this.category_elements[5].disabled == true)
-            score_info["upper"]["sixes"] = this.category_elements[5].value
-        if (this.category_elements[6].disabled == true)
-            score_info["lower"]["three_of_a_kind"] = this.category_elements[6].value
-        if (this.category_elements[7].disabled == true)
-            score_info["lower"]["four_of_a_kind"] = this.category_elements[7].value
-        if (this.category_elements[8].disabled == true)
-            score_info["lower"]["full_house"] = this.category_elements[8].value
-        if (this.category_elements[9].disabled == true)
-            score_info["lower"]["small_straight"] = this.category_elements[9].value
-        if (this.category_elements[10].disabled == true)
-            score_info["lower"]["large_straight"] = this.category_elements[10].value
-        if (this.category_elements[11].disabled == true)
-            score_info["lower"]["yahtzee"] = this.category_elements[11].value
-        if (this.category_elements[12].disabled == true)
-            score_info["lower"]["chance"] = this.category_elements[12].value
-        
-        return score_info
-    }
+  to_object() {
+    let dice_rolls = this.dice.rolls_remaining_element.innerHTML;
+    let upper = {};
+    let lower = {};
+    this.category_elements.forEach((element) => {
+      let raw_id = element.id.slice(0, -6);
+      if (element.classList.contains("upper")) {
+        let id = raw_id === "six" ? "sixes" : raw_id + "s";
+        upper[id] = element.disabled ? parseInt(element.value) : -1;
+      } else {
+        lower[raw_id] = element.disabled ? parseInt(element.value) : -1;
+      }
+    });
+    return {
+      dice_rolls,
+      upper,
+      lower,
+    };
+  }
 }
 
 export default Scorecard;
