@@ -67,7 +67,7 @@ async function enter_score_handler(event){
         let scorecard_id = document.getElementById("scorecard_id").dataset.score;
         let data = window.scorecard.to_object();
         console.log(data)
-        dice.reset();
+        
         let res = await fetch("http://127.0.0.1:3000/scorecards/"+scorecard_id, {
             method: "POST",
             headers: {
@@ -75,8 +75,8 @@ async function enter_score_handler(event){
             },
             body: JSON.stringify(data),
         });
-        console.log("wow!!!")
-        console.log("WOOWOJFLIKJSDJFKLJSLDKJFLKSJDKLFJLKSDJFLKJSDLKJFLK ", await res.json());   
+        dice.reset();
+        console.log("Response from update: ", await res.json());   
     }
     else
         display_feedback("Incorrect score", "bad");
