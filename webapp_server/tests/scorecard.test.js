@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const tools = require('../tests/util');
+const tools = require('./util');
 
 let url_base='http://127.0.0.1:3000'
 let num_games_per_user=3;
@@ -10,6 +10,7 @@ function sleep(ms) {
 async function enterCategory(page, dice_values, category_id, score) {
    await page.evaluate((dice_values, category_id, score) => {
      window.dice.set(dice_values, 2);
+     document.getElementById(category_id).disabled=false;
      document.getElementById(category_id).value=score;
    }, dice_values, category_id, score);
  

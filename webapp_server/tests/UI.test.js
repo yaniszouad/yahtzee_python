@@ -353,24 +353,10 @@ describe('Scorecard', () => {
       page = await browser.newPage();
       let game_name = users[0]["username"]+"game2";
       let username = users[0]["username"];
-      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})
-      await page.screenshot({
-        "type": "png", 
-        "path": "./4_1_load.png",  // where to save it
-        "fullPage": true,  // will scroll down to capture everything if true
-      });
+      await page.goto(url_base+'/games/'+game_name+"/"+username, {waitUntil: 'domcontentloaded'})  
+      
       const rollButton = await page.$('#roll_button')
-      await page.screenshot({
-        "type": "png", 
-        "path": "./4_1_before.png",  // where to save it
-        "fullPage": true,  // will scroll down to capture everything if true
-      });
       let rollsRemaining1 = await page.evaluate('window.dice.get_rolls_remaining();');
-      await page.screenshot({
-        "type": "png", 
-        "path": "./4_1_after.png",  // where to save it
-        "fullPage": true,  // will scroll down to capture everything if true
-      });
       expect(rollsRemaining1).toBe(3);
 
       await rollButton.click();

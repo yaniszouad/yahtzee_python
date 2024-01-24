@@ -10,8 +10,10 @@
         <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
       </tr>
       <tr>
-        <td colspan="3">Rolls remaining: <span id="rolls_remaining">3</span></td>
-        <td colspan="2"><button id="roll_button" type="button">Roll the Dice!</button></td>
+        <td colspan="3">Rolls remaining: <span id="rolls_remaining"><% if (scorecard_info.score != 0){ %> <%=parseInt(scorecard_info.score_info.dice_rolls)%> <%} else{ %> 3 <%}%></span></td>
+        <td colspan="2">
+        <button id="roll_button" type="button">Roll the Dice!</button>
+        </td>
       </tr>
     </table>
     <br>
