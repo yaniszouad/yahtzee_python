@@ -497,6 +497,10 @@ app.post('games/join/:username', async function(request, response){
   let user_res = await fetch(url, {method:"GET"})
   console.log("Return of ", username, ": ", user_res)
 
+  url = "http://127.0.0.1:5000/username"
+  let all_users_res = await fetch(url, {method:"GET"})
+  console.log("Return of all users: ", all_users_res)
+
   url = 'http://127.0.0.1:5000/scorecards';
   res = await fetch(url);
   let all_scorecards = JSON.parse(await res.text());
@@ -518,6 +522,14 @@ app.post('games/join/:username', async function(request, response){
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ game_id: game_object["id"], user_id: user_res["id"], turn_order: 1}),
       }); 
+    }
+  }
+  // scorecards for the game
+  listOfScorecards = {}
+  for (scorecard of all_scorecards){
+    if (scorecard.game_id == game_object["id"]){
+      listOfScorecards[scorecard.user_id] = scorecard;// Need to get username from id
+      break;
     }
   }
   
