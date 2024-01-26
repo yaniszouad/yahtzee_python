@@ -2,11 +2,17 @@
 
         <form id="create_game_form" action="/games" method="post">
             <input type="hidden" id="username_input" name="username" value="<%= username %>">
-            <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
+            <input type="text" id="game_name_input" name="game_name" placeholder="Enter New Game Name">
             <button type="submit" id="create_button">Create</button>
         </form>
+        </br>
+        <form action="/games/join/<%=username%>" method="POST">
+          <input id="username_input" type="hidden" name="username"/>
+          <input id="game_name_input" type="text" name="game_name" placeholder="Enter Existing Game Name"/>
+          <button id="create_button" type="submit">Join</button>
+        </form>
+        
         <section id="feedback"><%=feedback%></section></br>
-
         <ol id="user_games_ol">
             <table class="table table-borderless caption-top">
               <thead>

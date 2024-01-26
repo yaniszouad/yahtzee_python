@@ -29,7 +29,10 @@ for (let category of category_elements) {
 let score_elements = Array.from(document.getElementsByClassName("score"));
 let scorecard = new Scorecard(category_elements, score_elements, dice);
 window.scorecard = scorecard;
-scorecard.update_scores();
+const user_ids = [...document.getElementById("scorecard").classList].map((e) => parseInt(e));
+for (const user_id of user_ids) {
+  scorecard.update_scores(user_id);}
+
 
 //---------Event Handlers-------//
 function reserve_die_handler(event) {
@@ -60,23 +63,24 @@ function roll_dice_handler() {
 async function enter_score_handler(event) {
   console.log("Score entry attempted for: ", event.target.id);
   if (scorecard.is_valid_score(event.target.id.slice(0,-6), parseInt(event.target.value))) {
+    const user_id = parseInt(event.target.getAttribute("user_id"));
     display_feedback("Valid entry", "good");
     event.target.disabled = true;
-    scorecard.update_scores();
+    scorecard.update_scores(user_id);
     dice.reset();
     dice_elements.forEach((e) => e.classList.remove("reserved"));
     display_feedback("Valid entry", "good");
-
-    let scorecard_id = document.getElementById("scorecard_id").dataset.score
+    //const scorecard_id = parseInt(event.target.getAttribute("scorecard_id")); // DEREK WAY SEE IF MINE BETTER
+    let scorecard_id = parseInt(document.getElementById("scorecard_id").dataset.score)
     let headers = {
       "Content-Type": "application/json",
     };
     let res = await fetch("http://127.0.0.1:3000/scorecards/"+scorecard_id, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(scorecard.to_object()),
+      body: JSON.stringify(scorecard.to_object(user_id)),
     });
-    console.log("here", scorecard.to_object(), res);
+    console.log("here", scorecard.to_object(user_id), res);
     dice_elements.forEach((e) => e.classList.remove("reserved"));
   } else {
     display_feedback("Invalid entry", "bad");

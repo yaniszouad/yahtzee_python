@@ -309,7 +309,8 @@ app.post("/games", async function (request, response) {
   let url = 'http://127.0.0.1:5000/users/'+username;
   let res = await fetch(url);
   let user = JSON.parse(await res.text());
-
+  console.log("user: ", user)
+  console.log("user id: ", user.id)
   let url_2 = 'http://127.0.0.1:5000/games';
   let res_2 = await fetch(url_2); 
   let text_2 = await res_2.text();
@@ -394,7 +395,7 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
   let gameName = request.params.gameName;
   console.log("THIS IS THE GAME NAME OF /games/delete/gameName/username", request.params.gameName)
   try {
-      await fetch(`http://127.0.0.1:5000/games/${gameName}`, {
+      await fetch('http://127.0.0.1:5000/games/'+gameName, {
           method: 'DELETE'
       });
       response.redirect('/games/' + username);
@@ -403,51 +404,46 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
   }
 });
 
-app.get('/games/:game_name/:username', async function(request, response) {
-  console.log(request.method, request.url) //event logging
-  //Get User information from body of POST request
-  let username = request.params.username;
+app.get("/games/:game_name/:username", async function (request, response) {
   let game_name = request.params.game_name;
-  console.log("stuff: ", username, game_name)
+  let username = request.params.username;
+  // add link
+  console.log(
+    "games/:game_name/:username",
+    request.method,
+    request.url,
+    request.params
+  ); //event logging
 
-  //Get scorecard id –
-  let url = 'http://127.0.0.1:5000/users/' + username;
+  let user_url = "http://127.0.0.1:5000/users/" + username;
+  let user_res = await fetch(user_url);
+  let user = JSON.parse(await user_res.text());
+  let user_id = user.id;
+  console.log("game: ", game_name)
+  let url = 'http://127.0.0.1:5000/games/scorecards/'+game_name;
+  console.log(url)
   let res = await fetch(url);
-  let userDetails = JSON.parse(await res.text());
-  console.log("user info: ", userDetails)
-
-  url = 'http://127.0.0.1:5000/games/' + game_name;
-  res = await fetch(url);
-  let gameDetails = JSON.parse(await res.text());
-  console.log("game info: ", gameDetails)
-
-  //get scorecard for user with game_id
-  url = 'http://127.0.0.1:5000/scorecards';
-  res = await fetch(url);
-  let all_scorecards = JSON.parse(await res.text());
-  let scorecard1 = {};
-  for (scorecard of all_scorecards){
-      if (scorecard.user_id == userDetails["id"] && scorecard.game_id == gameDetails["id"]){
-        scorecard1 = scorecard;
-        break;
-      }
+  let resk = await res.text()
+  console.log(resk);
+  let scorecard_details = JSON.parse(resk);
+  let scorecards = scorecard_details;
+  for (let scorecard of scorecards) {
+    console.log(
+      "filters",
+      scorecards.filter((e) => e.user_id === user_id)
+    );
+    console.log(scorecard.score_info.upper, scorecard.score_info.lower);
   }
-
-  url = 'http://127.0.0.1:5000/scorecards/' + scorecard1.id;
-  res = await fetch(url);
-  let scorecard_info = JSON.parse(await res.text());
-
-  console.log("scorecard info: ", scorecard_info)
+  console.log(scorecard_details);
 
   response.status(200);
-  response.setHeader('Content-Type', 'text/html')
+  response.setHeader("Content-Type", "text/html");
   response.render("game/game", {
-      feedback: "",
-      gameName:game_name,
-      username:username,
-      scorecard_id: scorecard_info.id,
-      scorecard:scorecard_info,
-      scorecard_info:scorecard_info
+    feedback: "",
+    username,
+    gameName: game_name,
+    scorecards,
+    user_id,
   });
 });
 
@@ -476,78 +472,56 @@ app.post('/scorecards/:scorecard_id', async function(request, response) {
   });
 });
 
-app.post('games/join/:username', async function(request, response){
-  let game_name= request.body.game_name
-  let username=request.params.username
+app.post("/games/join", async function (request, response) {
+  console.log(request.method, request.url, request.body); //event logging
 
-  let url = "http://127.0.0.1:5000/games" + game_name
-  let game_res = await fetch(url, {method:"GET"})
-  let game_text = await game_res.text()
-  let game_object = JSON.parse(game_text)
-  console.log("Return of game: ", game_name, ": ", game_object)
+  //Get game information from body of POST request
+  const username = request.body.username;
+  const game_name = request.body.game_name;
 
-  url = "http://127.0.0.1:5000/games/scorecards" + game_name
-  let game_scorecards = await fetch(url, {method:"GET"})
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", username, game_name);
 
-  let game_scorecards_text = await game_scorecards.text()
-  let game_scorecards_object = JSON.parse(game_scorecards_text)
-  console.log("Return the scorecards of ", game_scorecards_text, ": ", game_scorecards_object)
+  const game_url = "http://127.0.0.1:5000/games/" + game_name;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const game_res = await fetch(game_url);
 
-  url = "http://127.0.0.1:5000/username" + username
-  let user_res = await fetch(url, {method:"GET"})
-  console.log("Return of ", username, ": ", user_res)
+  const got_game = await game_res.text();
+  const game = JSON.parse(got_game);
+  // if (
+  //   game === "UNIQUE constraint failed: games.link" ||
+  //   game === "game details is of the wrong format"
+  // ) {
+  //   response.status(401);
+  //   response.setHeader("Content-Type", "text/html");
+  //   response.redirect("/games/" + username + "?feedback=invalid");
+  //   return;
+  // }
 
-  url = "http://127.0.0.1:5000/username"
-  let all_users_res = await fetch(url, {method:"GET"})
-  console.log("Return of all users: ", all_users_res)
+  console.log("Returned game:", game);
 
-  url = 'http://127.0.0.1:5000/scorecards';
-  res = await fetch(url);
-  let all_scorecards = JSON.parse(await res.text());
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
 
-  let scorecard1 = {};
-  for (scorecard of all_scorecards){
-    if (scorecard.user_id == user_res["id"] && scorecard.game_id == game_object["id"]){
-      // join an existing scorecard
-      scorecard1 = scorecard;
-      url = 'http://127.0.0.1:5000/scorecards/' + scorecard1.id;
-      res = await fetch(url, {method:"GET"});
-      break;
-    }
-    else{
-      //create a scorecard for the user 
-      url = "http://127.0.0.1:5000/scorecards";
-      res = await fetch(url, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ game_id: game_object["id"], user_id: user_res["id"], turn_order: 1}),
-      }); 
-    }
-  }
+  const scorecard_url = "http://127.0.0.1:5000/scorecards";
+  const scorecard_res = await fetch(scorecard_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
+  });
 
-  // scorecards for the game
-  listOfScorecards = {}
-  for (scorecard of all_scorecards){
-    if (scorecard.game_id == game_object["id"]){
-      listOfScorecards[scorecard.user_id] = scorecard;// Need to get username from id
-      break;
-    }
-  }
-  
-  let scorecard_info = JSON.parse(await res.text());
-  console.log("scorecard info: ", scorecard_info)
+  const posted_scorecard = await scorecard_res.text();
+  const scorecard = JSON.parse(posted_scorecard);
+  console.log("Returned scorecard:", scorecard);
 
   response.status(200);
-  response.setHeader('Content-Type', 'text/html')
-  response.render("game/game", {
-      feedback: "",
-      gameName:game_object["name"],
-      username:username,
-      scorecard_id: scorecard_info.id, // YOU NEED TO RETURN ALL SCORECARDS
-      scorecard:scorecard_info, // IMPLEMENT BEHAVIOR FOR SCORECARD.JS TO USE MULTIPLE SCORECARDS
-      scorecard_info:scorecard_info
-  });
-});
+  response.setHeader("Content-Type", "text/html");
+  response.redirect("/games/" + username);
+}); //POST /games/join/:username
+
 
 
 
