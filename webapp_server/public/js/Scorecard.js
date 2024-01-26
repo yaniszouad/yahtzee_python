@@ -101,12 +101,22 @@ class Scorecard {
     /**
      * Updates all score elements for a scorecard
      */
-    update_scores(username) {
-      const upper_score = this.category_elements.filter((element) => element.classList.contains("upper") && element.disabled).map((element) => element.value).reduce((partialSum, a) => partialSum + parseInt(a), 0);
+    update_scores() {
+      const upper_score = this.category_elements
+        .filter(
+          (element) => element.classList.contains("upper") && element.disabled
+        )
+        .map((element) => element.value)
+        .reduce((partialSum, a) => partialSum + parseInt(a), 0);
       const upper_bonus = upper_score >= 63;
       const upper_total = upper_bonus ? upper_score + 35 : upper_score;
   
-      const lower_total = this.category_elements.filter((element) => element.classList.contains("lower") && element.disabled).map((element) => element.value).reduce((partialSum, a) => partialSum + parseInt(a), 0);
+      const lower_total = this.category_elements
+        .filter(
+          (element) => element.classList.contains("lower") && element.disabled
+        )
+        .map((element) => element.value)
+        .reduce((partialSum, a) => partialSum + parseInt(a), 0);
   
       this.score_elements[0].innerHTML = upper_score;
       this.score_elements[1].innerHTML = upper_bonus ? 35 : "";

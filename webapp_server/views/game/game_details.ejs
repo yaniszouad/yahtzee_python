@@ -2,14 +2,8 @@
 
         <form id="create_game_form" action="/games" method="post">
             <input type="hidden" id="username_input" name="username" value="<%= username %>">
-            <input type="text" id="game_name_input" name="game_name" placeholder="New Game">
+            <input type="text" id="game_name_input" name="game_name" placeholder="Enter Game Name">
             <button type="submit" id="create_button">Create</button>
-        </form>
-        <br>
-        <form id="join_game_form" action="/games/join/<%= username %>" method="post">
-          <input type="hidden" id="username_input" name="username" value="<%= username %>">
-          <input type="text" id="game_name_input" name="game_name" placeholder="Existing Game">
-          <button type="submit" id="join_button">Join</button>
         </form>
         <section id="feedback"><%=feedback%></section></br>
 

@@ -35,11 +35,9 @@
       <tr>
         <td><img src="/images/one.svg" width="24" /></td>
         <td>Count and Add only Ones</td>
-        <% for (scorecard_info in scorecard){ %>
         <td><input type="text" class="upper category" id="one_input" size="3" 
           value="<%= scorecard_info.score_info.upper.ones !== -1 ? scorecard_info.score_info.upper.ones : '' %>" 
           <% if (scorecard_info.score_info.upper.ones !== -1) { %> disabled <% } %> /></td>
-        <% } %>
       </tr>
       <tr>
           <td><img src="/images/two.svg" width="24" /></td>
