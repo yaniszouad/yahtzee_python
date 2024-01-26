@@ -297,98 +297,60 @@ app.get('/games/:username', async function(request, response) {
 
 });
 
+
 app.post("/games", async function (request, response) {
   console.log(request.method, request.url, request.body); //event logging
 
   //Get game information from body of POST request
   const username = request.body.username;
   const game_name = request.body.game_name;
-  
-  response.setHeader("Content-Type", "text/html");
 
-  let url = 'http://127.0.0.1:5000/users/'+username;
-  let res = await fetch(url);
-  let user = JSON.parse(await res.text());
-  console.log("user: ", user)
-  console.log("user id: ", user.id)
-  let url_2 = 'http://127.0.0.1:5000/games';
-  let res_2 = await fetch(url_2); 
-  let text_2 = await res_2.text();
-  let details_2 = JSON.parse(text_2);
-  
-  let total_games = [];
-  for (let i = 0; i < details_2.length; i++) {
-    total_games.push(details_2[i]["name"]);
-  }
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", username, game_name);
 
-  let users_games = [];
-  for (let i = 0; i < total_games.length; i++){
-    if (details_2[i]["user_id"] == user["id"]){
-      users_games.push(details_2[i]);
-    }
-  }
+  const game_url = "http://127.0.0.1:5000/games";
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const game_res = await fetch(game_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ name: game_name }),
+  });
 
-  console.log("Info received:", username, game_name);
-
-  if (game_name == ""){
-    console.log("this is empty")
-    response.status(200);
-    response.render("game/game_details", {
-      feedback:"Please enter a valid gamename",
-      username: username,
-      games:users_games
-    });
+  const posted_game = await game_res.text();
+  const game = JSON.parse(posted_game);
+  if (
+    game === "UNIQUE constraint failed: games.link" ||
+    game === "game details is of the wrong format"
+  ) {
+    response.status(401);
+    response.setHeader("Content-Type", "text/html");
+    response.redirect("/games/" + username + "?feedback=invalid");
     return;
   }
-  let resGame
-  if (total_games.includes(game_name)){
-    console.log("this is invalid game name")
-    response.status(200);
-    response.render("game/game_details", {
-      feedback:"Please enter a valid gamename",
-      username: username,
-      games:users_games
-    });
-    return;
-  }
-  else{
-    let urlGame = 'http://127.0.0.1:5000/games'
-    let headers = {"Content-Type": "application/json"}
-
-    resGame = await fetch(urlGame, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({name:game_name})
-    });
-
-    console.log("RES GAME: ",resGame)
-  }
-  
-  let posted_game = await resGame.text();
-  let game = JSON.parse(posted_game);
 
   console.log("Returned game:", game);
 
-  if (typeof(game) == "object"){
-    let headers = {"Content-Type": "application/json"}
-    console.log("returned object: ", game)
-    let scorecard_url = "http://127.0.0.1:5000/scorecards";
-    let scorecard_res = await fetch(scorecard_url, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
-    });
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
 
-    let posted_scorecard = await scorecard_res.text();
-    console.log("posted scorecard ", posted_scorecard);
-    let scorecard = JSON.parse(posted_scorecard);
-    console.log("Returned scorecard:", scorecard);
-}
+  const scorecard_url = "http://127.0.0.1:5000/scorecards";
+  const scorecard_res = await fetch(scorecard_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
+  });
+
+  const posted_scorecard = await scorecard_res.text();
+  const scorecard = JSON.parse(posted_scorecard);
+  console.log("Returned scorecard:", scorecard);
+
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.redirect("/games/" + username);
-  return;
-});
+}); //POST /games
 
 app.get('/games/delete/:gameName/:username', async function(request, response) {
   let username = request.params.username;
@@ -403,10 +365,9 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
       console.error('Error deleting game:', error);
   }
 });
-
 app.get("/games/:game_name/:username", async function (request, response) {
-  let game_name = request.params.game_name;
-  let username = request.params.username;
+  const game_name = request.params.game_name;
+  const username = request.params.username;
   // add link
   console.log(
     "games/:game_name/:username",
@@ -415,19 +376,16 @@ app.get("/games/:game_name/:username", async function (request, response) {
     request.params
   ); //event logging
 
-  let user_url = "http://127.0.0.1:5000/users/" + username;
-  let user_res = await fetch(user_url);
-  let user = JSON.parse(await user_res.text());
-  let user_id = user.id;
-  console.log("game: ", game_name)
-  let url = 'http://127.0.0.1:5000/games/scorecards/'+game_name;
-  console.log(url)
-  let res = await fetch(url);
-  let resk = await res.text()
-  console.log(resk);
-  let scorecard_details = JSON.parse(resk);
-  let scorecards = scorecard_details;
-  for (let scorecard of scorecards) {
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
+  const user_id = user.id;
+
+  const url = `http://127.0.0.1:5000/games/scorecards/${game_name}`;
+  const res = await fetch(url);
+  const scorecard_details = JSON.parse(await res.text());
+  const scorecards = scorecard_details;
+  for (const scorecard of scorecards) {
     console.log(
       "filters",
       scorecards.filter((e) => e.user_id === user_id)
@@ -444,6 +402,8 @@ app.get("/games/:game_name/:username", async function (request, response) {
     gameName: game_name,
     scorecards,
     user_id,
+    scorecard_id: scorecards,
+    scorecard_info:scorecards
   });
 });
 
