@@ -297,7 +297,6 @@ app.get('/games/:username', async function(request, response) {
 
 });
 
-
 app.post("/games", async function (request, response) {
   console.log(request.method, request.url, request.body); //event logging
 
@@ -365,6 +364,7 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
       console.error('Error deleting game:', error);
   }
 });
+
 app.get("/games/:game_name/:username", async function (request, response) {
   const game_name = request.params.game_name;
   const username = request.params.username;
@@ -432,33 +432,24 @@ app.post('/scorecards/:scorecard_id', async function(request, response) {
   });
 });
 
-app.post("/games/join", async function (request, response) {
+app.post("/games/join/:username", async function (request, response) {
   console.log(request.method, request.url, request.body); //event logging
 
   //Get game information from body of POST request
-  const username = request.body.username;
-  const game_name = request.body.game_name;
+  let username = request.params.username;
+  let game_name = request.body.game_name;
 
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, game_name);
 
-  const game_url = "http://127.0.0.1:5000/games/" + game_name;
-  const headers = {
+  let game_url = "http://127.0.0.1:5000/games/" + game_name;
+  let headers = {
     "Content-Type": "application/json",
   };
-  const game_res = await fetch(game_url);
+  let game_res = await fetch(game_url);
 
-  const got_game = await game_res.text();
-  const game = JSON.parse(got_game);
-  // if (
-  //   game === "UNIQUE constraint failed: games.link" ||
-  //   game === "game details is of the wrong format"
-  // ) {
-  //   response.status(401);
-  //   response.setHeader("Content-Type", "text/html");
-  //   response.redirect("/games/" + username + "?feedback=invalid");
-  //   return;
-  // }
+  let got_game = await game_res.text();
+  let game = JSON.parse(got_game);
 
   console.log("Returned game:", game);
 
