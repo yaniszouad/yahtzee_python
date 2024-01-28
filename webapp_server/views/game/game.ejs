@@ -1,5 +1,4 @@
-<%- include('../partials/header', {title:"Yahtzee: "+gameName+'|'+username,
-username:username, gameName:gameName}) -%>
+<%- include('../partials/header', {title:"Yahtzee: "+gameName+'|'+username, username:username, gameName:gameName}) -%>
 <script src="/socket.io/socket.io.js"></script>
 
 <section id="dice">
@@ -13,7 +12,6 @@ username:username, gameName:gameName}) -%>
     </tr>
     <tr>
       <td colspan="3">Rolls remaining: <span id="rolls_remaining"><% if (scorecard_info.score == -1){ %> 3 <%} else{ %> <%=scorecards.filter((e) => e.user_id === user_id)[0].score_info.dice_rolls%> <%}%></span></td>
-      <!-- <td colspan="3">Rolls remaining: <span id="rolls_remaining"><%=scorecards.filter((e) => e.user_id === user_id)[0].score_info.dice_rolls%></span></td> -->
       <td colspan="2">
         <button id="roll_button" type="button">Roll the Dice!</button>
       </td>
@@ -156,11 +154,6 @@ username:username, gameName:gameName}) -%>
   });
 
   socket.on('update', function(data){
-    console.log("Scorecard updated")
-    console.log("New scorecard: ", data)
-    console.log(data["score_info"])
-    console.log(window.scorecard)
-    console.log(window.scorecards)
     window.scorecard.load_scorecard(data["score_info"], data["user_id"])
   })
 

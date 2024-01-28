@@ -71,8 +71,7 @@ async function enter_score_handler(event) {
     dice.reset();
     dice_elements.forEach((e) => e.classList.remove("reserved"));
     display_feedback("Valid entry", "good");
-    let scorecard_id = parseInt(event.target.getAttribute("scorecard_id")); // DEREK WAY SEE IF MINE BETTER
-    //let scorecard_id = parseInt(document.getElementById("scorecard_id").dataset.score)
+    let scorecard_id = parseInt(event.target.getAttribute("scorecard_id"));
 
     console.log("scorecard id: ", scorecard_id)
     let headers = {
