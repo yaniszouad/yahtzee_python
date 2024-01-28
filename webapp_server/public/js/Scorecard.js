@@ -102,12 +102,9 @@ class Scorecard {
      * Updates all score elements for a scorecard
      */
     update_scores(user_id) {
-      let category_elements = this.category_elements.filter(
-        (element) => parseInt(element.getAttribute("user_id")) === user_id
-      );
-      let score_elements = this.score_elements.filter(
-        (element) => parseInt(element.getAttribute("user_id")) === user_id
-      );
+      //filtering 
+      let category_elements = this.category_elements.filter((element) => parseInt(element.getAttribute("user_id")) === user_id);
+      let score_elements = this.score_elements.filter((element) => parseInt(element.getAttribute("user_id")) === user_id);
       let upper_score = category_elements
         .filter((element) => element.classList.contains("upper") && element.disabled)
         .map((element) => element.value)
@@ -161,12 +158,9 @@ class Scorecard {
         ...score_info.upper,
         ...score_info.lower,
       };
-      let category_elements = this.category_elements.filter(
-        (element) => parseInt(element.getAttribute("user_id")) === user_id
-      );
+      let category_elements = this.category_elements.filter((element) => parseInt(element.getAttribute("user_id")) === user_id);
       category_elements.forEach((element) => {
         let raw_id = element.id.slice(0, -6);
-        //because the score_info format doesn't match the score_elements' ids
         let id = element.classList.contains("upper")
           ? raw_id === "six"
             ? "sixes"

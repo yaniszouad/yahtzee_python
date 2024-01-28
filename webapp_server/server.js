@@ -14,6 +14,35 @@ app.use(express.static('public')); //specify location of static assests
 app.set('views', __dirname + '/views'); //specify location of templates
 app.set('view engine', 'ejs'); //specify templating library
 
+//.............Instantiate socket................................//
+
+//Socket Conection
+let server = require('http').Server(app);
+let io = require('socket.io')(server);
+
+io.on('connection', function(socket){  
+  io.emit('connection', {
+    num_total_connections: io.engine.clientsCount
+  }); 
+
+  socket.on('game_connection', function(data) {  
+    socket.join(data.game_name);
+    console.log('Socket game connection event:', data.username, io.sockets.adapter.rooms.get(data.game_name).size);
+    io.to(data.game_name).emit('game_connection', {
+        username:data.username,
+        num_game_connections: io.sockets.adapter.rooms.get(data.game_name).size
+    });
+  }); 
+
+  socket.on('chat', function(data) {
+    console.log('Socket chat event:', data);
+    io.to(data.game_name).emit('chat', {
+      username: data.username,
+      message: data.message
+    });
+  });
+});
+
 //.............Define server routes..............................//
 //Express checks routes in the order in which they are defined
 app.get('/', async function(request, response) {
@@ -67,16 +96,12 @@ app.get('/login', async function(request, response) {
         let urlGames = 'http://127.0.0.1:5000/users/games/'+username;
         let resGames = await fetch(urlGames);
         let games = JSON.parse(await resGames.text());
-        // let urlHighscores = 'http://127.0.0.1:5000/scores';
-        // let resHighscores = await fetch(urlHighscores);
-        // let highscores = JSON.parse(await resHighscores.text());
-        // console.log("Requested highscores:");
-        // console.log(highscores);
+        let newGames = games.filter((game) => game != "There is no game with this name or this id." && game != "There is no game with this name/id.")
         response.status(200);
         response.setHeader('Content-Type', 'text/html')
         response.render("game/game_details", {
           feedback:"",
-          games: games,
+          games: newGames,
           username: username
         });
       }else if (details["password"] && details["password"]!=password){
@@ -271,23 +296,19 @@ app.get('/games/:username', async function(request, response) {
   console.log(request.method, request.url) //event logging
 
   let username = request.params.username;
-  
 
   let url = 'http://127.0.0.1:5000/users/games/'+username
   let res = await fetch(url);
   let details = JSON.parse(await res.text());
-  let gameNames = [];
 
-  let urlAllGames = 'http://127.0.0.1:5000/games'
-  let resAllGames = await fetch(urlAllGames);
-  let detailsAllGames = JSON.parse(await resAllGames.text());
-  
+  let newGames = details.filter((game) => game != "There is no game with this name or this id." && game != "There is no game with this name/id.")
+
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
   try {
     response.render("game/game_details", {
       feedback:"",
-      games: detailsAllGames,
+      games: newGames,
       username: username
       });
   } catch (error) {
@@ -361,7 +382,7 @@ app.get('/games/delete/:gameName/:username', async function(request, response) {
       });
       response.redirect('/games/' + username);
   } catch (error) {
-      console.error('Error deleting game:', error);
+      console.error('You have had an error deleting:', error);
   }
 });
 
@@ -385,14 +406,15 @@ app.get("/games/:game_name/:username", async function (request, response) {
   const res = await fetch(url);
   const scorecard_details = JSON.parse(await res.text());
   const scorecards = scorecard_details;
-  for (const scorecard of scorecards) {
-    console.log(
-      "filters",
-      scorecards.filter((e) => e.user_id === user_id)
-    );
-    console.log(scorecard.score_info.upper, scorecard.score_info.lower);
-  }
-  console.log(scorecard_details);
+
+  // for (const scorecard of scorecards) {
+  //   console.log(
+  //     "filters",
+  //     scorecards.filter((e) => e.user_id === user_id)
+  //   );
+  //   console.log(scorecard.score_info.upper, scorecard.score_info.lower);
+  // }
+  // console.log(scorecard_details);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
@@ -421,9 +443,11 @@ app.post('/scorecards/:scorecard_id', async function(request, response) {
     headers: headers,
     body: JSON.stringify(scorecard_data)
   });
-
-  res_data = JSON.parse(await res.text());
+  json_data = await res.text();
+  res_data = JSON.parse(json_data);
   console.log("THIS THE DATA OF RES", res_data)
+
+  io.emit('update', res_data)
 
   response.status(200);
   response.setHeader('Content-Type', 'text/html')
@@ -439,7 +463,7 @@ app.post("/games/join/:username", async function (request, response) {
   let username = request.params.username;
   let game_name = request.body.game_name;
 
-  // HEADs UP: You really need to validate this information!
+  // HEADS UP: You really need to validate this information!
   console.log("Info recieved:", username, game_name);
 
   let game_url = "http://127.0.0.1:5000/games/" + game_name;
@@ -474,9 +498,6 @@ app.post("/games/join/:username", async function (request, response) {
 }); //POST /games/join/:username
 
 
-
-
-
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of
 // a request fot an invalid route
@@ -492,6 +513,7 @@ app.use("", function(request, response){
 
 //..............Start the server...............................//
 const port = process.env.PORT || 3000;
-app.listen(port, function() {
-  console.log('Server started at http://127.0.0.1:'+port+'.')
+app.set('port', port); //let heroku pick the port if needed
+server.listen(port, function() {
+ console.log('Server started at http://localhost:'+port+'.')
 });

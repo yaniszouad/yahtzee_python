@@ -51,11 +51,6 @@ class Dice{
      *
      * @return {Array} an array of six integers representing counts of the six die faces
     */
-    // get_counts(){
-    //     let counts = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}
-    //     this.get_values().forEach(value => counts[value]++);
-    //     return [counts[1], counts[2], counts[3], counts[4],counts[5],counts[6]];
-    // }
     get_counts() {
         const arr = [0, 0, 0, 0, 0, 0];
         this.get_values().forEach((element) => {

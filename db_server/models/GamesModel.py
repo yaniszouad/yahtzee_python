@@ -140,7 +140,7 @@ class Game:
                             "message": self.to_dict(results)
                             }
             return {"result": "error",
-                    "message": "There is no game with this name/id."
+                    "message": "There is no game with this name or this id."
                     }
         except sqlite3.Error as error:
             return {"result":"error",
